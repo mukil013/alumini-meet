@@ -7,7 +7,9 @@ export default function Home() {
   return (
     <div className="home-body">
       <Navbar />
-      <div className="outlet"><Outlet /></div>
+      <div className="outlet">
+        <Outlet />
+      </div>
     </div>
   );
 }
