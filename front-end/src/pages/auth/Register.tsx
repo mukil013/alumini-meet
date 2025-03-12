@@ -33,11 +33,10 @@ export default function Register() {
     setRole(selectedRole);
     setFormData((prevData) => ({
       ...prevData,
-      role: selectedRole, // ✅ Update role in formData
+      role: selectedRole,
     }));
   };
   
-
   const handleSubmit = async (e: any) => {
     e.preventDefault(); // Prevent default form submission behavior
 
