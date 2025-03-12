@@ -5,9 +5,8 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 
 export default function Register() {
-
-  const RegistrationLinkBackend = "Arey bhai inga podunga link ah"
-
+  const RegistrationLinkBackend = "Arey bhai inga podunga link ah";
+  const [role, setRole] = useState("student");
   const [next, setNext] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
@@ -17,9 +16,10 @@ export default function Register() {
     retypePassword: "",
     phone: "",
     gender: "",
+    role: role,
   });
 
-  const handleChange = (e:any) => {
+  const handleChange = (e: any) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
@@ -27,7 +27,7 @@ export default function Register() {
     }));
   };
 
-  const handleSubmit = async (e:any) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault(); // Prevent default form submission behavior
 
     try {
@@ -53,9 +53,13 @@ export default function Register() {
         retypePassword: "",
         phone: "",
         gender: "",
+        role: "student",
       });
     } catch (error) {
-      console.error("Error during registration:", error.response?.data || error.message);
+      console.error(
+        "Error during registration:",
+        error.response?.data || error.message
+      );
       alert("Registration failed. Please try again.");
     }
   };
@@ -74,7 +78,13 @@ export default function Register() {
                 <p className="descripton">
                   Join our platform and connect with opportunities
                 </p>
-                <button className="student-role" type="button">
+                <button
+                  className="student-role"
+                  type="button"
+                  onClick={() => {
+                    setRole("student");
+                  }}
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     height="18px"
@@ -89,7 +99,13 @@ export default function Register() {
                     Compete, learn, and apply for jobs and internships
                   </p>
                 </button>
-                <button className="student-role" type="button">
+                <button
+                  className="student-role"
+                  type="button"
+                  onClick={() => {
+                    setRole("alumini");
+                  }}
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     height="24px"
@@ -100,8 +116,9 @@ export default function Register() {
                     <path d="M160-80v-240h120v240H160Zm200 0v-476q-50 17-65 62.5T280-400h-80q0-128 75-204t205-76q100 0 150-49.5T680-880h80q0 88-37.5 157.5T600-624v544h-80v-240h-80v240h-80Zm120-640q-33 0-56.5-23.5T400-800q0-33 23.5-56.5T480-880q33 0 56.5 23.5T560-800q0 33-23.5 56.5T480-720Z" />
                   </svg>
                   <p>
-                    <h4>Sign up as a Student</h4>
-                    Compete, learn, and apply for jobs and internships
+                    <h4>Sign up as an Alumni</h4>
+                    Host competitions, hire talent, and offer career
+                    opportunities
                   </p>
                 </button>
                 <button
