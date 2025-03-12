@@ -8,6 +8,7 @@ export default function Register() {
 
   const RegistrationLinkBackend = "http://localhost:8000/user/registerUser"
 
+  const [role, setRole] = useState("");
   const [next, setNext] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
@@ -17,11 +18,10 @@ export default function Register() {
     retypePassword: "",
     phone: "",
     gender: "",
-    batch: "",
-    role: ""
+    role: role
   });
 
-  const handleChange = (e:any) => {
+  const handleChange = (e: any) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
@@ -29,9 +29,19 @@ export default function Register() {
     }));
   };
 
-  const handleSubmit = async (e:any) => {
+  const handleRoleChange = (selectedRole: string) => {
+    setRole(selectedRole);
+    setFormData((prevData) => ({
+      ...prevData,
+      role: selectedRole, // ✅ Update role in formData
+    }));
+  };
+  
+
+  const handleSubmit = async (e: any) => {
     e.preventDefault(); // Prevent default form submission behavior
 
+    console.log(formData);
     try {
       // Validate passwords match
       if (formData.password !== formData.retypePassword) {
@@ -55,11 +65,13 @@ export default function Register() {
         retypePassword: "",
         phone: "",
         gender: "",
-        batch: "",
         role: ""
       });
     } catch (error) {
-      console.error("Error during registration:", error.response?.data || error.message);
+      console.error(
+        "Error during registration:",
+        error.response?.data || error.message
+      );
       alert("Registration failed. Please try again.");
     }
   };
@@ -93,7 +105,13 @@ export default function Register() {
                     Compete, learn, and apply for jobs and internships
                   </p>
                 </button>
-                <button className="student-role" type="button">
+                <button
+                  className="student-role"
+                  type="button"
+                  onClick={() => {
+                    handleRoleChange("alumini");
+                  }}
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     height="24px"
