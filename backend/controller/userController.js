@@ -1,5 +1,5 @@
 const User = require('../model/userModel');
-// const mongoose = require('mongoose');
+const mongoose = require('mongoose');
 
 const dotenv =require('dotenv');
 
@@ -10,12 +10,13 @@ const registerUser = async (req, res) => {
         const user = await User.find({email: req.body.email});
         if(user.length === 0){
             const user = await User.create({
-                firstName: req.body.username,
+                firstName: req.body.firstName,
+                lastName: req.body.lastName,
                 email: req.body.email,
                 password: req.body.password,
                 gender: req.body.gender,
-                phoneNumber: req.body.phoneNumber,
-                department: req.body.department
+                phoneNumber: req.body.phone,
+                role: req.body.role
             });  
             
             const userDetail = {
@@ -24,8 +25,8 @@ const registerUser = async (req, res) => {
                 password: user.password,
                 gender: user.gender,
                 phoneNumber: user.phoneNumber,
-                department: user.department,
-                userId: user._id
+                userId: user._id,
+                role: user.role
             }
 
             res.status(200).json({

@@ -9,7 +9,7 @@ const userSchema = new mongoose.Schema({
   lastName: {
     type: String,
     trim: true,
-    default: "",
+    default: "lastname",
   },
   email: {
     type: String,
@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema({
   },
   department: {
     type: String,
-    required: [true, "The department is a required."],
+    default: "Engineer"
   },
   gender: {
     type: String,
@@ -68,12 +68,16 @@ const userSchema = new mongoose.Schema({
     trim: true,
     default: "",
   },
+  batch: {
+    type: Number,
+    default: -1
+  },
   role: {
     type: String,
-    enum: ["admin", "user", "alumni"],
-    default: "user",
+    enum: ["admin", "user", "alumini"]
   },
 });
+
 
 const User = mongoose.model("User", userSchema);
 module.exports = User;
