@@ -48,4 +48,8 @@ const registerUser = async (req, res) => {
     }
 }
 
+const validateUser = async (req, res) =>{
+    
+}
+
 module.exports = {registerUser};
