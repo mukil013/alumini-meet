@@ -6,7 +6,7 @@ import axios from "axios";
 
 export default function Register() {
 
-  const RegistrationLinkBackend = "Arey bhai inga podunga link ah"
+  const RegistrationLinkBackend = "http://localhost:8000/user/registerUser"
 
   const [next, setNext] = useState(false);
   const [formData, setFormData] = useState({
@@ -17,6 +17,8 @@ export default function Register() {
     retypePassword: "",
     phone: "",
     gender: "",
+    batch: "",
+    role: ""
   });
 
   const handleChange = (e:any) => {
@@ -53,6 +55,8 @@ export default function Register() {
         retypePassword: "",
         phone: "",
         gender: "",
+        batch: "",
+        role: ""
       });
     } catch (error) {
       console.error("Error during registration:", error.response?.data || error.message);
@@ -84,8 +88,8 @@ export default function Register() {
                   >
                     <path d="M480-120 200-272v-240L40-600l440-240 440 240v320h-80v-276l-80 44v240L480-120Zm0-332 274-148-274-148-274 148 274 148Zm0 241 200-108v-151L480-360 280-470v151l200 108Zm0-241Zm0 90Zm0 0Z" />
                   </svg>
+                  <h4>Sign up as a student</h4>
                   <p>
-                    <h4>Sign up as a Student</h4>
                     Compete, learn, and apply for jobs and internships
                   </p>
                 </button>
@@ -99,8 +103,8 @@ export default function Register() {
                   >
                     <path d="M160-80v-240h120v240H160Zm200 0v-476q-50 17-65 62.5T280-400h-80q0-128 75-204t205-76q100 0 150-49.5T680-880h80q0 88-37.5 157.5T600-624v544h-80v-240h-80v240h-80Zm120-640q-33 0-56.5-23.5T400-800q0-33 23.5-56.5T480-880q33 0 56.5 23.5T560-800q0 33-23.5 56.5T480-720Z" />
                   </svg>
+                  <h4>Sign up as a alumini</h4>
                   <p>
-                    <h4>Sign up as a Student</h4>
                     Compete, learn, and apply for jobs and internships
                   </p>
                 </button>
