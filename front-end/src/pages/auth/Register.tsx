@@ -1,10 +1,64 @@
-import React, { use, useState } from "react";
+import React, { useState } from "react";
 import "./style/Register.css";
 import logo from "../../assets/logo.png";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 export default function Register() {
+
+  const RegistrationLinkBackend = "Arey bhai inga podunga link ah"
+
   const [next, setNext] = useState(false);
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    retypePassword: "",
+    phone: "",
+    gender: "",
+  });
+
+  const handleChange = (e:any) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e:any) => {
+    e.preventDefault(); // Prevent default form submission behavior
+
+    try {
+      // Validate passwords match
+      if (formData.password !== formData.retypePassword) {
+        alert("Passwords do not match!");
+        return;
+      }
+
+      // Send POST request using Axios
+      const response = await axios.post(RegistrationLinkBackend, formData);
+
+      // Handle success
+      console.log("Registration successful:", response.data);
+      alert("Registration successful!");
+
+      // Reset form data
+      setFormData({
+        firstName: "",
+        lastName: "",
+        email: "",
+        password: "",
+        retypePassword: "",
+        phone: "",
+        gender: "",
+      });
+    } catch (error) {
+      console.error("Error during registration:", error.response?.data || error.message);
+      alert("Registration failed. Please try again.");
+    }
+  };
 
   return (
     <div className="register-body">
@@ -13,7 +67,7 @@ export default function Register() {
           <img src={logo} alt="college logo" />
         </aside>
         <aside className="register-form">
-          <form action="post">
+          <form onSubmit={handleSubmit}>
             {!next && (
               <>
                 <h1>Create a new account</h1>
@@ -75,39 +129,91 @@ export default function Register() {
                   </svg>
                 </div>
                 <label className="username">
-                  <label>First Name<input type="text" placeholder="First name"/></label>
-                  <label>Last Name<input type="text" placeholder="Last name"/></label>
+                  <label>
+                    First Name
+                    <input
+                      type="text"
+                      placeholder="First name"
+                      name="firstName"
+                      value={formData.firstName}
+                      onChange={handleChange}
+                      required
+                    />
+                  </label>
+                  <label>
+                    Last Name
+                    <input
+                      type="text"
+                      placeholder="Last name"
+                      name="lastName"
+                      value={formData.lastName}
+                      onChange={handleChange}
+                    />
+                  </label>
                 </label>
                 <label>
                   Email
-                  <input type="email" placeholder="Enter your email" />
+                  <input
+                    type="email"
+                    placeholder="Enter your email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                  />
                 </label>
                 <label>
                   Password
-                  <input type="password" placeholder="Enter your password" />
+                  <input
+                    type="password"
+                    placeholder="Enter your password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    required
+                  />
                 </label>
                 <label>
                   Retype Password
-                  <input type="password" placeholder="Enter your password" />
+                  <input
+                    type="password"
+                    placeholder="Retype your password"
+                    name="retypePassword"
+                    value={formData.retypePassword}
+                    onChange={handleChange}
+                    required
+                  />
                 </label>
                 <label>
-                  <label>
-                    Phone
-                    <input type="tel" placeholder="Enter your phone number"/>
-                  </label>
+                  Phone
+                  <input
+                    type="tel"
+                    placeholder="Enter your phone number"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    required
+                  />
                 </label>
                 <label className="gender">
-                    Gender
-                    <select>
-                      <option disabled value="" >[not selected]</option>
-                      <option value="male">Male</option>
-                      <option value="female">Female</option>
-                      <option value="other">Other</option>
-                    </select>
-                  </label>
+                  Gender
+                  <select
+                    name="gender"
+                    value={formData.gender}
+                    onChange={handleChange}
+                    required
+                  >
+                    <option disabled value="">
+                      [not selected]
+                    </option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                  </select>
+                </label>
                 <input type="submit" value="Register" />
                 <p className="redirect">
-                  Already have an account ? <Link to="/">Login</Link>
+                  Already have an account? <Link to="/">Login</Link>
                 </p>
               </section>
             )}
