@@ -22,19 +22,19 @@ export default function Navbar() {
           <Link to="/home/batches">Batches</Link> {/* Updated to /home/batches */}
         </li>
         <li>
-          <Link to="#">Events</Link> {/* Placeholder */}
+          <Link to="/home/event">Events</Link> {/* Placeholder */}
         </li>
         <li>
-          <Link to="#">Projects</Link> {/* Placeholder */}
+          <Link to="/home/projects">Projects</Link> {/* Placeholder */}
         </li>
         <li>
-          <Link to="#">Mentorships</Link> {/* Placeholder */}
+          <Link to="/home/mentorship">Mentorships</Link> {/* Placeholder */}
         </li>
         <li>
-          <Link to="#">Open Source</Link> {/* Placeholder */}
+          <Link to="/home/opensource">Open Source</Link> {/* Placeholder */}
         </li>
         <li>
-          <Link to="#">Placement</Link> {/* Placeholder */}
+          <Link to="/home/placements">Placement</Link> {/* Placeholder */}
         </li>
         <li>
           <Link to="/home/profile">Profile</Link> {/* Updated to /home/profile */}

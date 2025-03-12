@@ -6,6 +6,11 @@ import Register from "./pages/auth/Register.tsx";
 import Login from "./pages/auth/Login.tsx";
 import Batches from "./pages/Batches.tsx";
 import Profile from "./pages/Profile.tsx";
+import Projects from "./pages/Projects.tsx";
+import Placement from "./pages/Placement.tsx";
+import Opensource from "./pages/Opensource.tsx";
+import Mentorship from "./pages/Mentorship.tsx";
+import Events from "./pages/Events.tsx";
 
 const isAuth = true
 
@@ -34,6 +39,26 @@ const router = Bro([
         path: 'profile', 
         element: <Profile />,
       },
+      {
+        path: 'opensource',
+        element: <Opensource />
+      },
+      {
+        path: 'placements',
+        element: <Placement />
+      },
+      {
+        path: 'mentorship',
+        element: <Mentorship />
+      },
+      {
+        path: 'projects',
+        element: <Projects />
+      },
+      {
+        path: 'event',
+        element: <Events />
+      }
     ],
   },
 ]);
