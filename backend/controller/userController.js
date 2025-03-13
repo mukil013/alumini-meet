@@ -49,7 +49,39 @@ const registerUser = async (req, res) => {
 }
 
 const validateUser = async (req, res) =>{
-    
+    try{
+        const user = await User.find({
+            email: req.body.email,
+            password: req.body.password
+        });
+        if(user.length === 0){
+            res.status(400).json({
+                status: "failure",
+                message: "user does not exists."
+            });
+        }else{
+            const userDetail = {
+                firstName: user[0].firstName,
+                email: user[0].email,
+                password: user[0].password,
+                gender: user[0].gender,
+                phoneNumber: user[0].phoneNumber,
+                userId: user[0]._id,
+                role: user[0].role
+            }
+
+            res.status(200).json({
+                status: "success",
+                message: "user logged in successfully.",
+                userDetail: userDetail
+            })
+        }
+    }catch(error){
+        res.status(500).json({
+            status: "failure",
+            message: `No user found ${error}`,
+          });
+    }
 }
 
-module.exports = {registerUser};
+module.exports = {registerUser, validateUser};
