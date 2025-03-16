@@ -1,17 +1,17 @@
-const Project = require("../model/projectModel");
+const Referral = require("../model/projectModel");
 
-const addProject = async (req, res) => {
+const addReferral = async (req, res) => {
   try {
-    const project = await Project.create({
-      projectTitle: req.body.projectTitle,
-      projectDescription: req.body.projectDescription,
+    const referral = await Referral.create({
+        referraltitle: req.body.referraltitle,
+      gitDescription: req.body.gittDescription,
       gitLink: req.body.gitLink,
     });
 
     const projectDetail = {
-      projectTitle: project.projectTitle,
-      projectDescription: project.projectDescription,
-      gitLink: project.gitLink,
+        gitTitle: project.gitTitle,
+        gitDescription: project.gitDescription,
+        gitLink: project.gitLink,
     };
 
     res.status(200).json({
@@ -33,7 +33,7 @@ const getAllProject = async (req, res) => {
     res.status(200).json({
       status: "Success",
       message: "fetched the project successfully.",
-      projects: projects,
+      projects: projects
     });
   } catch (error) {
     res.status(200).json({
@@ -43,37 +43,39 @@ const getAllProject = async (req, res) => {
   }
 };
 
-const getUserProject = async (req, res) => {
-  try {
-    const { userId } = req.params;
-    if (!userId) {
-      return res.status(400).json({
-        status: "failure",
-        message: "User Id is required to fetch projects.",
-      });
+const getUserProject = async (req, res) =>{
+    try{
+        const { userId } = req.params;
+        if (!userId) {
+            return res.status(400).json({
+                status: "failure",
+                message: "User Id is required to fetch projects.",
+            });
+        }
+
+        const projects = await Project.find({ userId });
+
+        if (projects.length === 0) {
+            return res.status(404).json({
+                status: "failure",
+                message: "No projects found for the given user ID.",
+            });
+        }
+
+
+        res.status(200).json({
+            status: "success",
+            message: "Projects fetched successfully.",
+            projects,
+        });
+
+    }catch(error){
+        res.status(500).json({
+            status: "failure",
+            message: `cannot fetch the project of particular user ${error}.`,
+          });
     }
-
-    const projects = await Project.find({ userId });
-
-    if (projects.length === 0) {
-      return res.status(404).json({
-        status: "failure",
-        message: "No projects found for the given user ID.",
-      });
-    }
-
-    res.status(200).json({
-      status: "success",
-      message: "Projects fetched successfully.",
-      projects,
-    });
-  } catch (error) {
-    res.status(500).json({
-      status: "failure",
-      message: `cannot fetch the project of particular user ${error}.`,
-    });
-  }
-};
+}
 
 const deleteProject = async (req, res) => {
   try {
@@ -120,10 +122,4 @@ const editProject = async (req, res) => {
   }
 };
 
-module.exports = {
-  addProject,
-  getAllProject,
-  editProject,
-  deleteProject,
-  getUserProject,
-};
+module.exports = { addProject, getAllProject, editProject, deleteProject, getUserProject };
