@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import "./style/PlacementInfo.css";
 
@@ -16,6 +16,7 @@ export default function PlacementInfo() {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const dialogRef = useRef(null); // Ref for the dialog element
 
   // Fetch all placements on component mount
   useEffect(() => {
@@ -33,6 +34,15 @@ export default function PlacementInfo() {
 
     fetchPlacements();
   }, []);
+
+  // Handle dialog open/close
+  useEffect(() => {
+    if (showPopup && dialogRef.current) {
+      dialogRef.current.showModal(); // Open the dialog
+    } else if (!showPopup && dialogRef.current) {
+      dialogRef.current.close(); // Close the dialog
+    }
+  }, [showPopup]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -91,91 +101,91 @@ export default function PlacementInfo() {
       </button>
 
       {/* Popup Modal for Adding Placement */}
-      {showPopup && (
-        <div className="popup-overlay">
-          <div className="popup-content">
-            <h2>Add New Placement</h2>
-            <button className="close-btn" onClick={() => setShowPopup(false)}>
-              &times;
-            </button>
-            <form onSubmit={handleSubmit}>
-              <div className="form-group">
-                <label>Company Name</label>
-                <input
-                  type="text"
-                  name="companyName"
-                  value={formData.companyName}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Company Image URL</label>
-                <input
-                  type="url"
-                  name="companyImageUrl"
-                  value={formData.companyImageUrl}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Location</label>
-                <input
-                  type="text"
-                  name="location"
-                  value={formData.location}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Job Role</label>
-                <input
-                  type="text"
-                  name="jobRole"
-                  value={formData.jobRole}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Job Type</label>
-                <input
-                  type="text"
-                  name="jobType"
-                  value={formData.jobType}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Job Description</label>
-                <textarea
-                  name="jobDescription"
-                  value={formData.jobDescription}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Apply Link</label>
-                <input
-                  type="url"
-                  name="applyLink"
-                  value={formData.applyLink}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <button type="submit" disabled={loading}>
-                {loading ? "Adding..." : "Add Placement"}
-              </button>
-              {error && <p className="error">{error}</p>}
-            </form>
+      <dialog ref={dialogRef} className="popup-content">
+        <h2>Add New Placement</h2>
+        <button
+          className="close-btn"
+          onClick={() => setShowPopup(false)}
+          aria-label="Close"
+        >
+          &times;
+        </button>
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label>Company Name</label>
+            <input
+              type="text"
+              name="companyName"
+              value={formData.companyName}
+              onChange={handleChange}
+              required
+            />
           </div>
-        </div>
-      )}
+          <div className="form-group">
+            <label>Company Image URL</label>
+            <input
+              type="url"
+              name="companyImageUrl"
+              value={formData.companyImageUrl}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label>Location</label>
+            <input
+              type="text"
+              name="location"
+              value={formData.location}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label>Job Role</label>
+            <input
+              type="text"
+              name="jobRole"
+              value={formData.jobRole}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label>Job Type</label>
+            <input
+              type="text"
+              name="jobType"
+              value={formData.jobType}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label>Job Description</label>
+            <textarea
+              name="jobDescription"
+              value={formData.jobDescription}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label>Apply Link</label>
+            <input
+              type="url"
+              name="applyLink"
+              value={formData.applyLink}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <button type="submit" disabled={loading}>
+            {loading ? "Adding..." : "Add Placement"}
+          </button>
+          {error && <p className="error">{error}</p>}
+        </form>
+      </dialog>
 
       {/* Display All Placements */}
       <div className="placements-list">
