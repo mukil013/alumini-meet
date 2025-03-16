@@ -3,10 +3,11 @@ import "./style/Login.css";
 import logo from "../../assets/logo.png";
 import { Link } from "react-router-dom";
 import axios from "axios"; // Import Axios
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
 
-  const LoginLinkBackend = "Arey bhai inga podunga link ah"
+  const LoginLinkBackend = "http://localhost:8000/user/validateUser"
 
   const [formData, setFormData] = useState({
     email: "",
@@ -21,6 +22,8 @@ export default function Login() {
     }));
   };
 
+  const nav = useNavigate()
+
   const handleSubmit = async (e:any) => {
     e.preventDefault(); 
 
@@ -28,9 +31,10 @@ export default function Login() {
       const response = await axios.post(LoginLinkBackend, formData);
 
       // Handle success
-      console.log("Login successful:", response.data);
-      alert("Login successful!");
-      localStorage.setItem("token", response.data.token);
+      console.log("Login successful:", response.data.status);
+      localStorage.setItem("token", response.data.userDetail);
+      nav('/home/profile')
+      
     } catch (error:any) {
       // Handle error
       console.error("Error during login:", error.response?.data || error.message);

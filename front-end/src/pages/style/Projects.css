@@ -1,0 +1,38 @@
+#project-body{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+#project-body li{
+  list-style: none;
+}
+.project-container{
+  width: 640px;
+  display: flex;
+  gap: 1rem;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid #9e9e9e55;
+  padding: 1rem;
+  border-radius: 1rem;
+}
+.project-title{
+  font-size: 2rem;
+  text-align: center;
+}
+.project-description{
+  text-align: justify;
+}
+.register-btn-project{
+  height: 2.5rem;
+  padding: .5rem 1rem;
+  color: #fff;
+  background-color: royalblue;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+.postedBy{
+  opacity: .5;
+}

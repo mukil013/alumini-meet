@@ -1,0 +1,31 @@
+.mentor-card{
+  height: 25vh;
+  width: 25vw;
+  border: 1px solid #9e9e9e;
+  padding: 1rem;
+  border-radius: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.mentor-grp-description{
+  text-align: justify;
+}
+#join-grp{
+  height: 2rem;
+  width: fit-content;
+  padding: .5rem 1rem;
+  color: #fff;
+  background-color: royalblue;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+.mentor-body{
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+  gap: 1rem;
+  justify-content: center;
+}

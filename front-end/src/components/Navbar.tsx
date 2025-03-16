@@ -6,7 +6,7 @@ export default function Navbar() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    // Add your logout logic here
+    localStorage.removeItem("user")
     console.log('User logged out');
     navigate('/login'); // Redirect to the login page after logout
   };
@@ -16,7 +16,7 @@ export default function Navbar() {
       <div className="nav-logo">Alumini meet</div>
       <ul>
         <li>
-          <Link to="/home">Home</Link> {/* Updated to /home */}
+          <Link to="/home/profile">Home</Link> {/* Updated to /home */}
         </li>
         <li>
           <Link to="/home/batches">Batches</Link> {/* Updated to /home/batches */}

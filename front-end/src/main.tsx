@@ -12,7 +12,7 @@ import Opensource from "./pages/Opensource.tsx";
 import Mentorship from "./pages/Mentorship.tsx";
 import Events from "./pages/Events.tsx";
 
-const isAuth = true
+const isAuth = !!localStorage.getItem("user")
 
 const router = Bro([
   {
