@@ -35,7 +35,7 @@ const addPlacement = async (req, res) => {
   }
 };
 
-const deletePlacement = async (res, req) => {
+const deletePlacement = async (req, res) => {
   try {
     await Placement.findByIdAndDelete(req.params.id);
     res.status(200).json({
@@ -52,17 +52,10 @@ const deletePlacement = async (res, req) => {
 
 const getAllPlacement = async (req, res) => {
   try {
-    const getPlacement = await Placement.find();
-    res.status(200).json({
-      status: "Success",
-      message: "fetched all the placements successfully.",
-      placements: getPlacement,
-    });
+    const placements = await Placement.find();
+    res.status(200).json(placements);
   } catch (error) {
-    res.status(500).json({
-      status: "failure",
-      message: "unable to fetch the placement details.",
-    });
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -82,11 +75,11 @@ const editPlacement = async (req, res) => {
       new: true,
     });
     if (!result) {
-        return res.status(404).json({
-          status: "failure",
-          message: "Placement not found.",
-        });
-      }
+      return res.status(404).json({
+        status: "failure",
+        message: "Placement not found.",
+      });
+    }
     res.status(200).json({
       status: "Success",
       message: "placement details editted successfully.",
@@ -100,4 +93,9 @@ const editPlacement = async (req, res) => {
   }
 };
 
-module.exports = { addPlacement, deletePlacement, editPlacement, getAllPlacement };
+module.exports = {
+  addPlacement,
+  deletePlacement,
+  editPlacement,
+  getAllPlacement,
+};

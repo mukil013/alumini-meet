@@ -70,7 +70,7 @@ const userSchema = new mongoose.Schema({
   },
   batch: {
     type: Number,
-    default: -1
+    default: ""
   },
   role: {
     type: String,

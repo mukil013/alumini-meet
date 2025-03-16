@@ -1,0 +1,86 @@
+.placement-container {
+  padding: 2rem;
+}
+
+.ats-section {
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background: #f5f5f5;
+  border-radius: 8px;
+}
+
+.placements-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.placement-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1.5rem;
+  transition: transform 0.2s;
+}
+
+.company-logo {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.ats-btn {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 1rem;
+}
+
+.apply-btn {
+  background: #2196F3;
+  color: white;
+  padding: 0.8rem 1.5rem;
+  border-radius: 4px;
+  text-decoration: none;
+}
+
+.actions {
+  margin-top: 1rem;
+}
+.loading {
+  font-size: 1.2rem;
+  padding: 2rem;
+  text-align: center;
+}
+
+.error {
+  color: red;
+  padding: 2rem;
+  text-align: center;
+}
+
+.no-data {
+  font-style: italic;
+  padding: 2rem;
+  text-align: center;
+}
+.dialog-content{
+  height: 50vh;
+  width: 50vw;
+  background-color: #ffffffc9;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 1rem;
+  border-radius: 1rem;
+}
+.ats-result{
+  font-size: 1.5rem;
+  height: 10vh;
+  overflow-y: auto;
+}
