@@ -10,3 +10,5 @@ router.post('/addEvents', addEvent);
 router.delete('/deleteEvent/:id', deleteEvent);
 // http://localhost:8000/event/editEvent/ event id
 router.patch('/editEvent/:id', editEvent);
+
+module.exports = router;
