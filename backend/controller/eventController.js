@@ -33,6 +33,7 @@ const getAllEvents = async (req, res) => {
     res.status(200).json({
       status: "Success",
       message: "fetched the events successfully.",
+      events: events
     });
   } catch (error) {
     res.status(200).json({
