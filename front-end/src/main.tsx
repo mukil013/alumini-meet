@@ -13,6 +13,7 @@ import Mentorship from "./pages/Mentorship.tsx";
 import Events from "./pages/Events.tsx";
 import UserManagement from "./pages/admin/UserManagement.tsx";
 import AdminHome from "./pages/admin/AdminHome.tsx";
+import PlacementInfo from "./pages/admin/PlacementInfo.tsx";
 
 const isAuth = !!localStorage.getItem("user") 
 const isAdmin = JSON.parse(localStorage.getItem("user")!) || null
@@ -25,6 +26,10 @@ const router = Bro([
   {
     path: '/userManagement',
     element: <UserManagement/>
+  },
+  {
+    path: '/placement-info',
+    element: <PlacementInfo />
   },
   {
     path: '/register',

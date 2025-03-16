@@ -1,14 +1,20 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import './style/Navbar.css';
 
 export default function Navbar() {
   const navigate = useNavigate();
+  const location = useLocation(); // Get the current location
 
   const handleLogout = () => {
-    localStorage.removeItem("user")
+    localStorage.removeItem("user");
     console.log('User logged out');
     navigate('/login'); // Redirect to the login page after logout
+  };
+
+  // Function to check if a link is active
+  const isActive = (path) => {
+    return location.pathname === path;
   };
 
   return (
@@ -16,28 +22,68 @@ export default function Navbar() {
       <div className="nav-logo">Alumini meet</div>
       <ul>
         <li>
-          <Link to="/home/profile">Home</Link> {/* Updated to /home */}
+          <Link
+            to="/home/profile"
+            className={isActive('/home/profile') ? 'active' : ''}
+          >
+            Home
+          </Link>
         </li>
         <li>
-          <Link to="/home/batches">Batches</Link> {/* Updated to /home/batches */}
+          <Link
+            to="/home/batches"
+            className={isActive('/home/batches') ? 'active' : ''}
+          >
+            Batches
+          </Link>
         </li>
         <li>
-          <Link to="/home/event">Events</Link> {/* Placeholder */}
+          <Link
+            to="/home/event"
+            className={isActive('/home/event') ? 'active' : ''}
+          >
+            Events
+          </Link>
         </li>
         <li>
-          <Link to="/home/projects">Projects</Link> {/* Placeholder */}
+          <Link
+            to="/home/projects"
+            className={isActive('/home/projects') ? 'active' : ''}
+          >
+            Projects
+          </Link>
         </li>
         <li>
-          <Link to="/home/mentorship">Mentorships</Link> {/* Placeholder */}
+          <Link
+            to="/home/mentorship"
+            className={isActive('/home/mentorship') ? 'active' : ''}
+          >
+            Mentorships
+          </Link>
         </li>
         <li>
-          <Link to="/home/opensource">Open Source</Link> {/* Placeholder */}
+          <Link
+            to="/home/opensource"
+            className={isActive('/home/opensource') ? 'active' : ''}
+          >
+            Open Source
+          </Link>
         </li>
         <li>
-          <Link to="/home/placements">Placement</Link> {/* Placeholder */}
+          <Link
+            to="/home/placements"
+            className={isActive('/home/placements') ? 'active' : ''}
+          >
+            Placement
+          </Link>
         </li>
         <li>
-          <Link to="/home/profile">Profile</Link> {/* Updated to /home/profile */}
+          <Link
+            to="/home/profile"
+            className={isActive('/home/profile') ? 'active' : ''}
+          >
+            Profile
+          </Link>
         </li>
       </ul>
       <button className="logout" onClick={handleLogout}>

@@ -1,13 +1,11 @@
-const express = require('express');
-const {getAllPlacement, addPlacement, editPlacement, deletePlacement} =  require('../controller/placementController');
+const express = require("express");
 const router = express.Router();
-// http://localhost:8000/placement/getPlacement
-router.get('/getPlacement', getAllPlacement);
-// http://localhost:8000/placement/addPlacement
-router.post('/addPlacement', addPlacement);
-// http://localhost:8000/placement/deletePlacement/ placement blog id
-router.delete('/deletePlacement/:id', deletePlacement);
-// http://localhost:8000/placement/editPlacement/placement blog id
-router.patch('/editPlacement', editPlacement);
+const placementController = require("../controller/placementController");
+
+// Define routes
+router.post("/addPlacement", placementController.addPlacement);
+router.delete("/deletePlacement/:id", placementController.deletePlacement);
+router.get("/getAllPlacement", placementController.getAllPlacement);
+router.put("/editPlacement/:id", placementController.editPlacement);
 
 module.exports = router;
