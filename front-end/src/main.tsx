@@ -11,6 +11,7 @@ import Placement from "./pages/Placement.tsx";
 import Opensource from "./pages/Opensource.tsx";
 import Mentorship from "./pages/Mentorship.tsx";
 import Events from "./pages/Events.tsx";
+import UserManagement from "./pages/admin/UserManagement.tsx";
 
 const isAuth = true
 
@@ -18,6 +19,10 @@ const router = Bro([
   {
     path: '/',
     element: isAuth ? <Home /> : <Login />, 
+  },
+  {
+    path: '/userManagement',
+    element: <UserManagement/>
   },
   {
     path: '/register',

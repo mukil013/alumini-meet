@@ -6,7 +6,7 @@ import axios from "axios"; // Import Axios
 
 export default function Login() {
 
-  const LoginLinkBackend = "Arey bhai inga podunga link ah"
+  const LoginLinkBackend = "http://localhost:8000/user/validateUser"
 
   const [formData, setFormData] = useState({
     email: "",
