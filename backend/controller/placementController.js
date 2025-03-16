@@ -76,7 +76,7 @@ const editPlacement = async (req, res) => {
       jobRole: req.body.jobRole,
       jobType: req.body.jobType,
       jobDescription: req.body.jobDescription,
-      applyLink: req.body.applyLink,
+      applyLink: req.body.applyLink
     };
     const result = await Placement.findByIdAndUpdate(id, updatedPlacement, {
       new: true,
