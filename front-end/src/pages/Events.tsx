@@ -1,122 +1,55 @@
-import React from 'react'
-import './style/Events.css'
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import './style/Events.css';
 
 export default function Events() {
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true); 
+  const [error, setError] = useState('');
 
-  const imgSrc:string = "https://placehold.co/600x400"
+  // Fetch all events on component mount
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const response = await axios.get('http://localhost:8000/event/getAllEvents');
+        console.log(response)
+        setEvents(response.data);
+      } catch (error) {
+        console.error('Error fetching events:', error);
+        setError('Failed to fetch events. Please try again.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEvents();
+  }, []);
+
+  if (loading) return <div className="loading">Loading events...</div>;
+  if (error) return <div className="error">{error}</div>;
 
   return (
     <ul id="events-body">
-      <li>
-        <div className='events-container'>
-        <img src={imgSrc} alt="" />
-        <div className="events-title">Lorem ipsum dolor sit amet consectetur adipisicing elit.</div>
-        <div className="events-description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Suscipit eius blanditiis explicabo, vero iure excepturi eaque doloremque, vitae laborum voluptates quas vel, sunt totam ullam fugit minima minus harum itaque.
-        Commodi inventore maiores laborum cum voluptatem voluptates nihil at mollitia praesentium, id unde harum quod soluta quidem facere, enim iste sunt! Incidunt necessitatibus omnis voluptate tempore fugiat in qui blanditiis.
-        Recusandae cupiditate aspernatur voluptates cumque repellat expedita quia iusto et assumenda dolore tenetur quo ex corrupti amet quibusdam sunt hic, laboriosam iure quam ad reiciendis facilis excepturi! Fugiat, blanditiis iusto.
-        Sapiente dignissimos nihil quasi! Ea inventore enim temporibus laudantium? Explicabo, aliquid sequi, possimus corporis laborum in iure quos magnam delectus sit, dolorem odio iusto rem tempora qui laboriosam eligendi asperiores.</div>
-        <button className="register-btn-events">Register</button>
-      </div>
-      </li>
-      <li>
-        <div className='events-container'>
-        <img src={imgSrc} alt="" />
-        <div className="events-title">Lorem ipsum dolor sit amet consectetur adipisicing elit.</div>
-        <div className="events-description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Suscipit eius blanditiis explicabo, vero iure excepturi eaque doloremque, vitae laborum voluptates quas vel, sunt totam ullam fugit minima minus harum itaque.
-        Commodi inventore maiores laborum cum voluptatem voluptates nihil at mollitia praesentium, id unde harum quod soluta quidem facere, enim iste sunt! Incidunt necessitatibus omnis voluptate tempore fugiat in qui blanditiis.
-        Recusandae cupiditate aspernatur voluptates cumque repellat expedita quia iusto et assumenda dolore tenetur quo ex corrupti amet quibusdam sunt hic, laboriosam iure quam ad reiciendis facilis excepturi! Fugiat, blanditiis iusto.
-        Sapiente dignissimos nihil quasi! Ea inventore enim temporibus laudantium? Explicabo, aliquid sequi, possimus corporis laborum in iure quos magnam delectus sit, dolorem odio iusto rem tempora qui laboriosam eligendi asperiores.</div>
-        <button className="register-btn-events">Register</button>
-      </div>
-      </li>
-      <li>
-        <div className='events-container'>
-        <img src={imgSrc} alt="" />
-        <div className="events-title">Lorem ipsum dolor sit amet consectetur adipisicing elit.</div>
-        <div className="events-description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Suscipit eius blanditiis explicabo, vero iure excepturi eaque doloremque, vitae laborum voluptates quas vel, sunt totam ullam fugit minima minus harum itaque.
-        Commodi inventore maiores laborum cum voluptatem voluptates nihil at mollitia praesentium, id unde harum quod soluta quidem facere, enim iste sunt! Incidunt necessitatibus omnis voluptate tempore fugiat in qui blanditiis.
-        Recusandae cupiditate aspernatur voluptates cumque repellat expedita quia iusto et assumenda dolore tenetur quo ex corrupti amet quibusdam sunt hic, laboriosam iure quam ad reiciendis facilis excepturi! Fugiat, blanditiis iusto.
-        Sapiente dignissimos nihil quasi! Ea inventore enim temporibus laudantium? Explicabo, aliquid sequi, possimus corporis laborum in iure quos magnam delectus sit, dolorem odio iusto rem tempora qui laboriosam eligendi asperiores.</div>
-        <button className="register-btn-events">Register</button>
-      </div>
-      </li>
-      <li>
-        <div className='events-container'>
-        <img src={imgSrc} alt="" />
-        <div className="events-title">Lorem ipsum dolor sit amet consectetur adipisicing elit.</div>
-        <div className="events-description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Suscipit eius blanditiis explicabo, vero iure excepturi eaque doloremque, vitae laborum voluptates quas vel, sunt totam ullam fugit minima minus harum itaque.
-        Commodi inventore maiores laborum cum voluptatem voluptates nihil at mollitia praesentium, id unde harum quod soluta quidem facere, enim iste sunt! Incidunt necessitatibus omnis voluptate tempore fugiat in qui blanditiis.
-        Recusandae cupiditate aspernatur voluptates cumque repellat expedita quia iusto et assumenda dolore tenetur quo ex corrupti amet quibusdam sunt hic, laboriosam iure quam ad reiciendis facilis excepturi! Fugiat, blanditiis iusto.
-        Sapiente dignissimos nihil quasi! Ea inventore enim temporibus laudantium? Explicabo, aliquid sequi, possimus corporis laborum in iure quos magnam delectus sit, dolorem odio iusto rem tempora qui laboriosam eligendi asperiores.</div>
-        <button className="register-btn-events">Register</button>
-      </div>
-      </li>
-      <li>
-        <div className='events-container'>
-        <img src={imgSrc} alt="" />
-        <div className="events-title">Lorem ipsum dolor sit amet consectetur adipisicing elit.</div>
-        <div className="events-description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Suscipit eius blanditiis explicabo, vero iure excepturi eaque doloremque, vitae laborum voluptates quas vel, sunt totam ullam fugit minima minus harum itaque.
-        Commodi inventore maiores laborum cum voluptatem voluptates nihil at mollitia praesentium, id unde harum quod soluta quidem facere, enim iste sunt! Incidunt necessitatibus omnis voluptate tempore fugiat in qui blanditiis.
-        Recusandae cupiditate aspernatur voluptates cumque repellat expedita quia iusto et assumenda dolore tenetur quo ex corrupti amet quibusdam sunt hic, laboriosam iure quam ad reiciendis facilis excepturi! Fugiat, blanditiis iusto.
-        Sapiente dignissimos nihil quasi! Ea inventore enim temporibus laudantium? Explicabo, aliquid sequi, possimus corporis laborum in iure quos magnam delectus sit, dolorem odio iusto rem tempora qui laboriosam eligendi asperiores.</div>
-        <button className="register-btn-events">Register</button>
-      </div>
-      </li>
-      <li>
-        <div className='events-container'>
-        <img src={imgSrc} alt="" />
-        <div className="events-title">Lorem ipsum dolor sit amet consectetur adipisicing elit.</div>
-        <div className="events-description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Suscipit eius blanditiis explicabo, vero iure excepturi eaque doloremque, vitae laborum voluptates quas vel, sunt totam ullam fugit minima minus harum itaque.
-        Commodi inventore maiores laborum cum voluptatem voluptates nihil at mollitia praesentium, id unde harum quod soluta quidem facere, enim iste sunt! Incidunt necessitatibus omnis voluptate tempore fugiat in qui blanditiis.
-        Recusandae cupiditate aspernatur voluptates cumque repellat expedita quia iusto et assumenda dolore tenetur quo ex corrupti amet quibusdam sunt hic, laboriosam iure quam ad reiciendis facilis excepturi! Fugiat, blanditiis iusto.
-        Sapiente dignissimos nihil quasi! Ea inventore enim temporibus laudantium? Explicabo, aliquid sequi, possimus corporis laborum in iure quos magnam delectus sit, dolorem odio iusto rem tempora qui laboriosam eligendi asperiores.</div>
-        <button className="register-btn-events">Register</button>
-      </div>
-      </li>
-      <li>
-        <div className='events-container'>
-        <img src={imgSrc} alt="" />
-        <div className="events-title">Lorem ipsum dolor sit amet consectetur adipisicing elit.</div>
-        <div className="events-description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Suscipit eius blanditiis explicabo, vero iure excepturi eaque doloremque, vitae laborum voluptates quas vel, sunt totam ullam fugit minima minus harum itaque.
-        Commodi inventore maiores laborum cum voluptatem voluptates nihil at mollitia praesentium, id unde harum quod soluta quidem facere, enim iste sunt! Incidunt necessitatibus omnis voluptate tempore fugiat in qui blanditiis.
-        Recusandae cupiditate aspernatur voluptates cumque repellat expedita quia iusto et assumenda dolore tenetur quo ex corrupti amet quibusdam sunt hic, laboriosam iure quam ad reiciendis facilis excepturi! Fugiat, blanditiis iusto.
-        Sapiente dignissimos nihil quasi! Ea inventore enim temporibus laudantium? Explicabo, aliquid sequi, possimus corporis laborum in iure quos magnam delectus sit, dolorem odio iusto rem tempora qui laboriosam eligendi asperiores.</div>
-        <button className="register-btn-events">Register</button>
-      </div>
-      </li>
-      <li>
-        <div className='events-container'>
-        <img src={imgSrc} alt="" />
-        <div className="events-title">Lorem ipsum dolor sit amet consectetur adipisicing elit.</div>
-        <div className="events-description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Suscipit eius blanditiis explicabo, vero iure excepturi eaque doloremque, vitae laborum voluptates quas vel, sunt totam ullam fugit minima minus harum itaque.
-        Commodi inventore maiores laborum cum voluptatem voluptates nihil at mollitia praesentium, id unde harum quod soluta quidem facere, enim iste sunt! Incidunt necessitatibus omnis voluptate tempore fugiat in qui blanditiis.
-        Recusandae cupiditate aspernatur voluptates cumque repellat expedita quia iusto et assumenda dolore tenetur quo ex corrupti amet quibusdam sunt hic, laboriosam iure quam ad reiciendis facilis excepturi! Fugiat, blanditiis iusto.
-        Sapiente dignissimos nihil quasi! Ea inventore enim temporibus laudantium? Explicabo, aliquid sequi, possimus corporis laborum in iure quos magnam delectus sit, dolorem odio iusto rem tempora qui laboriosam eligendi asperiores.</div>
-        <button className="register-btn-events">Register</button>
-      </div>
-      </li>
-      <li>
-        <div className='events-container'>
-        <img src={imgSrc} alt="" />
-        <div className="events-title">Lorem ipsum dolor sit amet consectetur adipisicing elit.</div>
-        <div className="events-description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Suscipit eius blanditiis explicabo, vero iure excepturi eaque doloremque, vitae laborum voluptates quas vel, sunt totam ullam fugit minima minus harum itaque.
-        Commodi inventore maiores laborum cum voluptatem voluptates nihil at mollitia praesentium, id unde harum quod soluta quidem facere, enim iste sunt! Incidunt necessitatibus omnis voluptate tempore fugiat in qui blanditiis.
-        Recusandae cupiditate aspernatur voluptates cumque repellat expedita quia iusto et assumenda dolore tenetur quo ex corrupti amet quibusdam sunt hic, laboriosam iure quam ad reiciendis facilis excepturi! Fugiat, blanditiis iusto.
-        Sapiente dignissimos nihil quasi! Ea inventore enim temporibus laudantium? Explicabo, aliquid sequi, possimus corporis laborum in iure quos magnam delectus sit, dolorem odio iusto rem tempora qui laboriosam eligendi asperiores.</div>
-        <button className="register-btn-events">Register</button>
-      </div>
-      </li>
-      <li>
-        <div className='events-container'>
-        <img src={imgSrc} alt="" />
-        <div className="events-title">Lorem ipsum dolor sit amet consectetur adipisicing elit.</div>
-        <div className="events-description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Suscipit eius blanditiis explicabo, vero iure excepturi eaque doloremque, vitae laborum voluptates quas vel, sunt totam ullam fugit minima minus harum itaque.
-        Commodi inventore maiores laborum cum voluptatem voluptates nihil at mollitia praesentium, id unde harum quod soluta quidem facere, enim iste sunt! Incidunt necessitatibus omnis voluptate tempore fugiat in qui blanditiis.
-        Recusandae cupiditate aspernatur voluptates cumque repellat expedita quia iusto et assumenda dolore tenetur quo ex corrupti amet quibusdam sunt hic, laboriosam iure quam ad reiciendis facilis excepturi! Fugiat, blanditiis iusto.
-        Sapiente dignissimos nihil quasi! Ea inventore enim temporibus laudantium? Explicabo, aliquid sequi, possimus corporis laborum in iure quos magnam delectus sit, dolorem odio iusto rem tempora qui laboriosam eligendi asperiores.</div>
-        <button className="register-btn-events">Register</button>
-      </div>
-      </li>
+      {events.length === 0 ? (
+        <p>No events found.</p>
+      ) : (
+        events.foreach((event) => (
+          <li key={event._id}>
+            <div className="events-container">
+              <div className="events-title">{event.eventTitle}</div>
+              <div className="events-description">{event.eventDescription}</div>
+              <a
+                href={event.applyLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="register-btn-events"
+              >
+                Register
+              </a>
+            </div>
+          </li>
+        ))
+      )}
     </ul>
-  )
+  );
 }

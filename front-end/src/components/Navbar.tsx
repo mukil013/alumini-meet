@@ -63,10 +63,10 @@ export default function Navbar() {
         </li>
         <li>
           <Link
-            to="/home/opensource"
-            className={isActive('/home/opensource') ? 'active' : ''}
+            to="/home/Refferral"
+            className={isActive('/home/Refferral') ? 'active' : ''}
           >
-            Open Source
+            Referral
           </Link>
         </li>
         <li>

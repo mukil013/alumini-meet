@@ -95,11 +95,12 @@ export default function Profile() {
         <div className="skills-section">
           <h3>Skills</h3>
           <div className="skills">
-            {user.skills.map((skill, index) => (
+            {(user.skills != undefined) ? (
+            user.skills.map((skill, index) => (
               <div className="skill" key={index}>
                 {skill}
               </div>
-            )) || null}
+            ))) : ""}
           </div>
         </div>
 
@@ -139,11 +140,11 @@ export default function Profile() {
         <div className="interests-section">
           <h3>Interests</h3>
           <div className="interests">
-            {user.interests.map((interest, index) => (
+            {(user.interests != undefined) ? user.interests.map((interest, index) => (
               <div className="interest" key={index}>
                 {interest}
               </div>
-            ))}
+            )) : ""}
           </div>
         </div>
 

@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function Opensource() {
+export default function Refferral() {
   return (
     <ul className="mentor-body">
       <li>

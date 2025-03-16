@@ -8,12 +8,12 @@ import Batches from "./pages/Batches.tsx";
 import Profile from "./pages/Profile.tsx";
 import Projects from "./pages/Projects.tsx";
 import Placement from "./pages/Placement.tsx";
-import Opensource from "./pages/Opensource.tsx";
 import Mentorship from "./pages/Mentorship.tsx";
 import Events from "./pages/Events.tsx";
 import UserManagement from "./pages/admin/UserManagement.tsx";
 import AdminHome from "./pages/admin/AdminHome.tsx";
 import PlacementInfo from "./pages/admin/PlacementInfo.tsx";
+import Refferral from "./pages/Refferral.tsx";
 
 const isAuth = !!localStorage.getItem("user") 
 const isAdmin = JSON.parse(localStorage.getItem("user")!) || null
@@ -52,8 +52,8 @@ const router = Bro([
         element: <Profile />,
       },
       {
-        path: 'opensource',
-        element: <Opensource />
+        path: 'Refferral',
+        element: <Refferral />
       },
       {
         path: 'placements',
