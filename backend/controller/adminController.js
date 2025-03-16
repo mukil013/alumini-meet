@@ -29,10 +29,10 @@ const deleteUser = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({
-        status: "failure",
-        message: `user cannot be deleted ${error}`
+      status: "failure",
+      message: `user cannot be deleted ${error}`,
     });
   }
 };
 
-module.exports = {getAllUsers, deleteUser};
+module.exports = { getAllUsers, deleteUser };

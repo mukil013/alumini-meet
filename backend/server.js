@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const dotenv = require("dotenv");
 const userRoutes = require("./routes/userRoutes");
 const adminRoutes = require("./routes/adminRoute");
+const placementRoutes = require('./routes/placementRoutes');
 const cors = require("cors");
 const app = express();
 
@@ -30,6 +31,8 @@ connectionToDb();
 app.use("/user", userRoutes);
 
 app.use("/admin", adminRoutes);
+
+app.use("/placement", placementRoutes);
 
 const PORT = 8000;
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
