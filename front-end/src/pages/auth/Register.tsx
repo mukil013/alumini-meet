@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./style/Register.css";
 import logo from "../../assets/logo.png";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 export default function Register() {
   const RegistrationLinkBackend = "http://localhost:8000/user/registerUser";
@@ -13,6 +13,8 @@ export default function Register() {
     firstName: "",
     lastName: "",
     email: "",
+    batch: "",
+    dept: "",
     password: "",
     retypePassword: "",
     phone: "",
@@ -20,7 +22,7 @@ export default function Register() {
     role: role,
   });
 
-  const handleChange = (e: any) => {
+  const handleChange = (e:  React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
@@ -36,7 +38,7 @@ export default function Register() {
     }));
   };
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Prevent default form submission behavior
 
     console.log(formData);
@@ -59,6 +61,8 @@ export default function Register() {
         firstName: "",
         lastName: "",
         email: "",
+        batch: "",
+        dept: "",
         password: "",
         retypePassword: "",
         phone: "",
@@ -66,11 +70,22 @@ export default function Register() {
         role: "",
       });
     } catch (error) {
-      console.error(
-        "Error during registration:",
-        error.response?.data || error.message
-      );
-      alert("Registration failed. Please try again.");
+      // Use AxiosError for type-safe error handling
+      if (axios.isAxiosError(error)) {
+        const axiosError = error as AxiosError<{ message: string }>;
+        console.error(
+          "Error during registration:",
+          axiosError.response?.data?.message || axiosError.message
+        );
+        alert(
+          axiosError.response?.data?.message ||
+            "Registration failed. Please try again."
+        );
+      } else {
+        // Handle non-Axios errors
+        console.error("Unexpected error:", error);
+        alert("An unexpected error occurred. Please try again.");
+      }
     }
   };
 
@@ -184,6 +199,28 @@ export default function Register() {
                     placeholder="Enter your email"
                     name="email"
                     value={formData.email}
+                    onChange={handleChange}
+                    required
+                  />
+                </label>
+                <label>
+                  Batch
+                  <input
+                    type="text"
+                    placeholder="Enter your batch year"
+                    name="batch"
+                    value={formData.batch}
+                    onChange={handleChange}
+                    required
+                  />
+                </label>
+                <label>
+                  Department
+                  <input
+                    type="text"
+                    placeholder="Enter your dept"
+                    name="dept"
+                    value={formData.dept}
                     onChange={handleChange}
                     required
                   />

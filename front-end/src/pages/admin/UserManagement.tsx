@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import './style/UserManagement.css';
 
 interface User {
   _id: string;
@@ -23,18 +24,14 @@ interface User {
 
 const UserManagement = () => {
   const [users, setUsers] = useState<User[]>([]);
-  const [activeTab, setActiveTab] = useState<"admin" | "user" | "alumini">(
-    "admin"
-  );
+  const [activeTab, setActiveTab] = useState<"user" | "alumini">("user");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:8000/admin/getAllUsers"
-        );
+        const response = await axios.get("http://localhost:8000/admin/getAllUsers");
         setUsers(response.data.users);
       } catch (error) {
         console.error("Error fetching users:", error);
@@ -42,6 +39,7 @@ const UserManagement = () => {
     };
     fetchUsers();
   }, []);
+
   const filteredUsers = users.filter((user) => user.role === activeTab);
 
   const handleSave = async () => {
@@ -62,21 +60,19 @@ const UserManagement = () => {
       console.error("Error updating user:", error);
     }
   };
+
   const handleEdit = (user: User) => {
     setSelectedUser(user);
     setIsModalOpen(true);
   };
 
-  // Handle Delete
   const handleDelete = async (id: string) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this user?"
-    );
+    const confirmDelete = window.confirm("Are you sure you want to delete this user?");
     if (!confirmDelete) return;
 
     try {
       await axios.delete(`http://localhost:8000/admin/deleteUser/${id}`);
-      setUsers(users.filter((user) => user._id !== id)); // Remove from UI
+      setUsers(users.filter((user) => user._id !== id));
       alert("User deleted successfully");
     } catch (error) {
       console.error("Error deleting user:", error);
@@ -84,18 +80,15 @@ const UserManagement = () => {
   };
 
   return (
-    <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4">User Management</h2>
+    <div className="user-management-body">
+      <h2 className="user-title">User Management</h2>
 
-      {/* Tabs */}
-      <div className="flex space-x-4 border-b">
-        {["admin", "user", "alumini"].map((role) => (
+      <div className="user-tab-head">
+        {["user", "alumini"].map((role) => (
           <button
             key={role}
-            className={`px-4 py-2 ${
-              activeTab === role ? "border-b-2 border-blue-500 font-bold" : ""
-            }`}
-            onClick={() => setActiveTab(role as "admin" | "user" | "alumini")}
+            className={`tab-button ${activeTab === role ? "activeTab" : ""}`}
+            onClick={() => setActiveTab(role as "user" | "alumini")}
           >
             {role.charAt(0).toUpperCase() + role.slice(1)}
           </button>
@@ -103,37 +96,35 @@ const UserManagement = () => {
       </div>
 
       {/* User List */}
-      <div className="mt-4">
+      <div className="user-list-container">
         {filteredUsers.length === 0 ? (
           <p>No {activeTab} users found.</p>
         ) : (
-          <table className="w-full border-collapse border border-gray-300">
+          <table className="user-table">
             <thead>
-              <tr className="bg-gray-200">
-                <th className="border p-2">Name</th>
-                <th className="border p-2">Email</th>
-                <th className="border p-2">Role</th>
-                <th className="border p-2">Actions</th>
+              <tr className="table-header">
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               {filteredUsers.map((user) => (
-                <tr key={user._id} className="border">
-                  <td className="border p-2">
-                    {user.firstName} {user.lastName}
-                  </td>
-                  <td className="border p-2">{user.email}</td>
-                  <td className="border p-2">{user.role}</td>
-                  <td className="border p-2 flex space-x-2">
+                <tr key={user._id} className="table-row">
+                  <td>{user.firstName} {user.lastName}</td>
+                  <td>{user.email}</td>
+                  <td>{user.role}</td>
+                  <td className="actions">
                     <button
                       onClick={() => handleEdit(user)}
-                      className="bg-blue-500 text-white px-3 py-1 rounded"
+                      className="edit-button"
                     >
                       Edit
                     </button>
                     <button
                       onClick={() => handleDelete(user._id)}
-                      className="bg-red-500 text-white px-3 py-1 rounded"
+                      className="delete-button"
                     >
                       Delete
                     </button>
@@ -145,42 +136,185 @@ const UserManagement = () => {
         )}
 
         {isModalOpen && selectedUser && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="bg-white p-6 rounded-lg w-1/3">
-              <h3 className="text-xl font-bold mb-4">Edit User</h3>
-              <input
-                type="text"
-                value={selectedUser.firstName}
-                onChange={(e) =>
-                  setSelectedUser({
-                    ...selectedUser,
-                    firstName: e.target.value,
-                  })
-                }
-                className="w-full p-2 border rounded mb-2"
-                placeholder="First Name"
-              />
-              <input
-                type="text"
-                value={selectedUser.lastName}
-                onChange={(e) =>
-                  setSelectedUser({ ...selectedUser, lastName: e.target.value })
-                }
-                className="w-full p-2 border rounded mb-2"
-                placeholder="Last Name"
-              />
-              <button
-                onClick={handleSave}
-                className="bg-green-500 text-white px-4 py-2 rounded mr-2"
-              >
-                Save
-              </button>
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className="bg-gray-500 text-white px-4 py-2 rounded"
-              >
-                Cancel
-              </button>
+          <div className="modal-overlay">
+            <div className="modal-content">
+              <h3>Edit User</h3>
+              <div className="form-group">
+                <label>First Name</label>
+                <input
+                  type="text"
+                  value={selectedUser.firstName}
+                  onChange={(e) =>
+                    setSelectedUser({ ...selectedUser, firstName: e.target.value })
+                  }
+                />
+              </div>
+              <div className="form-group">
+                <label>Last Name</label>
+                <input
+                  type="text"
+                  value={selectedUser.lastName}
+                  onChange={(e) =>
+                    setSelectedUser({ ...selectedUser, lastName: e.target.value })
+                  }
+                />
+              </div>
+              <div className="form-group">
+                <label>Email</label>
+                <input
+                  type="email"
+                  value={selectedUser.email}
+                  onChange={(e) =>
+                    setSelectedUser({ ...selectedUser, email: e.target.value })
+                  }
+                />
+              </div>
+              <div className="form-group">
+                <label>Password</label>
+                <input
+                  type="password"
+                  value={selectedUser.password}
+                  onChange={(e) =>
+                    setSelectedUser({ ...selectedUser, password: e.target.value })
+                  }
+                />
+              </div>
+              <div className="form-group">
+                <label>Department</label>
+                <input
+                  type="text"
+                  value={selectedUser.department}
+                  onChange={(e) =>
+                    setSelectedUser({ ...selectedUser, department: e.target.value })
+                  }
+                />
+              </div>
+              <div className="form-group">
+                <label>Gender</label>
+                <select
+                  value={selectedUser.gender}
+                  onChange={(e) =>
+                    setSelectedUser({ ...selectedUser, gender: e.target.value })
+                  }
+                >
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div className="form-group">
+                <label>Phone Number</label>
+                <input
+                  type="text"
+                  value={selectedUser.phoneNumber}
+                  onChange={(e) =>
+                    setSelectedUser({ ...selectedUser, phoneNumber: e.target.value })
+                  }
+                />
+              </div>
+              <div className="form-group">
+                <label>Skills</label>
+                <input
+                  type="text"
+                  value={selectedUser.skills || ""}
+                  onChange={(e) =>
+                    setSelectedUser({ ...selectedUser, skills: e.target.value })
+                  }
+                />
+              </div>
+              <div className="form-group">
+                <label>Bio</label>
+                <textarea
+                  value={selectedUser.bio || ""}
+                  onChange={(e) =>
+                    setSelectedUser({ ...selectedUser, bio: e.target.value })
+                  }
+                />
+              </div>
+              <div className="form-group">
+                <label>LinkedIn</label>
+                <input
+                  type="text"
+                  value={selectedUser.linkedIn || ""}
+                  onChange={(e) =>
+                    setSelectedUser({ ...selectedUser, linkedIn: e.target.value })
+                  }
+                />
+              </div>
+              <div className="form-group">
+                <label>GitHub</label>
+                <input
+                  type="text"
+                  value={selectedUser.github || ""}
+                  onChange={(e) =>
+                    setSelectedUser({ ...selectedUser, github: e.target.value })
+                  }
+                />
+              </div>
+              <div className="form-group">
+                <label>Twitter</label>
+                <input
+                  type="text"
+                  value={selectedUser.twitter || ""}
+                  onChange={(e) =>
+                    setSelectedUser({ ...selectedUser, twitter: e.target.value })
+                  }
+                />
+              </div>
+              <div className="form-group">
+                <label>Interests</label>
+                <input
+                  type="text"
+                  value={selectedUser.interests || ""}
+                  onChange={(e) =>
+                    setSelectedUser({ ...selectedUser, interests: e.target.value })
+                  }
+                />
+              </div>
+              <div className="form-group">
+                <label>Company Name</label>
+                <input
+                  type="text"
+                  value={selectedUser.companyName || ""}
+                  onChange={(e) =>
+                    setSelectedUser({ ...selectedUser, companyName: e.target.value })
+                  }
+                />
+              </div>
+              <div className="form-group">
+                <label>Batch</label>
+                <input
+                  type="text"
+                  value={selectedUser.batch}
+                  onChange={(e) =>
+                    setSelectedUser({ ...selectedUser, batch: e.target.value })
+                  }
+                />
+              </div>
+              <div className="form-group">
+                <label>Role</label>
+                <select
+                  value={selectedUser.role}
+                  onChange={(e) =>
+                    setSelectedUser({ ...selectedUser, role: e.target.value as "admin" | "user" | "alumini" })
+                  }
+                >
+                  <option value="admin">Admin</option>
+                  <option value="user">User</option>
+                  <option value="alumini">Alumini</option>
+                </select>
+              </div>
+              <div className="modal-actions">
+                <button onClick={handleSave} className="save-button">
+                  Save
+                </button>
+                <button
+                  onClick={() => setIsModalOpen(false)}
+                  className="cancel-button"
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
           </div>
         )}

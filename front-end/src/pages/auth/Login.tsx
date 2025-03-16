@@ -2,19 +2,20 @@ import React, { useState } from "react";
 import "./style/Login.css";
 import logo from "../../assets/logo.png";
 import { Link } from "react-router-dom";
-import axios from "axios"; // Import Axios
+import axios, { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
 
 export default function Login() {
-
-  const LoginLinkBackend = "http://localhost:8000/user/validateUser"
+  const LoginLinkBackend = "http://localhost:8000/user/validateUser";
 
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
 
-  const handleChange = (e) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
@@ -22,23 +23,42 @@ export default function Login() {
     }));
   };
 
-  const nav = useNavigate()
+  const nav = useNavigate();
 
-  const handleSubmit = async (e:any) => {
-    e.preventDefault(); 
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
     try {
       const response = await axios.post(LoginLinkBackend, formData);
 
-      // Handle success
-      console.log("Login successful:", response.data.status);
-      localStorage.setItem("token", response.data.userDetail);
-      nav('/home/profile')
-      
-    } catch (error:any) {
-      // Handle error
-      console.error("Error during login:", error.response?.data || error.message);
-      alert("Login failed. Please check your credentials.");
+      console.log("Login successful:", response.data);
+
+      const user = response.data.userDetail;
+      localStorage.setItem("user", JSON.stringify(user));
+      const role:string = response.data.userDetail.role;
+      switch(role){
+        case 'user':
+          nav("/home");
+          break;
+        case 'alumini':
+          nav("/home");
+          break;
+        case 'admin':
+          nav('/admin-home')
+          break;
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const axiosError = error as AxiosError<{ message: string }>; 
+        console.error(
+          "Error during login:",
+          axiosError.response?.data?.message || axiosError.message
+        );
+        alert(
+          axiosError.response?.data?.message ||
+            "Login failed. Please check your credentials."
+        );
+      }
     }
   };
 
@@ -52,7 +72,8 @@ export default function Login() {
           <form onSubmit={handleSubmit}>
             <h1>Log in</h1>
             <label>
-              Email<br />
+              Email
+              <br />
               <input
                 type="email"
                 placeholder="Enter your email"
@@ -63,7 +84,8 @@ export default function Login() {
               />
             </label>
             <label>
-              Password<br />
+              Password
+              <br />
               <input
                 type="password"
                 placeholder="Enter your password"

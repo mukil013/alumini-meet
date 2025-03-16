@@ -12,13 +12,15 @@ import Opensource from "./pages/Opensource.tsx";
 import Mentorship from "./pages/Mentorship.tsx";
 import Events from "./pages/Events.tsx";
 import UserManagement from "./pages/admin/UserManagement.tsx";
+import AdminHome from "./pages/admin/AdminHome.tsx";
 
-const isAuth = !!localStorage.getItem("user")
+const isAuth = !!localStorage.getItem("user") 
+const isAdmin = JSON.parse(localStorage.getItem("user")!) || null
 
 const router = Bro([
   {
     path: '/',
-    element: isAuth ? <Home /> : <Login />, 
+    element: isAuth ? isAdmin.role === 'admin' ? <AdminHome /> : <Home /> : <Login />, 
   },
   {
     path: '/userManagement',

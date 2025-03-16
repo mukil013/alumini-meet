@@ -22,9 +22,9 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, "The password is required."],
   },
-  department: {
+  dept: {
     type: String,
-    default: "Engineer"
+    default: ""
   },
   gender: {
     type: String,

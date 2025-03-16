@@ -17,6 +17,8 @@ const registerUser = async (req, res) => {
         gender: req.body.gender,
         phoneNumber: req.body.phone,
         role: req.body.role,
+        batch: req.body.batch,
+        dept: req.body.dept
       });
 
       const userDetail = {
@@ -27,6 +29,8 @@ const registerUser = async (req, res) => {
         phoneNumber: user.phoneNumber,
         userId: user._id,
         role: user.role,
+        dept: user.dept,
+        batch: user.batch
       };
 
       res.status(200).json({
@@ -68,6 +72,8 @@ const validateUser = async (req, res) => {
         phoneNumber: user[0].phoneNumber,
         userId: user[0]._id,
         role: user[0].role,
+        dept: user[0].dept,
+        batch: user[0].batch
       };
 
       res.status(200).json({
@@ -92,7 +98,8 @@ const updateProfile = async (req, res) => {
       lastName: req.body.lastName,
       email: req.body.email,
       password: req.body.password,
-      department: req.body.department,
+      dept: req.body.dept,
+      batch: req.body.batch,
       gender: req.body.gender,
       phoneNumber: req.body.phoneNumber,
       skills: req.body.skills,
