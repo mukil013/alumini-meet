@@ -17,14 +17,13 @@
 .tab-button {
   padding: 10px 20px;
   border: none;
-  background-color: #f0f0f0;
+  background-color: transparent;
   cursor: pointer;
-  border-radius: 5px;
+  border-bottom: 2px solid transparent;
 }
 
 .tab-button.activeTab {
-  background-color: #007bff;
-  color: white;
+  border-bottom: 2px solid royalblue;
 }
 
 .user-list-container {
