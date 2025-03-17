@@ -6,6 +6,7 @@ const adminRoutes = require("./routes/adminRoute");
 const placementRoutes = require('./routes/placementRoutes');
 const eventRoutes = require("./routes/eventRoutes");
 const projectRoutes = require("./routes/projectRoute");
+const referralRoutes = require("./routes/referralRoutes");
 const cors = require("cors");
 const app = express();
 
@@ -39,6 +40,8 @@ app.use("/placement", placementRoutes);
 app.use("/event", eventRoutes);
 
 app.use("/project", projectRoutes);
+
+app.use("/referral", referralRoutes);
 
 const PORT = 8000;
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));

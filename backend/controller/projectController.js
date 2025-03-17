@@ -6,12 +6,14 @@ const addProject = async (req, res) => {
       projectTitle: req.body.projectTitle,
       projectDescription: req.body.projectDescription,
       gitLink: req.body.gitLink,
+      userId: req.params.id
     });
 
     const projectDetail = {
       projectTitle: project.projectTitle,
       projectDescription: project.projectDescription,
       gitLink: project.gitLink,
+      userId: project.userId
     };
 
     res.status(200).json({
@@ -63,7 +65,7 @@ const getUserProject = async (req, res) => {
     }
 
     res.status(200).json({
-      status: "success",
+      status: "Success",
       message: "Projects fetched successfully.",
       projects,
     });
@@ -98,7 +100,7 @@ const editProject = async (req, res) => {
       projectDescription: req.body.projectDescription,
       gitLink: req.body.gitLink,
     };
-    const result = await Event.findByIdAndUpdate(id, updatedProject, {
+    const result = await Project.findByIdAndUpdate(id, updatedProject, {
       new: true,
     });
     if (!result) {
