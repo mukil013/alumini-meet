@@ -25,6 +25,8 @@ export default function Profile() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState<boolean>(false); // State to control edit dialog visibility
+  const [formData, setFormData] = useState<User | null>(null); // State to store form data
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -46,18 +48,38 @@ export default function Profile() {
     fetchUserProfile();
   }, []);
 
-  const handleEdit = async () => {
+  // Open the edit dialog and pre-fill the form with user data
+  const openEditDialog = () => {
+    if (user) {
+      setFormData(user); // Pre-fill the form with current user data
+      setIsEditDialogOpen(true);
+    }
+  };
+
+  // Handle form input changes
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData!,
+      [name]: value,
+    }));
+  };
+
+  // Handle form submission (update profile)
+  const handleEdit = async (e: React.FormEvent) => {
+    e.preventDefault();
     try {
       const userId = user?.userId; // Get userId from state
 
       const response = await axios.patch(
         `http://localhost:8000/user/updateUserProfile/${userId}`,
-        user // Send the current user state
+        formData // Send the updated form data
       );
 
       // Update state and localStorage with the updated user data
       setUser(response.data.userDetail);
       localStorage.setItem("user", JSON.stringify(response.data.userDetail));
+      setIsEditDialogOpen(false); // Close the dialog
       setError(""); // Clear errors on success
     } catch (error) {
       console.error("Error updating profile:", error);
@@ -74,10 +96,6 @@ export default function Profile() {
   return (
     <div className="profile-container">
       <div className="profile-card">
-        <button className="edit-btn" onClick={handleEdit}>
-          ✏️ Edit Profile
-        </button>
-
         <img
           src=""
           alt={`${user.firstName}'s profile`}
@@ -95,12 +113,13 @@ export default function Profile() {
         <div className="skills-section">
           <h3>Skills</h3>
           <div className="skills">
-            {(user.skills != undefined) ? (
-            user.skills.map((skill, index) => (
-              <div className="skill" key={index}>
-                {skill}
-              </div>
-            ))) : ""}
+            {user.skills != undefined
+              ? user.skills.map((skill, index) => (
+                  <div className="skill" key={index}>
+                    {skill}
+                  </div>
+                ))
+              : ""}
           </div>
         </div>
 
@@ -140,11 +159,13 @@ export default function Profile() {
         <div className="interests-section">
           <h3>Interests</h3>
           <div className="interests">
-            {(user.interests != undefined) ? user.interests.map((interest, index) => (
-              <div className="interest" key={index}>
-                {interest}
-              </div>
-            )) : ""}
+            {user.interests != undefined
+              ? user.interests.map((interest, index) => (
+                  <div className="interest" key={index}>
+                    {interest}
+                  </div>
+                ))
+              : ""}
           </div>
         </div>
 
@@ -153,7 +174,76 @@ export default function Profile() {
             <b>Company:</b> {user.companyName}
           </div>
         )}
+
+        {/* Edit Button at the Bottom */}
+        <button className="edit-btn" onClick={openEditDialog}>
+          Edit Profile
+        </button>
       </div>
+
+      {/* Edit Dialog */}
+      {isEditDialogOpen && (
+        <div className="dialog-overlay" onClick={() => setIsEditDialogOpen(false)}>
+          <div className="dialog-box" onClick={(e) => e.stopPropagation()}>
+            <h2>Edit Profile</h2>
+            <form onSubmit={handleEdit}>
+              <div className="form-group">
+                <label>First Name</label>
+                <input
+                  type="text"
+                  name="firstName"
+                  value={formData?.firstName || ""}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>Last Name</label>
+                <input
+                  type="text"
+                  name="lastName"
+                  value={formData?.lastName || ""}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>Email</label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData?.email || ""}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>Department</label>
+                <input
+                  type="text"
+                  name="dept"
+                  value={formData?.dept || ""}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>Bio</label>
+                <textarea
+                  name="bio"
+                  value={formData?.bio || ""}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <button type="submit">Save Changes</button>
+              <button type="button" onClick={() => setIsEditDialogOpen(false)}>
+                Cancel
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
