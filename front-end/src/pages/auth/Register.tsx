@@ -5,10 +5,14 @@ import { Link } from "react-router-dom";
 import axios, { AxiosError } from "axios";
 
 export default function Register() {
-  const RegistrationLinkBackend = "http://localhost:8000/user/registerUser";
-
+  const SendOTPLinkBackend = "http://localhost:8000/user/sendOtp";
+  const VerificationLinkBackend = "http://localhost:8000/user/verifyOtp";
   const [role, setRole] = useState("");
   const [next, setNext] = useState(false);
+  const [isVerificationDialogOpen, setIsVerificationDialogOpen] = useState(false);
+  const [verificationCode, setVerificationCode] = useState("");
+  const [verificationError, setVerificationError] = useState("");
+  const [registeredEmail, setRegisteredEmail] = useState("");
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -19,10 +23,12 @@ export default function Register() {
     retypePassword: "",
     phone: "",
     gender: "",
-    role: role,
+    role: "",
   });
 
-  const handleChange = (e:  React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
@@ -39,52 +45,62 @@ export default function Register() {
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault(); // Prevent default form submission behavior
+    e.preventDefault();
 
-    console.log(formData);
+    // Validate passwords match
+    if (formData.password !== formData.retypePassword) {
+      alert("Passwords do not match!");
+      return;
+    }
+
     try {
-      // Validate passwords match
-      if (formData.password !== formData.retypePassword) {
-        alert("Passwords do not match!");
-        return;
-      }
-
-      // Send POST request using Axios
-      const response = await axios.post(RegistrationLinkBackend, formData);
-
-      // Handle success
-      console.log("Registration successful:", response.data);
-      alert("Registration successful!");
-
-      // Reset form data
-      setFormData({
-        firstName: "",
-        lastName: "",
-        email: "",
-        batch: "",
-        dept: "",
-        password: "",
-        retypePassword: "",
-        phone: "",
-        gender: "",
-        role: "",
-      });
+      await axios.post(SendOTPLinkBackend, { email: formData.email });
+      setIsVerificationDialogOpen(true); 
+      setRegisteredEmail(formData.email); 
+      window.location.href = "/login"
     } catch (error) {
-      // Use AxiosError for type-safe error handling
       if (axios.isAxiosError(error)) {
-        const axiosError = error as AxiosError<{ message: string }>;
-        console.error(
-          "Error during registration:",
-          axiosError.response?.data?.message || axiosError.message
-        );
-        alert(
-          axiosError.response?.data?.message ||
-            "Registration failed. Please try again."
-        );
+        alert(error.response?.data?.message || "Error sending OTP.");
       } else {
-        // Handle non-Axios errors
-        console.error("Unexpected error:", error);
-        alert("An unexpected error occurred. Please try again.");
+        alert("An error occurred. Please try again.");
+      }
+    }
+  };
+
+  const handleVerificationSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      // Verify OTP and register user
+      const response = await axios.post(VerificationLinkBackend, {
+        ...formData,
+        code: verificationCode,
+      });
+
+      if (response.data.status === "Success") {
+        alert("Verification successful! Account created.");
+        setIsVerificationDialogOpen(false); // Close OTP dialog
+
+        // Reset form and state
+        setFormData({
+          firstName: "",
+          lastName: "",
+          email: "",
+          batch: "",
+          dept: "",
+          password: "",
+          retypePassword: "",
+          phone: "",
+          gender: "",
+          role: "",
+        });
+        setRole("");
+        setNext(false);
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        setVerificationError(error.response?.data?.message || "Verification failed.");
+      } else {
+        setVerificationError("An error occurred. Please try again.");
       }
     }
   };
@@ -120,7 +136,7 @@ export default function Register() {
                     <path d="M480-120 200-272v-240L40-600l440-240 440 240v320h-80v-276l-80 44v240L480-120Zm0-332 274-148-274-148-274 148 274 148Zm0 241 200-108v-151L480-360 280-470v151l200 108Zm0-241Zm0 90Zm0 0Z" />
                   </svg>
                   <p>
-                    <h4>Sign up as a student</h4>
+                    <b>Sign up as a student</b><br />
                     Compete, learn, and apply for jobs and internships
                   </p>
                 </button>
@@ -141,7 +157,7 @@ export default function Register() {
                     <path d="M160-80v-240h120v240H160Zm200 0v-476q-50 17-65 62.5T280-400h-80q0-128 75-204t205-76q100 0 150-49.5T680-880h80q0 88-37.5 157.5T600-624v544h-80v-240h-80v240h-80Zm120-640q-33 0-56.5-23.5T400-800q0-33 23.5-56.5T480-880q33 0 56.5 23.5T560-800q0 33-23.5 56.5T480-720Z" />
                   </svg>
                   <p>
-                    <h4>Sign up as a alumini</h4>
+                    <b>Sign up as a alumini</b><br />
                     Compete, learn, and apply for jobs and internships
                   </p>
                 </button>
@@ -154,6 +170,9 @@ export default function Register() {
                 >
                   Next
                 </button>
+                <p className="redirect">
+                  Already have an account? <Link to="/login">Login</Link>
+                </p>
               </>
             )}
             {next && (
@@ -283,6 +302,47 @@ export default function Register() {
           </form>
         </aside>
       </div>
+      {isVerificationDialogOpen && (
+        <div className="verification-dialog-overlay">
+          <div className="verification-dialog">
+            <h2>Email Verification</h2>
+            <p>We've sent a 4-digit code to {registeredEmail}</p>
+            <form onSubmit={handleVerificationSubmit}>
+              <input
+                type="number"
+                placeholder="Enter verification code"
+                value={verificationCode}
+                onChange={(e) => {
+                  const val = e.target.value.slice(0, 4);
+                  setVerificationCode(val);
+                  setVerificationError("");
+                }}
+                required
+              />
+              {verificationError && (
+                <p className="error">{verificationError}</p>
+              )}
+              <div className="action-btns">
+                <button type="submit">Verify</button>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    try {
+                      await axios.post(SendOTPLinkBackend, { email: registeredEmail });
+                      alert("New OTP sent!");
+                    } catch (error) {
+                      setVerificationError("Failed to resend OTP.");
+                    }
+                  }}
+                >
+                  Resend Code
+                </button>
+              </div>
+             <button className="cancel" onClick={() => setIsVerificationDialogOpen(false)}>Cancel</button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

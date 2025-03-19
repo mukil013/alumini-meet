@@ -16,28 +16,16 @@ export default function AdminNav() {
       <div className="nav-logo">Alumini meet</div>
       <ul>
         <li>
-          <Link to="/home/profile">Home</Link> {/* Updated to /home */}
+          <Link to="/admin/user-management">User Management</Link> 
         </li>
         <li>
-          <Link to="/home/batches">Batches</Link> {/* Updated to /home/batches */}
+          <Link to="/admin/edit-event">Edit Event</Link> 
         </li>
         <li>
-          <Link to="/home/event">Events</Link> {/* Placeholder */}
+          <Link to="#">CMS</Link> 
         </li>
         <li>
-          <Link to="/home/projects">Projects</Link> {/* Placeholder */}
-        </li>
-        <li>
-          <Link to="/home/mentorship">Mentorships</Link> {/* Placeholder */}
-        </li>
-        <li>
-          <Link to="/home/opensource">Open Source</Link> {/* Placeholder */}
-        </li>
-        <li>
-          <Link to="/home/placements">Placement</Link> {/* Placeholder */}
-        </li>
-        <li>
-          <Link to="/home/profile">Profile</Link> {/* Updated to /home/profile */}
+          <Link to="/admin/placement-info">Placement Info</Link> 
         </li>
       </ul>
       <button className="logout" onClick={handleLogout}>

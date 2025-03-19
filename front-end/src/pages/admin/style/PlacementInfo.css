@@ -64,3 +64,23 @@ button:hover:not(:disabled) {
   text-align: center;
   margin-top: 1rem;
 }
+
+.dialog-content{
+  height: fit-content;
+  padding: 1rem;
+}
+.dialog-content form{
+  width: 80%;
+}
+.dialog-content form label{
+  width: 100%;
+  display: flex;
+}
+.dialog-content form label p{
+  flex: 1;
+}
+.dialog-content form label input,.dialog-content form label textarea{
+  flex: 1;
+  border-radius: 8px;
+  resize: none;
+}

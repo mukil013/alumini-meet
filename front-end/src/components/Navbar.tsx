@@ -23,8 +23,8 @@ export default function Navbar() {
       <ul>
         <li>
           <Link
-            to="/home/profile"
-            className={isActive('/home/profile') ? 'active' : ''}
+            to="/home/landing"
+            className={isActive('/home/landing') ? 'active' : ''}
           >
             Home
           </Link>

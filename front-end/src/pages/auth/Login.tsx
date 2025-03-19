@@ -7,7 +7,6 @@ import { useNavigate } from "react-router-dom";
 
 export default function Login() {
   const LoginLinkBackend = "http://localhost:8000/user/validateUser";
-
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -27,29 +26,34 @@ export default function Login() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     try {
       const response = await axios.post(LoginLinkBackend, formData);
-
       console.log("Login successful:", response.data);
 
-      const user = response.data.userDetail;
-      localStorage.setItem("user", JSON.stringify(user));
-      const role:string = response.data.userDetail.role;
-      switch(role){
-        case 'user':
+      // Save tokens to localStorage
+      const { accessToken, refreshToken, userDetail } = response.data;
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
+      localStorage.setItem("user", JSON.stringify(userDetail));
+
+      // Redirect based on role
+      const role = userDetail.role;
+      switch (role) {
+        case "user":
           nav("/home");
           break;
-        case 'alumini':
+        case "alumini":
           nav("/home");
           break;
-        case 'admin':
-          nav('/admin-home')
+        case "admin":
+          nav("/admin-home");
           break;
+        default:
+          nav("/home");
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        const axiosError = error as AxiosError<{ message: string }>; 
+        const axiosError = error as AxiosError<{ message: string }>;
         console.error(
           "Error during login:",
           axiosError.response?.data?.message || axiosError.message

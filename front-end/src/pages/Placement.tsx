@@ -59,7 +59,7 @@ export default function Placement() {
     }
   };
 
-  const openDialog = (jd) => {
+  const openDialog = (jd:string) => {
     setCurrentJd(jd);
     setIsDialogOpen(true);
   };
@@ -104,7 +104,7 @@ export default function Placement() {
                 rel="noopener noreferrer"
                 className="apply-btn"
               >
-                Apply Now
+                Know more
               </a>
             </div>
           </div>
@@ -125,8 +125,8 @@ export default function Placement() {
             ) : (
               atsResult && (
                 <div className="ats-result">
-                  <p>Score: <span>{atsResult.ats_score}</span></p>
-                  <p>Missing keywords: <span>{atsResult.missing_keywords.join(", ")}</span></p>
+                  <p className="atsScore"><b>Score:</b> <span className="atsScoreForResume">{atsResult.ats_score}</span></p>
+                  <p className="missingWords"><b>Missing keywords:</b> <span>{atsResult.missing_keywords.join(", ")}</span></p>
                 </div>
               )
             )}

@@ -1,14 +1,11 @@
 const express = require('express');
-const {getAllEvents, addEvent, deleteEvent, editEvent} = require('../controller/eventController');
+const { addEvent, getAllEvents, deleteEvent, editEvent, upload } = require('../controller/eventController');
 const router = express.Router();
 
-// http://localhost:8000/event/getAllEvents
+// Routes
 router.get('/getAllEvents', getAllEvents);
-// http://localhost:8000/event/addEvents
-router.post('/addEvents', addEvent);
-// http://localhost:8000/event/deleteEvent/ event id
+router.post('/addEvents', upload.single('eventImg'), addEvent); // Add multer middleware
 router.delete('/deleteEvent/:id', deleteEvent);
-// http://localhost:8000/event/editEvent/ event id
-router.patch('/editEvent/:id', editEvent);
+router.put('/editEvent/:id', upload.single('eventImg'), editEvent); // Add multer middleware
 
 module.exports = router;

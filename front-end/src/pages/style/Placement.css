@@ -34,7 +34,7 @@
   background: #4CAF50;
   color: white;
   border: none;
-  padding: 0.8rem 1.5rem;
+  padding: 0.5rem 1rem;
   border-radius: 4px;
   cursor: pointer;
   margin-right: 1rem;
@@ -43,7 +43,7 @@
 .apply-btn {
   background: #2196F3;
   color: white;
-  padding: 0.8rem 1.5rem;
+  padding: 0.5rem 1.5rem;
   border-radius: 4px;
   text-decoration: none;
 }
@@ -69,7 +69,7 @@
   text-align: center;
 }
 .dialog-content{
-  height: 50vh;
+  height: 70vh;
   width: 50vw;
   background-color: #ffffffc9;
   display: flex;
@@ -80,16 +80,15 @@
   border-radius: 1rem;
 }
 .ats-result{
-  font-size: 1.5rem;
-  height: 10vh;
+  text-align: center;
+  font-size: 1rem;
+  height: 30vh;
   overflow-y: auto;
 }
 dialog {
   border: 1px solid #ccc;
   border-radius: 8px;
   padding: 20px;
-  width: 400px;
-  max-width: 90%;
   position: fixed;
   top: 50%;
   left: 50%;
@@ -99,4 +98,25 @@ dialog {
 dialog::backdrop {
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(1rem);
+}
+.dialog-actions{
+  display: flex;
+  gap: 1rem;
+}
+.missingWords{
+  text-align: justify;
+}
+.atsScoreForResume{
+  font-size: 4rem;
+  font-weight: 700;
+}
+.atsScore{
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  justify-content: center;
+  background-color: #fff;
+  border-top: 1px solid #9e9e9e;
+  border-bottom: 1px solid #9e9e9e;
 }

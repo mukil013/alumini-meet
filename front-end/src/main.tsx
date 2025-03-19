@@ -1,6 +1,8 @@
+// index.tsx
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import { createBrowserRouter as Bro, RouterProvider } from "react-router-dom";
+import { AuthProvider } from "./AuthContext"; // Import the AuthProvider
 import Home from "./pages/Home.tsx";
 import Register from "./pages/auth/Register.tsx";
 import Login from "./pages/auth/Login.tsx";
@@ -15,34 +17,55 @@ import AdminHome from "./pages/admin/AdminHome.tsx";
 import PlacementInfo from "./pages/admin/PlacementInfo.tsx";
 import Refferral from "./pages/Refferral.tsx";
 import EditEvent from "./pages/admin/EditEvents.tsx";
-
-const isAuth = !!localStorage.getItem("user");
-const isAdmin = JSON.parse(localStorage.getItem("user")!) || null;
+import ProtectedRoute from "./pages/ProtectedRoute.tsx";
+import { StrictMode } from "react";
+import DefaultHome from "./pages/DefaultHome.tsx";
 
 const router = Bro([
   {
     path: "/",
-    element: isAuth ? (
-      isAdmin.role === "admin" ? (
-        <AdminHome />
-      ) : (
-        <Home />
-      )
-    ) : (
-      <Login />
-    ),
-  },
-  {
-    path: "/userManagement",
-    element: <UserManagement />,
-  },
-  {
-    path: "/placement-info",
-    element: <PlacementInfo />,
-  },
-  {
-    path: "/edit-event",
-    element: <EditEvent />,
+    element: <ProtectedRoute />,
+    children: [
+      {
+        path: "home",
+        element: <Home />,
+        children: [
+          {
+            path: "landing",
+            element: <DefaultHome />,
+            index: true
+          },
+          {
+            path: "batches",
+            element: <Batches />,
+          },
+          {
+            path: "profile",
+            element: <Profile />,
+          },
+          {
+            path: "Refferral",
+            element: <Refferral />,
+          },
+          {
+            path: "placements",
+            element: <Placement />,
+          },
+          {
+            path: "mentorship",
+            element: <Mentorship />,
+          },
+          {
+            path: "projects",
+            element: <Projects />,
+          },
+          {
+            path: "event",
+            element: <Events />,
+          },
+        ],
+      },
+    ],
   },
   {
     path: "/register",
@@ -53,41 +76,27 @@ const router = Bro([
     element: <Login />,
   },
   {
-    path: "/home",
-    element: <Home />,
+    path: "/admin",
+    element: <AdminHome />,
     children: [
       {
-        path: "batches",
-        element: <Batches />,
+        path: "user-management",
+        element: <UserManagement />,
       },
       {
-        path: "profile",
-        element: <Profile />,
+        path: "placement-info",
+        element: <PlacementInfo />,
       },
       {
-        path: "Refferral",
-        element: <Refferral />,
-      },
-      {
-        path: "placements",
-        element: <Placement />,
-      },
-      {
-        path: "mentorship",
-        element: <Mentorship />,
-      },
-      {
-        path: "projects",
-        element: <Projects />,
-      },
-      {
-        path: "event",
-        element: <Events />,
-      },
-    ],
+        path: "edit-event",
+        element: <EditEvent />,
+      }
+    ]
   },
 ]);
 
 createRoot(document.getElementById("root")!).render(
-  <RouterProvider router={router} />
+  <StrictMode>
+    <RouterProvider router={router} />
+  </StrictMode>
 );

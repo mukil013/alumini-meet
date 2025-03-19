@@ -18,7 +18,12 @@ export default function Batches() {
 
       try {
         const response = await axios.get('http://localhost:8000/admin/getAllUsers');
-        setAllUsers(response.data);
+        console.log('Backend response:', response.data); // Debugging
+        if (response.data && response.data.users) {
+          setAllUsers(response.data.users);
+        } else {
+          setError('No users found in the response.');
+        }
       } catch (error) {
         console.error('Error fetching users:', error);
         setError('Failed to fetch users. Please try again.');
@@ -34,9 +39,8 @@ export default function Batches() {
   const handleBatchClick = (batch) => {
     setSelectedBatch(batch);
     setIsDialogOpen(true);
-
     // Filter users based on the selected batch
-    const filtered = allUsers.filter((user) => user.batch === batch);
+    const filtered = allUsers.filter((user) => user.batch == batch);
     setFilteredUsers(filtered);
   };
 
@@ -54,7 +58,7 @@ export default function Batches() {
           const year = 2015 + index;
           return (
             <li key={year}>
-              <button onClick={() => handleBatchClick(`Batch of ${year}`)}>
+              <button onClick={() => handleBatchClick(`${year}`)}>
                 Batch of {year}
               </button>
             </li>
@@ -76,10 +80,12 @@ export default function Batches() {
             ) : (
               <ul className="user-list">
                 {filteredUsers.map((user) => (
-                  <li key={user.id} className="user-item">
-                    <p><strong>Name:</strong> {user.firstName}</p>
+                  <li key={user._id} className="user-item">
+                    <p><strong>Name:</strong> {user.firstName} {user.lastName}</p>
                     <p><strong>Email:</strong> {user.email}</p>
-                    <p><strong>Role:</strong> {user.role}</p>
+                    <p><strong>Contact:</strong> {user.phoneNumber}</p>
+                    <p><strong>LinkedIn:</strong> </p>
+                    <p><strong>Twitter:</strong> </p>
                   </li>
                 ))}
               </ul>
