@@ -4,20 +4,22 @@ const addReferral = async (req, res) => {
   try {
     const referral = await Referral.create({
         referraltitle: req.body.referraltitle,
-      gitDescription: req.body.gittDescription,
-      gitLink: req.body.gitLink,
+        jobDescription: req.body.jobDescription,
+        applyLink: req.body.applyLink,
+        userId: req.params.id
     });
 
-    const projectDetail = {
-        gitTitle: project.gitTitle,
-        gitDescription: project.gitDescription,
-        gitLink: project.gitLink,
+    const referralDetail = {
+      referraltitle: referral.referraltitle,
+      jobDescription: referral.jobDescription,
+      applyLink: referral.applyLink,
+      userId: referral.userId
     };
 
     res.status(200).json({
       status: "Success",
       message: "project added successfully.",
-      event: projectDetail,
+      event: referralDetail,
     });
   } catch (error) {
     res.status(400).json({
@@ -27,99 +29,99 @@ const addReferral = async (req, res) => {
   }
 };
 
-const getAllProject = async (req, res) => {
+const getAllReferral = async (req, res) => {
   try {
-    const projects = await Project.find();
+    const referrals = await Referral.find();
     res.status(200).json({
       status: "Success",
-      message: "fetched the project successfully.",
-      projects: projects
+      message: "fetched the referrals successfully.",
+      referral: referrals
     });
   } catch (error) {
     res.status(200).json({
       status: "failure",
-      message: `cannot fetch the project ${error}`,
+      message: `cannot fetch the referrals ${error}`,
     });
   }
 };
 
-const getUserProject = async (req, res) =>{
+const getUserReferrals = async (req, res) =>{
     try{
         const { userId } = req.params;
         if (!userId) {
             return res.status(400).json({
                 status: "failure",
-                message: "User Id is required to fetch projects.",
+                message: "User Id is required to fetch referrals.",
             });
         }
 
-        const projects = await Project.find({ userId });
+        const referrals = await Referral.find({ userId });
 
-        if (projects.length === 0) {
+        if (referrals.length === 0) {
             return res.status(404).json({
                 status: "failure",
-                message: "No projects found for the given user ID.",
+                message: "No referrals found for the given user ID.",
             });
         }
 
 
         res.status(200).json({
-            status: "success",
-            message: "Projects fetched successfully.",
-            projects,
+            status: "Success",
+            message: "Referrals fetched successfully.",
+            referrals,
         });
 
     }catch(error){
         res.status(500).json({
             status: "failure",
-            message: `cannot fetch the project of particular user ${error}.`,
+            message: `cannot fetch the referrals of particular user ${error}.`,
           });
     }
 }
 
-const deleteProject = async (req, res) => {
+const deleteReferral = async (req, res) => {
   try {
-    await Project.findByIdAndDelete(req.params.id);
+    await Referral.findByIdAndDelete(req.params.id);
     res.status(200).json({
       status: "Success",
-      message: "project deleted successfully.",
+      message: "referral deleted successfully.",
     });
   } catch (error) {
     res.status(500).json({
       status: "failure",
-      message: `project cannot be deleted ${error}`,
+      message: `referral cannot be deleted ${error}`,
     });
   }
 };
 
-const editProject = async (req, res) => {
+const editReferral = async (req, res) => {
   try {
     const { id } = req.params;
-    const updatedProject = {
-      projectTitle: req.body.projectTitle,
-      projectDescription: req.body.projectDescription,
-      gitLink: req.body.gitLink,
+    const updatedReferral = {
+      referraltitle: req.body.referraltitle,
+      jobDescription: req.body.jobDescription,
+      applyLink: req.body.applyLink,
     };
-    const result = await Event.findByIdAndUpdate(id, updatedProject, {
+    const result = await Referral.findByIdAndUpdate(id, updatedReferral, {
       new: true,
     });
     if (!result) {
       return res.status(404).json({
         status: "failure",
-        message: "project not found.",
+        message: "referral not found.",
       });
     }
 
     res.status(200).json({
       status: "Success",
-      message: "project details editted successfully.",
+      message: "referral details editted successfully.",
     });
   } catch (error) {
     res.status(500).json({
       status: "failure",
-      message: "project details cannot be editted.",
+      message: "referral details cannot be editted.",
     });
   }
 };
 
-module.exports = { addProject, getAllProject, editProject, deleteProject, getUserProject };
+module.exports = { addReferral, editReferral, deleteReferral, getUserReferrals, getAllReferral };
