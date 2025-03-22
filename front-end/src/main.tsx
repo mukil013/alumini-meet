@@ -2,7 +2,6 @@
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import { createBrowserRouter as Bro, RouterProvider } from "react-router-dom";
-import { AuthProvider } from "./AuthContext"; // Import the AuthProvider
 import Home from "./pages/Home.tsx";
 import Register from "./pages/auth/Register.tsx";
 import Login from "./pages/auth/Login.tsx";
@@ -24,44 +23,43 @@ import DefaultHome from "./pages/DefaultHome.tsx";
 const router = Bro([
   {
     path: "/",
-    element: <ProtectedRoute />,
+    Component: ProtectedRoute,
     children: [
       {
         path: "home",
-        element: <Home />,
+        Component: Home,
         children: [
           {
-            path: "landing",
-            element: <DefaultHome />,
-            index: true
+            path: "",
+            Component: DefaultHome,
           },
           {
             path: "batches",
-            element: <Batches />,
+            Component: Batches,
           },
           {
             path: "profile",
-            element: <Profile />,
+            Component: Profile,
           },
           {
             path: "Refferral",
-            element: <Refferral />,
+            Component: Refferral,
           },
           {
             path: "placements",
-            element: <Placement />,
+            Component: Placement,
           },
           {
             path: "mentorship",
-            element: <Mentorship />,
+            Component: Mentorship,
           },
           {
             path: "projects",
-            element: <Projects />,
+            Component: Projects,
           },
           {
             path: "event",
-            element: <Events />,
+            Component: Events,
           },
         ],
       },
@@ -69,27 +67,27 @@ const router = Bro([
   },
   {
     path: "/register",
-    element: <Register />,
+    Component: Register,
   },
   {
     path: "/login",
-    element: <Login />,
+    Component: Login,
   },
   {
     path: "/admin",
-    element: <AdminHome />,
+    Component: AdminHome,
     children: [
       {
         path: "user-management",
-        element: <UserManagement />,
+        Component: UserManagement,
       },
       {
         path: "placement-info",
-        element: <PlacementInfo />,
+        Component: PlacementInfo,
       },
       {
         path: "edit-event",
-        element: <EditEvent />,
+        Component: EditEvent,
       }
     ]
   },

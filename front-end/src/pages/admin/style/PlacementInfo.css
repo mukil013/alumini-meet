@@ -55,9 +55,9 @@ button:disabled {
   cursor: not-allowed;
 }
 
-button:hover:not(:disabled) {
+/* button:hover:not(:disabled) {
   background-color: #0056b3;
-}
+} */
 
 .error {
   color: red;

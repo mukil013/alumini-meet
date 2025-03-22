@@ -70,7 +70,7 @@ export default function Batches() {
       {isDialogOpen && (
         <div className="dialog-overlay" onClick={handleCloseDialog}>
           <div className="dialog-box" onClick={(e) => e.stopPropagation()}>
-            <h2>{selectedBatch}</h2>
+            <h2 className='batch-selected-year'>{selectedBatch}</h2>
             {loading ? (
               <p>Loading users...</p>
             ) : error ? (
@@ -90,7 +90,6 @@ export default function Batches() {
                 ))}
               </ul>
             )}
-            <button onClick={handleCloseDialog}>Close</button>
           </div>
         </div>
       )}
