@@ -88,14 +88,19 @@
   fill: #00000055;
 }
 .common-profile-link:hover{
-  background-color: #fff;
+  background-color: rgba(65, 105, 225, 0.2);
 }
 .common-profile-link:hover svg{
   fill: royalblue;
 }
 .common-logout:hover{
-  background-color: #fff;
+  background-color: rgba(255, 0, 0, 0.2);
 }
 .common-logout:hover svg{
   fill: red;
+}
+.common-nav-ruler{
+  height: 100%;
+  color: #ebebeb;
+  width: 1px;
 }
