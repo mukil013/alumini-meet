@@ -1,34 +1,52 @@
 const Project = require("../model/projectModel");
+const multer = require('multer');
+
+// Configure Multer storage
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+
+const handleFileUpload = upload.fields([{ name: 'upiQR', maxCount: 1 }]);
 
 const addProject = async (req, res) => {
   try {
-    const project = await Project.create({
-      projectTitle: req.body.projectTitle,
-      projectDescription: req.body.projectDescription,
-      gitLink: req.body.gitLink,
-      userId: req.params.id
+    const { projectTitle, projectDescription, gitLink } = req.body;
+    const userId = req.params.userId;
+
+    // Handle file upload
+    let upiQR = null;
+    if (req.files && req.files.upiQR) {
+      const upiQRFile = req.files.upiQR[0];
+      upiQR = {
+        data: upiQRFile.buffer,
+        contentType: upiQRFile.mimetype
+      };
+    }
+
+    const newProject = new Project({
+      userId,
+      projectTitle,
+      projectDescription,
+      gitLink,
+      upiQR
     });
 
-    const projectDetail = {
-      projectTitle: project.projectTitle,
-      projectDescription: project.projectDescription,
-      gitLink: project.gitLink,
-      userId: project.userId
-    };
-
-    res.status(200).json({
-      status: "Success",
-      message: "project added successfully.",
-      event: projectDetail,
+    await newProject.save();
+    res.status(201).json({
+      status: "success",
+      message: "Project added successfully",
+      project: newProject
     });
+
   } catch (error) {
-    res.status(400).json({
+    res.status(500).json({
       status: "failure",
-      message: "project cannot be added.",
+      message: "Project cannot be added.",
+      error: error.message
     });
   }
 };
 
+// Rest of the controller functions remain the same as in your original code
 const getAllProject = async (req, res) => {
   try {
     const projects = await Project.find();
@@ -38,7 +56,7 @@ const getAllProject = async (req, res) => {
       projects: projects,
     });
   } catch (error) {
-    res.status(200).json({
+    res.status(500).json({
       status: "failure",
       message: `cannot fetch the project ${error}`,
     });
@@ -99,6 +117,7 @@ const editProject = async (req, res) => {
       projectTitle: req.body.projectTitle,
       projectDescription: req.body.projectDescription,
       gitLink: req.body.gitLink,
+      upiQR: req.body.upiQR 
     };
     const result = await Project.findByIdAndUpdate(id, updatedProject, {
       new: true,
@@ -122,10 +141,26 @@ const editProject = async (req, res) => {
   }
 };
 
+const getProjectImage = async (req, res) => {
+  try {
+    const project = await Project.findById(req.params.projectId);
+    if (!project || !project.upiQR || !project.upiQR.data) {
+      return res.status(404).json({ message: "Project image not found" });
+    }
+
+    res.set('Content-Type', project.upiQR.contentType);
+    res.send(project.upiQR.data);
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error });
+  }
+};
+
 module.exports = {
+  handleFileUpload,
   addProject,
   getAllProject,
   editProject,
   deleteProject,
   getUserProject,
+  getProjectImage
 };

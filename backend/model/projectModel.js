@@ -1,29 +1,14 @@
 const mongoose = require('mongoose');
 
 const projectSchema = new mongoose.Schema({
-    projectTitle: {
-        type: String,
-        required: true,
-        trim: true, 
-    },
-    projectDescription: {
-        type: String,
-        required: true,
-        trim: true, 
-    },
-    gitLink: {
-        type: String,
-        required: true,
-        trim: true, 
-    },
-    userId: {
-        type: String,
-        required: true,
-        trim: true,
-    }
-
+  userId: { type: String, required: true },
+  projectTitle: { type: String, required: true },
+  projectDescription: { type: String, required: true },
+  gitLink: { type: String, required: true },
+  upiQR: {
+    data: Buffer,
+    contentType: String
+  }
 });
 
-const Project = mongoose.model("Project", projectSchema);
-
-module.exports = Project;
+module.exports = mongoose.model('Project', projectSchema);
