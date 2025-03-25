@@ -17,6 +17,6 @@ router.post("/verifyOTP", verifyOTP);
 router.post("/validateUser", validateUser);
 
 // Route to update user profile
-router.post("/updateProfile/:id", updateProfile);
+router.post("/updateProfile/:userId", updateProfile);
 
 module.exports = router;

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import "./style/Events.css";
 import loader from "../assets/Iphone-spinner-2.gif";
@@ -10,23 +10,24 @@ export default function Events() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedDescription, setSelectedDescription] = useState("");
 
-  const fetchEvents = async () => {
+  const fetchEvents = useCallback(async () => {
     try {
       const response = await axios.get(
         "http://localhost:8000/event/getAllEvents"
       );
       setEvents(response.data.events);
       setLoading(false);
+      console.log(response.data.events)
     } catch (error) {
       console.error("Error fetching events:", error);
       setError("Failed to fetch events. Please try again.");
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchEvents();
-  }, []);
+  }, [fetchEvents]);
 
   if (loading)
     return (
@@ -45,10 +46,6 @@ export default function Events() {
     setIsDialogOpen(false);
     setSelectedDescription("");
   };
-
-  const logger = (any) => {
-    console.log(any)
-  }
 
   return (
     <>

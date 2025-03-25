@@ -72,13 +72,12 @@ export default function Profile() {
       const userId = user?.userId; // Get userId from state
 
       const response = await axios.patch(
-        `http://localhost:8000/user/updateUserProfile/${userId}`,
+        `http://localhost:8000/user/updateProfile/${userId}`,
         formData // Send the updated form data
       );
 
       // Update state and localStorage with the updated user data
       setUser(response.data.userDetail);
-      localStorage.setItem("user", JSON.stringify(response.data.userDetail));
       setIsEditDialogOpen(false); // Close the dialog
       setError(""); // Clear errors on success
     } catch (error) {
