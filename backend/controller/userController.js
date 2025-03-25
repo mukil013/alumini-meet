@@ -206,6 +206,10 @@ const updateProfile = async (req, res) => {
       companyName: req.body.companyName,
     };
 
+    if(req.file){
+      updateProfile.profileImage = req.file.filename;
+    }
+
     const user = await User.findById(id);
     if (!user) {
       return res.status(404).json({
@@ -229,10 +233,11 @@ const updateProfile = async (req, res) => {
       }
     }
 
-    await User.findByIdAndUpdate(req.params.id, updatedProfile, { new: true });
+    const updatedUser  = await User.findByIdAndUpdate(req.params.id, updatedProfile, { new: true });
     res.status(200).json({
       status: "Success",
       message: "Profile updated successfully.",
+      userDetail: updatedUser
     });
   } catch (error) {
     res.status(500).json({
