@@ -24,9 +24,14 @@
 .common-nav-logo{
   font-size: 2rem;
   font-weight: 900;
+  color: #fff;
+  background-color: #222;
+  padding: 1rem;
+  border-radius: 1rem;
+  text-decoration:underline dashed;
 }
 .active, .common-nav-link{
-  color: #22222255;
+  color: #222222;
   border-radius: 8px;
   height: 2.5rem;
   width: 100%;
@@ -37,20 +42,21 @@
   transition: .5s all ease;
 }
 .active{
-  background-color: #ebebeb;
-  color: #000;
+  background-color: #ffffff;
 }
-.active svg{
-  fill: #00000094;
+.common-nav-link svg{
+  fill: #222222;
 }
 .common-nav-link:hover{
-  background-color: #ebebeba2;
+  background-color: #ffffff55;
 }
 .common-nav-list-items p{
   flex: 2;
+  color: #222;;
 }
 .common-nav-list-items svg{
   flex: 1;
+  fill: #222;
 }
 .common-profile-and-logout{
   display: flex;
@@ -58,7 +64,8 @@
   height: 3em;
   justify-content: center;
   align-items: center;
-  background-color: #ebebeb;
+  background-color: #ffffff;
+  border: 2px solid #ffffff;
   border-radius: 4rem;
   overflow: hidden
 }
@@ -74,7 +81,7 @@
   transition: .5s all ease;
 }
 .common-logout svg{
-  fill: #00000055;
+  fill: #222;
 }
 .common-profile-link{
   height: 100%;
@@ -84,8 +91,8 @@
   align-items: center;
   transition: .5s all ease;
 }
-.common-profile-link svg{
-  fill: #00000055;
+.common-profile-link svg {
+  fill: #222;
 }
 .common-profile-link:hover{
   background-color: rgba(65, 105, 225, 0.2);
@@ -101,6 +108,5 @@
 }
 .common-nav-ruler{
   height: 100%;
-  color: #ebebeb;
-  width: 1px;
+  color: #ffffff;
 }

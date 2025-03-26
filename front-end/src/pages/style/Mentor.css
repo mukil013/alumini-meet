@@ -1,3 +1,9 @@
+.mentor-body{
+  height: 100%;
+  width: 100%;
+  background: #000;
+  border-radius: 1rem;
+}
 .mentor-card{
   height: 25vh;
   width: 25vw;
@@ -28,4 +34,7 @@
   list-style: none;
   gap: 1rem;
   justify-content: center;
+}
+.tabs button{
+  background-color: transparent;
 }

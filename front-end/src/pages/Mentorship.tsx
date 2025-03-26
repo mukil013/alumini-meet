@@ -73,12 +73,12 @@ export default function Mentorship() {
   };
 
   return (
-    <>
+    <div className="mentor-body">
       <div className="tabs">
-        <button onClick={() => setCurrentPage("explore")}>Explore</button>
-        <button onClick={() => setCurrentPage("following")}>Following</button>
+        <button className={`tab ${currentPage === "explore" ? "active" : ""}`} onClick={() => setCurrentPage("explore")}>Explore</button>
+        <button className={`tab ${currentPage === "following" ? "active" : ""}`} onClick={() => setCurrentPage("following")}>Following</button>
         {role === "alumini" && (
-          <button onClick={() => setCurrentPage("yours")}>Yours</button>
+          <button className={`tab ${currentPage === "yours" ? "active" : ""}`} onClick={() => setCurrentPage("yours")}>Yours</button>
         )}
       </div>
 
@@ -278,6 +278,6 @@ export default function Mentorship() {
           </form>
         </dialog>
       )}
-    </>
+    </div>
   );
 }

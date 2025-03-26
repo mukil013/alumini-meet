@@ -1,7 +1,8 @@
 .batches-body{
   height: 100%;
   width: 100%;
-  background-color: #fff;
+  background: #fff;
+  border-radius: 1rem;
 }
 #batches{
   height: 100%;
@@ -35,6 +36,9 @@
   color: #222;
   box-shadow: 0 0 .5rem #ebebeb;
   transition: .1s all ease-in-out;
+}
+#batches li button:active{
+  scale: 1.05;
 }
 .dialog-overlay{
   position: absolute;
