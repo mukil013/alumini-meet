@@ -5,7 +5,7 @@ import "./style/Mentor.css";
 export default function Mentorship() {
   const [community, setCommunity] = useState([]);
   const [following, setFollowing] = useState([]);
-  const { role, userId } = JSON.parse(localStorage.getItem("user")!);
+  const { role, userId } = JSON.parse(sessionStorage.getItem("user")!);
   const [currentPage, setCurrentPage] = useState("explore");
   const [selectedGroup, setSelectedGroup] = useState(null);
 

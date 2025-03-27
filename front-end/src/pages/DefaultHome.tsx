@@ -28,7 +28,7 @@ export default function DefaultHome() {
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const storedUser = localStorage.getItem("user");
+        const storedUser = sessionStorage.getItem("user");
         if (!storedUser) throw new Error("User not authenticated");
         const parsedUser = JSON.parse(storedUser);
         setUser(parsedUser);

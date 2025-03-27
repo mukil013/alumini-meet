@@ -6,7 +6,7 @@ export default function AdminNav() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.removeItem("user")
+    sessionStorage.removeItem("user")
     console.log('User logged out');
     navigate('/login'); // Redirect to the login page after logout
   };

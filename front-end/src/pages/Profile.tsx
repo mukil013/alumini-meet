@@ -31,7 +31,7 @@ export default function Profile() {
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const storedUser = localStorage.getItem("user");
+        const storedUser = sessionStorage.getItem("user");
         if (!storedUser) throw new Error("User not authenticated");
         const parsedUser = JSON.parse(storedUser);
         setUser(parsedUser);
@@ -76,7 +76,7 @@ export default function Profile() {
         formData // Send the updated form data
       );
 
-      // Update state and localStorage with the updated user data
+      // Update state and sessionStorage with the updated user data
       setUser(response.data.userDetail);
       setIsEditDialogOpen(false); // Close the dialog
       setError(""); // Clear errors on success

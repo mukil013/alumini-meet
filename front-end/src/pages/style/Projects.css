@@ -35,6 +35,9 @@
   color: #222;
   border-radius: 100px;
 }
+.tab:active{ 
+  scale: 1.5;
+}
 
 .projects-grid {
   display: grid;

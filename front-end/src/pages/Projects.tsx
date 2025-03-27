@@ -4,7 +4,7 @@ import "./style/Projects.css";
 
 export default function Projects() {
   const [tab, setTab] = useState("Explore");
-  const { role, userId } = JSON.parse(localStorage.getItem("user")!);
+  const { role, userId } = JSON.parse(sessionStorage.getItem("user")!);
   const [projects, setProjects] = useState([]);
   const [fundRaiser, setFundRaiser] = useState(false);
   const [addProjectForm, setAddProjectForm] = useState(false);

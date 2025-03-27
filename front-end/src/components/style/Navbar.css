@@ -25,10 +25,18 @@
   font-size: 2rem;
   font-weight: 900;
   color: #fff;
-  background-color: #222;
+  background-color: #333;
   padding: 1rem;
   border-radius: 1rem;
   text-decoration:underline dashed;
+  cursor: default;
+  user-select: none;
+  transition: .5s all ease-in-out;
+}
+.common-nav-logo:active{
+  box-shadow: -1rem 1rem 0 #000;
+  transition: .2s all ease-in-out;
+  scale: 1.2;
 }
 .active, .common-nav-link{
   color: #222222;
@@ -52,11 +60,17 @@
 }
 .common-nav-list-items p{
   flex: 2;
-  color: #222;;
+  color: #222;
 }
 .common-nav-list-items svg{
   flex: 1;
   fill: #222;
+}
+.common-nav-list-items{
+  transition: .5s all ease;
+}
+.common-nav-list-items:active{
+  scale: 1.1;
 }
 .common-profile-and-logout{
   display: flex;

@@ -3,13 +3,13 @@
   width: 100vw;
   display: flex;
   position: relative;
-  background: linear-gradient(270deg, #ffc17b, #e16c97, #788be9);
+  background: linear-gradient(270deg, #f4d35e, #ffafcc, #a2d2ff);
   background-size: 300% 300%;
   animation: home-bg 5s infinite alternate linear;
 }
 @keyframes home-bg {
   0% {
-    background-position: 0% 50%;
+    background-position: 0% 0%;
   }
   100% {
     background-position: 100% 50%;
