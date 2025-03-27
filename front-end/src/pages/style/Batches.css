@@ -53,9 +53,10 @@
   background-color: #00000055;
 }
 .dialog-box{
-  max-height: fit-content;
+  max-height: 90vh;
   height: 30vh;
   width: 40vw;
+  overflow: auto;
   display: flex;
   justify-content: center;
   align-items: center;

@@ -1,9 +1,3 @@
-.mentor-body{
-  height: 100%;
-  width: 100%;
-  background: #000;
-  border-radius: 1rem;
-}
 .mentor-card{
   height: 25vh;
   width: 25vw;
@@ -28,13 +22,88 @@
   font-size: 1rem;
 }
 .mentor-body{
+  background-color: #fff;
+  border-radius: 1rem;
+  overflow: auto;
   width: 100%;
+  height: 100%;
   display: flex;
   flex-wrap: wrap;
   list-style: none;
   gap: 1rem;
-  justify-content: center;
+  flex-direction: column;
+  padding: 1rem;
 }
-.tabs button{
-  background-color: transparent;
+.mentor-content-page{
+  position: relative;
+  height: 90%;
+  overflow: auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: start;
+  gap: 1rem;
+}
+.mentorship-card{
+  padding: 1rem;
+  border-radius: 1rem;
+  height: 10rem;
+  width: 15rem;
+  border: 1px solid #9e9e9e55;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: .2s all ease-in-out;
+}
+.mentorship-card:hover{
+  background-color: rgba(122, 122, 122, 0.1);
+}
+.svgFollow{
+  rotate: 45deg;
+  transition: .2s all ease;
+  fill: red;
+  scale: 1.2;
+}
+.svgUnfollow{
+  transition: .2s all ease;
+  fill: royalblue;
+  scale: 1.2;
+}
+.follow-btn{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  transition: .2s all ease;
+  border-radius: 100px;
+}
+.follow-btn *{
+  flex: 1;
+}
+.follow-btn:has(.svgFollow){
+  background-color: rgba(255, 0, 0, 0.45);
+  color: red;
+}
+.follow-btn:has(.svgUnfollow){
+  background-color: rgba(65, 105, 225, 0.45);
+  color: royalblue;
+}
+.follow-btn:active{
+  scale: 1.1;
+}
+.add-community{
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  height: 3rem;
+  border-radius: 2rem;
+  background-color: rgba(161, 161, 161, 0.2);
+  color: rgb(0, 0, 0);
+}
+.add-community:hover{
+  background-color: #333;
+  color: #fff;
+}
+.add-community:active{
+  background-color: royalblue;
 }

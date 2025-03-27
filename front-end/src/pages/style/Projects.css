@@ -3,19 +3,20 @@
   height: 100%;
   overflow: auto;
   border-radius: 1rem;
+  padding: 1rem;
   font-family: Arial, sans-serif;
   background-color: #fff;
+  position: relative;
 }
 
 .tabs {
   width: fit-content;
   height: fit-content;
-  margin: 1rem;
   padding: 4px;
   border-radius: 100px;
   background-color: #222;
   overflow: hidden;
-  display: flex;
+  display: inline-flex;
   justify-content: center;
   align-items: center;
 }
@@ -25,13 +26,14 @@
   background-color: transparent;
   cursor: pointer;
   font-size: 16px;
+  border-radius: 100px;
+  transition: .2s all ease-in-out;
 }
 
 .tab.active {
   background: #fff;
   color: #222;
   border-radius: 100px;
-  font-weight: bold;
 }
 
 .projects-grid {
@@ -91,20 +93,21 @@
   scale: 1.05;
 }
 
-.add-project-btn {
-  display: block;
-  margin: 20px auto;
-  background: #28a745;
-  color: white;
-  padding: 10px 20px;
-  font-size: 16px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
+.add-project-btn{
+  position: absolute;
+  bottom: 2%;
+  right: 1.5%;
+  height: 3rem;
+  border-radius: 2rem;
+  background-color: rgba(161, 161, 161, 0.2);
+  color: rgb(0, 0, 0);
 }
-
-.add-project-btn:hover {
-  background: #218838;
+.add-project-btn:hover{
+  background-color: #333;
+  color: #fff;
+}
+.add-project-btn:active{
+  background-color: royalblue;
 }
 
 .modal-overlay {

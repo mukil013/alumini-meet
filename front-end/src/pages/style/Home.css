@@ -1,10 +1,19 @@
 .home-body{
   height: 100vh;
   width: 100vw;
-  /* background-color: #f5f7f9; */
-  background-image: linear-gradient(45deg, #A2D2FF, #FFAFCC, #CDB4DB, #BDE0FE);
   display: flex;
   position: relative;
+  background: linear-gradient(270deg, #ffc17b, #e16c97, #788be9);
+  background-size: 300% 300%;
+  animation: home-bg 5s infinite alternate linear;
+}
+@keyframes home-bg {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
 }
 .navbar{
   flex: 1;

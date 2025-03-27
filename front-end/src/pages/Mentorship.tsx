@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import "./style/Mentor.css";
 
 export default function Mentorship() {
   const [community, setCommunity] = useState([]);
@@ -75,32 +76,64 @@ export default function Mentorship() {
   return (
     <div className="mentor-body">
       <div className="tabs">
-        <button className={`tab ${currentPage === "explore" ? "active" : ""}`} onClick={() => setCurrentPage("explore")}>Explore</button>
-        <button className={`tab ${currentPage === "following" ? "active" : ""}`} onClick={() => setCurrentPage("following")}>Following</button>
+        <button
+          className={`tab ${currentPage === "explore" ? "active" : ""}`}
+          onClick={() => setCurrentPage("explore")}
+        >
+          Explore
+        </button>
+        <button
+          className={`tab ${currentPage === "following" ? "active" : ""}`}
+          onClick={() => setCurrentPage("following")}
+        >
+          Following
+        </button>
         {role === "alumini" && (
-          <button className={`tab ${currentPage === "yours" ? "active" : ""}`} onClick={() => setCurrentPage("yours")}>Yours</button>
+          <button
+            className={`tab ${currentPage === "yours" ? "active" : ""}`}
+            onClick={() => setCurrentPage("yours")}
+          >
+            Yours
+          </button>
         )}
       </div>
 
       {/* Explore Section */}
       {currentPage === "explore" && (
-        <div>
+        <div className="mentor-content-page">
           {community.length > 0 ? (
             community.map((group) => (
               <div
                 key={group._id}
                 className="mentorship-card"
                 onClick={() => setSelectedGroup(group)}
+                title={group.groupTitle}
               >
-                <h2>{group.groupTitle}</h2>
-                <p>{group.groupDescription}</p>
+                <div>
+                  <h2>{group.groupTitle}</h2>
+                  <p>{group.groupDescription}</p>
+                </div>
                 <button
+                  className="follow-btn"
                   onClick={(e) => {
                     e.stopPropagation();
                     toggleFollow(group._id);
                   }}
                 >
-                  {group.followers.includes(userId) ? "Unfollow" : "Follow"}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    height="24px"
+                    viewBox="0 -960 960 960"
+                    width="24px"
+                    fill="#fff"
+                    className={
+                      group.followers.includes(userId)
+                        ? "svgFollow"
+                        : "svgUnfollow"
+                    }
+                  >
+                    <path d="M440-280h80v-160h160v-80H520v-160h-80v160H280v80h160v160Zm40 200q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z" />
+                  </svg>
                 </button>
               </div>
             ))
@@ -112,23 +145,40 @@ export default function Mentorship() {
 
       {/* Following Section */}
       {currentPage === "following" && (
-        <div>
+        <div className="mentor-content-page">
           {following.length > 0 ? (
             following.map((group) => (
               <div
                 key={group._id}
                 className="mentorship-card"
                 onClick={() => setSelectedGroup(group)}
+                title={group.groupTitle}
               >
-                <h2>{group.groupTitle}</h2>
-                <p>{group.groupDescription}</p>
+                <div>
+                  <h2>{group.groupTitle}</h2>
+                  <p>{group.groupDescription}</p>
+                </div>
                 <button
+                  className="follow-btn"
                   onClick={(e) => {
                     e.stopPropagation();
                     toggleFollow(group._id);
                   }}
                 >
-                  Unfollow
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    height="24px"
+                    viewBox="0 -960 960 960"
+                    width="24px"
+                    fill="#fff"
+                    className={
+                      group.followers.includes(userId)
+                        ? "svgFollow"
+                        : "svgUnfollow"
+                    }
+                  >
+                    <path d="M440-280h80v-160h160v-80H520v-160h-80v160H280v80h160v160Zm40 200q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z" />
+                  </svg>
                 </button>
               </div>
             ))
@@ -140,14 +190,17 @@ export default function Mentorship() {
 
       {/* Yours Section */}
       {currentPage === "yours" && (
-        <div>
+        <div className="mentor-content-page">
           {role === "alumini" && (
-            <button onClick={() => setShowAddForm(true)}>
-              + Add Community
+            <button
+              onClick={() => setShowAddForm(true)}
+              className="add-community"
+            >
+              Add Community
             </button>
           )}
           {showAddForm && (
-            <dialog open={showAddForm}>
+            <dialog open={showAddForm} className="dialog-box">
               <form
                 onSubmit={handleAddCommunity}
                 className="add-community-form"
@@ -180,8 +233,10 @@ export default function Mentorship() {
                 className="mentorship-card"
                 onClick={() => setSelectedGroup(group)}
               >
-                <h2>{group.groupTitle}</h2>
-                <p>{group.groupDescription}</p>
+                <div>
+                  <h2>{group.groupTitle}</h2>
+                  <p>{group.groupDescription}</p>
+                </div>
               </div>
             ))
           ) : (
@@ -192,10 +247,13 @@ export default function Mentorship() {
 
       {/* Expanded Group View */}
       {selectedGroup && (
-        <dialog className="group-details" open={selectedGroup}>
+        <div className="dialog-overlay">
+        <dialog className="dialog-box" open={selectedGroup} onClick={(e) => e.stopPropagation()}>
           <button onClick={() => setSelectedGroup(null)}>Back</button>
-          <h2>{selectedGroup.groupTitle}</h2>
-          <p>{selectedGroup.groupDescription}</p>
+          <div>
+            <h2>{selectedGroup.groupTitle}</h2>
+            <p>{selectedGroup.groupDescription}</p>
+          </div>
 
           <h3>Posts</h3>
           {role === "alumini" && selectedGroup.userId === userId && (
@@ -239,6 +297,7 @@ export default function Mentorship() {
             <p>No posts yet.</p>
           )}
         </dialog>
+        </div>
       )}
 
       {/* Add/Edit Post Modal */}
