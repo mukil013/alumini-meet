@@ -169,6 +169,11 @@ const validateUser = async (req, res) => {
       role: user.role,
       dept: user.dept,
       batch: user.batch,
+      bio: user.bio,
+      github:  user.github,
+      companyName: user.companyName,
+      twitter: user.twitter,
+      linkedIn: user.linkedIn
     };
 
     res.status(200).json({
