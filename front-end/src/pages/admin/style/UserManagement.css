@@ -66,13 +66,13 @@
 }
 
 .edit-button {
-  background-color: #007bff;
-  color: white;
+  background-color: rgba(65, 105, 225, 0.2);
+  color: rgb(0, 61, 243);
 }
 
 .delete-button {
-  background-color: #dc3545;
-  color: white;
+  background-color: #dc354655;
+  color: red;
 }
 
 .modal-overlay {

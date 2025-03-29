@@ -8,8 +8,8 @@ interface User {
 
 const ProtectedRoute: React.FC = () => {
 
-  const isAuth = !!localStorage.getItem("user")
-  const isAdmin = JSON.parse(localStorage.getItem("user")!)
+  const isAuth = !!sessionStorage.getItem("user")
+  const isAdmin = JSON.parse(sessionStorage.getItem("user")!)
 
   if (!isAuth) {
     return <Navigate to="/login" replace />;

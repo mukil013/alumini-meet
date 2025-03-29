@@ -28,13 +28,12 @@ export default function Login() {
     e.preventDefault();
     try {
       const response = await axios.post(LoginLinkBackend, formData);
-      console.log("Login successful:", response.data);
 
-      // Save tokens to localStorage
+      // Save tokens to sessionStorage
       const { accessToken, refreshToken, userDetail } = response.data;
-      localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("refreshToken", refreshToken);
-      localStorage.setItem("user", JSON.stringify(userDetail));
+      sessionStorage.setItem("accessToken", accessToken);
+      sessionStorage.setItem("refreshToken", refreshToken);
+      sessionStorage.setItem("user", JSON.stringify(userDetail));
 
       // Redirect based on role
       const role = userDetail.role;

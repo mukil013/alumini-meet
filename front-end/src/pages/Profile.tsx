@@ -46,6 +46,22 @@ export default function Profile() {
     }
   };
   useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const storedUser = sessionStorage.getItem("user");
+        if (!storedUser) throw new Error("User not authenticated");
+        const parsedUser = JSON.parse(storedUser);
+        setUser(parsedUser);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+        setError(
+          error instanceof Error ? error.message : "Failed to load profile"
+        );
+        setLoading(false);
+      }
+    };
+
     fetchUserProfile();
   }, []);
 
