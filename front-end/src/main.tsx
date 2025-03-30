@@ -93,6 +93,10 @@ const router = Bro([
   },
 ]);
 
+
+export const mainUrlPrefix = "http://localhost:8000"
+export const mainPythonUrl = "http://127.0.0.1:5000"
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <RouterProvider router={router} />

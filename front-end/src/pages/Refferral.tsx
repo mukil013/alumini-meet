@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useCallback, useEffect, useState } from "react";
 import "./style/Projects.css";
+import { mainUrlPrefix } from "../main";
 
 export default function Referrals() {
   const { role, userId } = JSON.parse(sessionStorage.getItem("user")!);
@@ -21,9 +22,9 @@ export default function Referrals() {
     try {
       let endpoint = "";
       if (tab === "Explore") {
-        endpoint = "http://localhost:8000/referral/getAllReferrals";
+        endpoint = `${mainUrlPrefix}/referral/getAllReferrals`;
       } else if (tab === "Yours") {
-        endpoint = `http://localhost:8000/referral/getUserReferrals/${userId}`;
+        endpoint = `${mainUrlPrefix}/referral/getUserReferrals/${userId}`;
       }
       const response = await axios.get(endpoint);
       setReferrals(
@@ -64,7 +65,7 @@ export default function Referrals() {
         applyLink: formData.applyLink,
       };
       const response = await axios.post(
-        `http://localhost:8000/referral/addReferral/${userId}`,
+        `${mainUrlPrefix}/referral/addReferral/${userId}`,
         payload,
         { headers: { "Content-Type": "application/json" } }
       );
@@ -82,7 +83,7 @@ export default function Referrals() {
   const handleDeleteReferral = async (referralId: string) => {
     try {
       await axios.delete(
-        `http://localhost:8000/referral/deleteReferral/${referralId}`
+        `${mainUrlPrefix}/referral/deleteReferral/${referralId}`
       );
       fetchReferrals();
     } catch (error) {
@@ -100,7 +101,7 @@ export default function Referrals() {
         applyLink: formData.applyLink,
       };
       const response = await axios.patch(
-        `http://localhost:8000/referral/editReferral/${referralId}`,
+        `${mainUrlPrefix}/referral/editReferral/${referralId}`,
         payload,
         { headers: { "Content-Type": "application/json" } }
       );

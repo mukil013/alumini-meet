@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./style/DefaultHome.css";
+import { mainUrlPrefix } from "../main";
 
 interface User {
   firstName: string;
@@ -56,7 +57,7 @@ export default function DefaultHome() {
 
     const fetchEvents = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/event/getAllEvents");
+        const response = await axios.get(`${mainUrlPrefix}/event/getAllEvents`);
         setEvents(response.data.events || []);
       } catch (error) {
         console.error("Failed to fetch events:", error);
@@ -65,7 +66,7 @@ export default function DefaultHome() {
 
     const fetchProjects = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/project/getAllProjects");
+        const response = await axios.get(`${mainUrlPrefix}/project/getAllProjects`);
         setProjects(response.data.projects || []);
       } catch (error) {
         console.error("Failed to fetch projects:", error);

@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import "./style/Mentor.css";
+import { mainUrlPrefix } from "../main";
 
 // Helper function to convert an array of numbers to a base64 string
 function arrayBufferToBase64(buffer: number[]): string {
@@ -37,11 +38,11 @@ export default function Mentorship() {
     try {
       let url = "";
       if (currentPage === "explore")
-        url = "http://localhost:8000/mentorship/getAll";
+        url = `${mainUrlPrefix}/mentorship/getAll`;
       else if (currentPage === "yours")
-        url = `http://localhost:8000/mentorship/get/${userId}`;
+        url = `${mainUrlPrefix}/mentorship/get/${userId}`;
       else if (currentPage === "following")
-        url = `http://localhost:8000/mentorship/followed/${userId}`;
+        url = `${mainUrlPrefix}/mentorship/followed/${userId}`;
 
       const response = await axios.get(url);
       if (currentPage === "following") {
@@ -62,7 +63,7 @@ export default function Mentorship() {
   const toggleFollow = async (groupId: string) => {
     try {
       await axios.post(
-        `http://localhost:8000/mentorship/follow/${groupId}/${userId}`
+        `${mainUrlPrefix}/mentorship/follow/${groupId}/${userId}`
       );
       fetchGroups();
     } catch (error) {
@@ -79,7 +80,7 @@ export default function Mentorship() {
     if (image) formData.append("image", image);
 
     try {
-      await axios.post("http://localhost:8000/mentorship/add", formData, {
+      await axios.post(`${mainUrlPrefix}/mentorship/add`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       setShowAddForm(false);
@@ -101,7 +102,7 @@ export default function Mentorship() {
 
     try {
       await axios.post(
-        `http://localhost:8000/mentorship/${groupId}/addPost`,
+      `${mainUrlPrefix}/mentorship/${groupId}/addPost`,
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
@@ -126,7 +127,7 @@ export default function Mentorship() {
 
     try {
       await axios.post(
-        `http://localhost:8000/mentorship/${groupId}/updatePost/${postIndex}`,
+        `${mainUrlPrefix}/mentorship/${groupId}/updatePost/${postIndex}`,
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
@@ -143,7 +144,7 @@ export default function Mentorship() {
   const handleDeletePost = async (postIndex: string, groupId: string) => {
     try {
       await axios.delete(
-        `http://localhost:8000/mentorship/${groupId}/deletePost/${postIndex}`
+        `${mainUrlPrefix}/mentorship/${groupId}/deletePost/${postIndex}`
       );
       fetchGroups();
     } catch (error) {
@@ -193,7 +194,7 @@ export default function Mentorship() {
       {currentPage === "explore" && (
         <div className="mentor-content-page">
           {community.length > 0 ? (
-            community.map((group) => (
+            community.map((group: any) => (
               <div
                 key={group._id}
                 className="mentorship-card"
@@ -239,7 +240,7 @@ export default function Mentorship() {
       {currentPage === "following" && (
         <div className="mentor-content-page">
           {following.length > 0 ? (
-            following.map((group) => (
+            following.map((group: any) => (
               <div
                 key={group._id}
                 className="mentorship-card"
@@ -320,7 +321,7 @@ export default function Mentorship() {
             </dialog>
           )}
           {community.length > 0 ? (
-            community.map((group) => (
+            community.map((group: any) => (
               <div
                 key={group._id}
                 className="mentorship-card"

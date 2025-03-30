@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import "./style/Events.css";
 import loader from "../assets/Iphone-spinner-2.gif";
+import { mainUrlPrefix } from "../main";
 
 export default function Events() {
   const [events, setEvents] = useState([]);
@@ -13,7 +14,7 @@ export default function Events() {
   const fetchEvents = useCallback(async () => {
     try {
       const response = await axios.get(
-        "http://localhost:8000/event/getAllEvents"
+        `${mainUrlPrefix}/event/getAllEvents`
       );
       setEvents(response.data.events);
       setLoading(false);
@@ -53,7 +54,7 @@ export default function Events() {
         {events.length === 0 ? (
           <p>No events found.</p>
         ) : (
-          events.map((event) => (
+          events.map((event: any) => (
             <li key={event._id} className="event-container">
               <img src={event.eventImg} alt="event picture" />
               <div className="event-details">

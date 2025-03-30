@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./style/Placement.css";
+import { mainPythonUrl, mainUrlPrefix } from "../main";
 
 export default function Placement() {
   const [placements, setPlacements] = useState([]);
@@ -16,7 +17,7 @@ export default function Placement() {
     const fetchAllPlacements = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:8000/placement/getAllPlacement"
+          `${mainUrlPrefix}/placement/getAllPlacement`
         );
         setPlacements(response.data);
         setLoading(false);
@@ -47,7 +48,7 @@ export default function Placement() {
       formData.append("job_description", currentJd);
 
       const response = await axios.post(
-        'http://127.0.0.1:5000/ats-score',
+        `${mainPythonUrl}/ats-score`,
         formData
       );
       setAtsResult(response.data);
@@ -77,7 +78,7 @@ export default function Placement() {
   return (
     <div className="placement-container">
       <div className="placements-grid">
-        {placements.map((placement) => (
+        {placements.map((placement: any) => (
           <div key={placement._id} className="placement-card">
             <img
               src={placement.companyImageUrl || 'https://via.placeholder.com/150'}

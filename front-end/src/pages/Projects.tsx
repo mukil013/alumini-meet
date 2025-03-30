@@ -1,6 +1,7 @@
 import axios from "axios";
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import "./style/Projects.css";
+import { mainUrlPrefix } from "../main";
 
 export default function Projects() {
   const [tab, setTab] = useState("Explore");
@@ -20,8 +21,8 @@ export default function Projects() {
     try {
       const endpoint =
         role === "user"
-          ? `http://localhost:8000/project/getUserProject/${userId}`
-          : "http://localhost:8000/project/getAllProjects";
+          ? `${mainUrlPrefix}/project/getUserProject/${userId}`
+          : `${mainUrlPrefix}/project/getAllProjects`;
 
       const response = await axios.get(endpoint);
       setProjects(response.data.projects || []);
@@ -48,7 +49,7 @@ export default function Projects() {
   };
 
   // Handle file uploads
-  const handleFileChange = (fieldName) => (e) => {
+  const handleFileChange = (fieldName: any) => (e) => {
     const file = e.target.files[0];
     setFormData((prev) => ({
       ...prev,
@@ -75,7 +76,7 @@ export default function Projects() {
         formDataToSend.append("upiQR", formData.upiQR);
       }
       const response = await axios.post(
-        `http://localhost:8000/project/addProject/${userId}`,
+        `${mainUrlPrefix}/project/addProject/${userId}`,
         formDataToSend,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
@@ -95,7 +96,7 @@ export default function Projects() {
         setAddProjectForm(false);
       }
     } catch (error) {
-      console.error("Failed to add project:", error.message);
+      console.error("Failed to add project:", error);
     }
   };
 
@@ -123,10 +124,13 @@ export default function Projects() {
           {(tab === "Explore"
             ? projects
             : projects.filter((project) => project.userId === userId)
-          ).map((project) => (
+          ).map((project: any) => (
             <div key={project._id} className="project-card">
               {project.upiQR && (
-                <div className="fundRaiserTag" title="This is a fundraiser project">
+                <div
+                  className="fundRaiserTag"
+                  title="This is a fundraiser project"
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     height="24px"
@@ -139,7 +143,7 @@ export default function Projects() {
               )}
               {project.upiQR && (
                 <img
-                  src={`http://localhost:8000/project/projectImage/${project._id}`}
+                  src={`${mainUrlPrefix}/project/projectImage/${project._id}`}
                   alt="UPI QR Code"
                   className="project-image"
                 />

@@ -47,7 +47,7 @@ export default function Batches() {
 
     const lowerSearchTerm = searchTerm.toLowerCase();
 
-    return batchUsers.filter((user) => {
+    return batchUsers.filter((user: any) => {
       // Check all fields if 'all' is selected
       if (filterField === "all") {
         return (
@@ -179,7 +179,7 @@ export default function Batches() {
                   {filteredUsers.length === 1 ? "member" : "members"} found
                 </p>
                 <ul className="user-list">
-                  {filteredUsers.map((user) => (
+                  {filteredUsers.map((user: any) => (
                     <li key={user._id} className="user-item">
                       <p>
                         <strong>Name:</strong> {user.firstName} {user.lastName}

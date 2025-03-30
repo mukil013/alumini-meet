@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./style/Profile.css";
+import { mainUrlPrefix } from "../main";
 
 interface User {
   firstName: string;
@@ -29,22 +30,7 @@ export default function Profile() {
   const [formData, setFormData] = useState<User | null>(null); // State to store form data
   const [newSkill, setNewSkill] = useState<string>(""); // New skill input
   const [newInterest, setNewInterest] = useState<string>(""); // New interest input
-  
-  const fetchUserProfile = async () => {
-    try {
-      const storedUser = localStorage.getItem("user");
-      if (!storedUser) throw new Error("User not authenticated");
-      const parsedUser = JSON.parse(storedUser);
-      setUser(parsedUser);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error fetching profile:", error);
-      setError(
-        error instanceof Error ? error.message : "Failed to load profile"
-      );
-      setLoading(false);
-    }
-  };
+
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
@@ -101,7 +87,7 @@ export default function Profile() {
       console.log("User in localStorage:", localStorage.getItem("user"));
       console.log(userId);
       const response = await axios.patch(
-        `http://localhost:8000/user/updateProfile/${userId}`,
+        `${mainUrlPrefix}/user/updateProfile/${userId}`,
         formData
       );
 

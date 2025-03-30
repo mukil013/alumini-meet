@@ -4,9 +4,10 @@ import logo from "../../assets/logo.png";
 import { Link } from "react-router-dom";
 import axios, { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
+import { mainUrlPrefix } from "../../main";
 
 export default function Login() {
-  const LoginLinkBackend = "http://localhost:8000/user/validateUser";
+  const LoginLinkBackend = `${mainUrlPrefix}/user/validateUser`;
   const [formData, setFormData] = useState({
     email: "",
     password: "",
