@@ -142,7 +142,7 @@ async function AddPost(req, res) {
 // Edit an existing post inside a mentorship group
 async function EditPost(req, res) {
   try {
-    const { groupId, postId } = req.params;
+    const { groupId, postIndex } = req.params;
     const { title, description } = req.body;
 
     const mentorship = await Mentorship.findById(groupId);
@@ -150,7 +150,7 @@ async function EditPost(req, res) {
       return res.status(404).json({ message: "Mentorship group not found" });
     }
 
-    const post = mentorship.posts.id(postId);
+    const post = mentorship.posts[postIndex];
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
     }
@@ -175,14 +175,26 @@ async function EditPost(req, res) {
 // Delete a post from a mentorship group
 async function DeletePost(req, res) {
   try {
-    const { groupId, postId } = req.params;
+    const { groupId, postIndex } = req.params;
+
+    // Convert postIndex to a number
+    const index = parseInt(postIndex, 10);
+    if (isNaN(index)) {
+      return res.status(400).json({ message: "Invalid post index" });
+    }
 
     const mentorship = await Mentorship.findById(groupId);
     if (!mentorship) {
       return res.status(404).json({ message: "Mentorship group not found" });
     }
 
-    mentorship.posts = mentorship.posts.filter((post) => post._id.toString() !== postId);
+    // Check if index is within valid range
+    if (index < 0 || index >= mentorship.posts.length) {
+      return res.status(400).json({ message: "Post index out of range" });
+    }
+
+    // Remove the post using splice
+    mentorship.posts.splice(index, 1);
     await mentorship.save();
 
     res.json({ message: "Post deleted successfully", mentorship });
@@ -190,6 +202,7 @@ async function DeletePost(req, res) {
     res.status(500).json({ message: "Failed to delete post", error: error.message });
   }
 }
+
 
 async function GetFollowedGroups(req, res) {
   try {

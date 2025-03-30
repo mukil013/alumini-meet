@@ -107,3 +107,15 @@
 .add-community:active{
   background-color: royalblue;
 }
+.mentor-dialog-box{
+  height: 95%;
+  width: 80%;
+  background-color: #fff;
+}
+.mentor-dialog-box h2{
+  font-size: 2rem;
+  padding: 1rem 0;
+}
+.mentor-dialog-box p{
+  padding: 1rem 0;
+}

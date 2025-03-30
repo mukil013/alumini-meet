@@ -1,4 +1,4 @@
-const Referral = require("../model/projectModel");
+const Referral = require("../model/referralModel");
 
 const addReferral = async (req, res) => {
   try {

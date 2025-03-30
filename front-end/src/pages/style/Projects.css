@@ -92,7 +92,7 @@
   text-decoration: none;
 }
 
-.know-more-btn:hover {
+.know-more-btn:active {
   scale: 1.05;
 }
 
@@ -170,4 +170,14 @@
 
 .cancel-btn:hover {
   background: #c82333;
+}
+.fundRaiserTag{
+  background-color: rgb(232, 151, 0);
+  border-radius: 1rem;
+  height: fit-content;
+  display: grid;
+  place-items: center;
+}
+.fundRaiserTag svg{
+  fill: rgb(255, 217, 147);
 }

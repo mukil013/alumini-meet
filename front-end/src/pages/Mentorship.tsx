@@ -2,6 +2,16 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import "./style/Mentor.css";
 
+// Helper function to convert an array of numbers to a base64 string
+function arrayBufferToBase64(buffer: number[]): string {
+  let binary = "";
+  const bytes = new Uint8Array(buffer);
+  for (let i = 0; i < bytes.byteLength; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return window.btoa(binary);
+}
+
 export default function Mentorship() {
   const [community, setCommunity] = useState([]);
   const [following, setFollowing] = useState([]);
@@ -17,6 +27,7 @@ export default function Mentorship() {
   const [editingPost, setEditingPost] = useState(null);
   const [showAddForm, setShowAddForm] = useState(false);
 
+  // Group creation state
   const [groupTitle, setGroupTitle] = useState("");
   const [groupDescription, setGroupDescription] = useState("");
   const [image, setImage] = useState<File | null>(null);
@@ -32,8 +43,12 @@ export default function Mentorship() {
         url = `http://localhost:8000/mentorship/followed/${userId}`;
 
       const response = await axios.get(url);
-      if (currentPage === "following") setFollowing(response.data);
-      else setCommunity(response.data.mentorshipGroups);
+      if (currentPage === "following") {
+        setFollowing(response.data);
+      } else {
+        setCommunity(response.data.mentorshipGroups);
+      }
+      console.log("Fetched groups:", response.data);
     } catch (e) {
       console.error("Error fetching mentorship groups:", e);
     }
@@ -72,6 +87,81 @@ export default function Mentorship() {
       console.error("Error adding mentorship group:", error);
     }
   };
+
+  const handleAddPost = async (e: React.FormEvent, groupId: string) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append("title", postTitle);
+    formData.append("description", postDescription);
+    if (postImage) {
+      // Append file with field name "file" as expected by multer
+      formData.append("file", postImage);
+    }
+
+    try {
+      await axios.post(
+        `http://localhost:8000/mentorship/${groupId}/addPost`,
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
+      setShowPostForm(false);
+      setPostTitle("");
+      setPostDescription("");
+      setPostImage(null);
+      fetchGroups();
+    } catch (error) {
+      console.error("Error adding post:", error);
+    }
+  };
+
+  const handleEditPost = async (e: React.FormEvent, groupId: string, postIndex: string) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append("title", postTitle);
+    formData.append("description", postDescription);
+    if (postImage) {
+      formData.append("file", postImage);
+    }
+
+    try {
+      await axios.post(
+        `http://localhost:8000/mentorship/${groupId}/updatePost/${postIndex}`,
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
+      setShowPostForm(false);
+      setPostTitle("");
+      setPostDescription("");
+      setPostImage(null);
+      fetchGroups();
+    } catch (error) {
+      console.error("Error adding post:", error);
+    }
+  };
+
+  const handleDeletePost = async (postIndex: string, groupId: string) => {
+    try {
+      await axios.delete(
+        `http://localhost:8000/mentorship/${groupId}/deletePost/${postIndex}`
+      );
+      fetchGroups();
+    } catch (error) {
+      console.error("Error deleting post:", error);
+    }
+  };
+
+  // Handle file changes for post image upload
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setPostImage(e.target.files[0]);
+    }
+  };
+
+  useEffect(() => {
+    if (selectedGroup) {
+      console.log("Selected Group:", selectedGroup);
+    }
+  }, [selectedGroup]);
 
   return (
     <div className="mentor-body">
@@ -247,56 +337,62 @@ export default function Mentorship() {
 
       {/* Expanded Group View */}
       {selectedGroup && (
-        <div className="dialog-overlay">
-        <dialog className="dialog-box" open={selectedGroup} onClick={(e) => e.stopPropagation()}>
-          <button onClick={() => setSelectedGroup(null)}>Back</button>
-          <div>
-            <h2>{selectedGroup.groupTitle}</h2>
-            <p>{selectedGroup.groupDescription}</p>
-          </div>
+        <div className="dialog-overlay" onClick={() => setSelectedGroup(null)}>
+          <dialog
+            className="mentor-dialog-box"
+            open={true}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div>
+              <h2>{selectedGroup.groupTitle}</h2>
+              <p>{selectedGroup.groupDescription}</p>
+            </div>
 
-          <h3>Posts</h3>
-          {role === "alumini" && selectedGroup.userId === userId && (
-            <button onClick={() => setShowPostForm(true)}>+ Add Post</button>
-          )}
-
-          {selectedGroup.posts.length > 0 ? (
-            selectedGroup.posts.map((post) => (
-              <div key={post._id} className="post-card">
-                <h3>{post.title}</h3>
-                <p>{post.description}</p>
-                {post.image && (
-                  <img
-                    src={`data:${post.image.contentType};base64,${Buffer.from(
-                      post.image.data.data
-                    ).toString("base64")}`}
-                    alt="Post Image"
-                    style={{ width: "100px", height: "100px" }}
-                  />
-                )}
-                {role === "alumini" && selectedGroup.userId === userId && (
-                  <>
-                    <button
-                      onClick={() => {
-                        setEditingPost(post);
-                        setPostTitle(post.title);
-                        setPostDescription(post.description);
-                        setShowPostForm(true);
-                      }}
-                    >
-                      Edit
-                    </button>
-                    <button onClick={() => handleDeletePost(post._id)}>
-                      Delete
-                    </button>
-                  </>
-                )}
-              </div>
-            ))
-          ) : (
-            <p>No posts yet.</p>
-          )}
-        </dialog>
+            <h3>Posts</h3>
+            {role === "alumini" && selectedGroup.userId === userId && (
+              <button onClick={() => setShowPostForm(true)}>+ Add Post</button>
+            )}
+            {selectedGroup.posts && selectedGroup.posts.length > 0 ? (
+              selectedGroup.posts.map((post) => (
+                <div key={post._id} className="post-card">
+                  <h3>{post.post.title}</h3>
+                  <p>{post.post.description}</p>
+                  {post.post.image && post.post.image.data && (
+                    <img
+                      src={`data:${post.post.image.contentType};base64,${arrayBufferToBase64(
+                        post.post.image.data.data
+                      )}`}
+                      alt="Post"
+                      style={{ width: "100px", height: "100px" }}
+                    />
+                  )}
+                  {role === "alumini" && selectedGroup.userId === userId && (
+                    <>
+                      <button
+                        onClick={() => {
+                          setEditingPost(post);
+                          setPostTitle(post.post.title);
+                          setPostDescription(post.post.description);
+                          setShowPostForm(true);
+                        }}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() =>
+                          handleDeletePost(post._id, selectedGroup._id)
+                        }
+                      >
+                        Delete
+                      </button>
+                    </>
+                  )}
+                </div>
+              ))
+            ) : (
+              <p>No posts yet.</p>
+            )}
+          </dialog>
         </div>
       )}
 
@@ -304,7 +400,11 @@ export default function Mentorship() {
       {showPostForm && (
         <dialog open={showPostForm}>
           <form
-            onSubmit={editingPost ? handleEditPost : handleAddPost}
+            onSubmit={
+              editingPost
+                ? (e) => handleEditPost(e, selectedGroup._id)
+                : (e) => handleAddPost(e, selectedGroup._id)
+            }
             className="post-form"
           >
             <h3>{editingPost ? "Edit Post" : "Add Post"}</h3>
@@ -321,7 +421,11 @@ export default function Mentorship() {
               onChange={(e) => setPostDescription(e.target.value)}
               required
             ></textarea>
-            <input type="file" accept="image/*" onChange={handleFileChange} />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+            />
             <button type="submit">
               {editingPost ? "Update Post" : "Add Post"}
             </button>

@@ -4,7 +4,7 @@ import "./style/PlacementInfo.css";
 
 // Define the type for a placement object
 interface Placement {
-  _id: string;
+  _id?: string;
   companyName: string;
   jobRole: string;
   jobType: string;
@@ -14,25 +14,20 @@ interface Placement {
   jobDescription: string;
 }
 
-// Define the type for the ATS result
-interface AtsResult {
-  ats_score: number;
-  missing_keywords: string[];
-}
-
 export default function PlacementInfo() {
   const [placements, setPlacements] = useState<Placement[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
-  const [atsResult, setAtsResult] = useState<AtsResult | null>(null);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [isAtsDialogOpen, setIsAtsDialogOpen] = useState<boolean>(false);
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState<boolean>(false); // State for edit dialog
-  const [isLoadingAts, setIsLoadingAts] = useState<boolean>(false);
-  const [currentJd, setCurrentJd] = useState<string>("");
-  const [currentPlacement, setCurrentPlacement] = useState<Placement | null>(
-    null
-  );
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState<boolean>(false);
+  const [newPlacement, setNewPlacement] = useState<Placement>({
+    companyName: "",
+    jobRole: "",
+    jobType: "",
+    location: "",
+    applyLink: "",
+    companyImageUrl: "",
+    jobDescription: "",
+  });
 
   useEffect(() => {
     const fetchAllPlacements = async () => {
@@ -52,120 +47,37 @@ export default function PlacementInfo() {
     fetchAllPlacements();
   }, []);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setSelectedFile(e.target.files[0]);
-    }
-  };
-
-  const handleAtsCheck = async () => {
-    if (!selectedFile) {
-      return alert("Please select a resume file first");
-    }
-
-    setIsLoadingAts(true);
-
-    try {
-      const formData = new FormData();
-      formData.append("resume", selectedFile);
-      formData.append("job_description", currentJd);
-
-      const response = await axios.post<AtsResult>(
-        "http://127.0.0.1:5000/ats-score",
-        formData
-      );
-      setAtsResult(response.data);
-    } catch (error) {
-      console.error("ATS Check Error:", error);
-      alert("Error checking resume. Please try again.");
-    } finally {
-      setIsLoadingAts(false);
-    }
-  };
-
-  const openAtsDialog = (jd: string) => {
-    setCurrentJd(jd);
-    setIsAtsDialogOpen(true);
-  };
-
-  const closeAtsDialog = () => {
-    setIsAtsDialogOpen(false);
-    setAtsResult(null);
-    setSelectedFile(null);
-  };
-
-  // Function to handle deletion of a placement
-  const handleDelete = async (id: string) => {
-    try {
-      await axios.delete(
-        `http://localhost:8000/placement/deletePlacement/${id}`
-      );
-      // Remove the deleted placement from the state
-      setPlacements(placements.filter((placement) => placement._id !== id));
-      alert("Placement deleted successfully!");
-    } catch (error) {
-      console.error("Error deleting placement:", error);
-      alert("Failed to delete placement. Please try again.");
-    }
-  };
-
-  // Function to open the edit dialog
-  const openEditDialog = (placement: Placement) => {
-    setCurrentPlacement(placement);
-    setIsEditDialogOpen(true);
-  };
-
-  // Function to close the edit dialog
-  const closeEditDialog = () => {
-    setIsEditDialogOpen(false);
-    setCurrentPlacement(null);
-  };
-
-  // Function to handle form submission for editing
-  const handleEditSubmit = async (e: React.FormEvent) => {
-    e.stopPropagation();
+  const handleAddPlacement = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!currentPlacement) return;
-
     try {
-      const response = await axios.put<Placement>(
-        `http://localhost:8000/placement/editPlacement/${currentPlacement._id}`,
-        currentPlacement
+      const response = await axios.post<Placement>(
+        "http://localhost:8000/placement/addPlacement",
+        newPlacement
       );
-      // Update the placement in the state
-      setPlacements(
-        placements.map((placement) =>
-          placement._id === currentPlacement._id ? response.data : placement
-        )
-      );
-      closeEditDialog();
-      alert("Placement updated successfully!");
+      setPlacements([...placements, response.data]);
+      setIsAddDialogOpen(false);
+      setNewPlacement({
+        companyName: "",
+        jobRole: "",
+        jobType: "",
+        location: "",
+        applyLink: "",
+        companyImageUrl: "",
+        jobDescription: "",
+      });
+      alert("Placement added successfully!");
     } catch (error) {
-      console.error("Error updating placement:", error);
-      alert("Failed to update placement. Please try again.");
+      console.error("Error adding placement:", error);
+      alert("Failed to add placement. Please try again.");
     }
   };
-
-  // Function to handle input changes in the edit form
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    if (!currentPlacement) return;
-
-    const { name, value } = e.target;
-    setCurrentPlacement({
-      ...currentPlacement,
-      [name]: value,
-    });
-  };
-
-  if (loading) return <div className="loading">Loading...</div>;
-  if (error) return <div className="error">{error}</div>;
-  if (placements.length === 0)
-    return <div className="no-data">No placements found.</div>;
 
   return (
     <div className="placement-container">
+      <button className="add-btn" onClick={() => setIsAddDialogOpen(true)}>
+        Add Placement
+      </button>
+
       <div className="placements-grid">
         {placements.map((placement) => (
           <div key={placement._id} className="placement-card">
@@ -175,10 +87,6 @@ export default function PlacementInfo() {
               }
               alt={`${placement.companyName} logo`}
               className="company-logo"
-              onError={(e) => {
-                (e.target as HTMLImageElement).src =
-                  "https://via.placeholder.com/150";
-              }}
             />
             <h2>{placement.companyName}</h2>
             <p>
@@ -190,37 +98,25 @@ export default function PlacementInfo() {
             <p>
               <strong>Location:</strong> {placement.location}
             </p>
-            <div className="actions">
-              <button
-                className="edit-btn"
-                onClick={() => openEditDialog(placement)}
-              >
-                Edit
-              </button>
-              <button
-                className="delete-btn"
-                onClick={() => handleDelete(placement._id)}
-              >
-                Delete
-              </button>
-            </div>
           </div>
         ))}
       </div>
 
-      {/* Edit Dialog */}
-      {isEditDialogOpen && currentPlacement && (
+      {isAddDialogOpen && (
         <div className="dialog-overlay">
-          <div className="dialog-content" >
-            <h2>Edit Placement</h2>
-            <form onSubmit={handleEditSubmit}>
+          <div className="dialog-content">
+            <h2>Add New Placement</h2>
+            <form onSubmit={handleAddPlacement}>
               <label>
                 <p>Company Name:</p>
                 <input
                   type="text"
                   name="companyName"
-                  value={currentPlacement.companyName}
-                  onChange={handleInputChange}
+                  value={newPlacement.companyName}
+                  onChange={(e) =>
+                    setNewPlacement({ ...newPlacement, companyName: e.target.value })
+                  }
+                  required
                 />
               </label>
               <label>
@@ -228,26 +124,39 @@ export default function PlacementInfo() {
                 <input
                   type="text"
                   name="jobRole"
-                  value={currentPlacement.jobRole}
-                  onChange={handleInputChange}
+                  value={newPlacement.jobRole}
+                  onChange={(e) =>
+                    setNewPlacement({ ...newPlacement, jobRole: e.target.value })
+                  }
+                  required
                 />
               </label>
               <label>
                 <p>Job Type:</p>
-                <input
-                  type="text"
-                  name="jobType"
-                  value={currentPlacement.jobType}
-                  onChange={handleInputChange}
-                />
+                <select
+                name="jobType"
+                  value={newPlacement.jobType}
+                  onChange={(e) =>
+                    setNewPlacement({ ...newPlacement, jobType: e.target.value })
+                  }
+                  required
+                >
+                  <option value="" selected disabled>Not Selected</option>
+                  <option value="on-site">On-Site</option>
+                  <option value="hybrid">Hybrid</option>
+                  <option value="wfh">Work from home</option>
+                </select>
               </label>
               <label>
                 <p>Location:</p>
                 <input
                   type="text"
                   name="location"
-                  value={currentPlacement.location}
-                  onChange={handleInputChange}
+                  value={newPlacement.location}
+                  onChange={(e) =>
+                    setNewPlacement({ ...newPlacement, location: e.target.value })
+                  }
+                  required
                 />
               </label>
               <label>
@@ -255,8 +164,11 @@ export default function PlacementInfo() {
                 <input
                   type="text"
                   name="applyLink"
-                  value={currentPlacement.applyLink}
-                  onChange={handleInputChange}
+                  value={newPlacement.applyLink}
+                  onChange={(e) =>
+                    setNewPlacement({ ...newPlacement, applyLink: e.target.value })
+                  }
+                  required
                 />
               </label>
               <label>
@@ -264,21 +176,26 @@ export default function PlacementInfo() {
                 <input
                   type="text"
                   name="companyImageUrl"
-                  value={currentPlacement.companyImageUrl}
-                  onChange={handleInputChange}
+                  value={newPlacement.companyImageUrl}
+                  onChange={(e) =>
+                    setNewPlacement({ ...newPlacement, companyImageUrl: e.target.value })
+                  }
                 />
               </label>
               <label>
                 <p>Job Description:</p>
                 <textarea
                   name="jobDescription"
-                  value={currentPlacement.jobDescription}
-                  onChange={handleInputChange}
+                  value={newPlacement.jobDescription}
+                  onChange={(e) =>
+                    setNewPlacement({ ...newPlacement, jobDescription: e.target.value })
+                  }
+                  required
                 />
               </label>
               <div className="dialog-actions">
-                <button type="submit">Save</button>
-                <button type="button" onClick={closeEditDialog}>
+                <button type="submit">Add</button>
+                <button type="button" onClick={() => setIsAddDialogOpen(false)}>
                   Cancel
                 </button>
               </div>

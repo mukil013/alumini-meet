@@ -11,6 +11,6 @@ router.delete('/deleteReferral/:id', deleteReferral);
 // http://localhost:8000/referral/editReferral/ referral id
 router.patch('/editReferral/:id', editReferral);
 // http://localhost:8000/referral/getUserReferrals/ user id
-router.get('/getUserReferrals/:id', getUserReferrals);
+router.get('/getUserReferrals/:userId', getUserReferrals);
 
 module.exports = router;

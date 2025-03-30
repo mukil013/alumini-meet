@@ -5,6 +5,9 @@
   align-self: center;
   gap: 1rem;
   padding: 1rem;
+  background-color: #fff;
+  overflow: scroll;
+  border-radius: 1rem;
 }
 .event-container{
   height: fit-content;
