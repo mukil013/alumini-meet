@@ -150,27 +150,30 @@ async function EditPost(req, res) {
       return res.status(404).json({ message: "Mentorship group not found" });
     }
 
-    const post = mentorship.posts[postIndex];
-    if (!post) {
-      return res.status(404).json({ message: "Post not found" });
+    const index = parseInt(postIndex, 10);
+    if (isNaN(index) || index < 0 || index >= mentorship.posts.length) {
+      return res.status(400).json({ message: "Invalid post index" });
     }
 
-    post.post.title = title || post.post.title;
-    post.post.description = description || post.post.description;
+    const post = mentorship.posts[index];
+
+    post.title = title || post.title;
+    post.description = description || post.description;
 
     if (req.file) {
-      post.post.image = {
+      post.image = {
         data: req.file.buffer,
         contentType: req.file.mimetype,
       };
     }
 
     await mentorship.save();
-    res.json({ message: "Post updated successfully", mentorship });
+    res.json({ message: "Post updated successfully", updatedPost: post });
   } catch (error) {
     res.status(500).json({ message: "Failed to edit post", error: error.message });
   }
 }
+
 
 // Delete a post from a mentorship group
 async function DeletePost(req, res) {

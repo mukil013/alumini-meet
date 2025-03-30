@@ -126,7 +126,7 @@ export default function Projects() {
           ).map((project) => (
             <div key={project._id} className="project-card">
               {project.upiQR && (
-                <div className="fundRaiserTag">
+                <div className="fundRaiserTag" title="This is a fundraiser project">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     height="24px"
@@ -144,8 +144,10 @@ export default function Projects() {
                   className="project-image"
                 />
               )}
-              <h3>{project.projectTitle}</h3>
-              <p>{project.projectDescription}</p>
+              <div>
+                <h3>{project.projectTitle}</h3>
+                <p>{project.projectDescription}</p>
+              </div>
               <a
                 href={project.gitLink}
                 target="_blank"

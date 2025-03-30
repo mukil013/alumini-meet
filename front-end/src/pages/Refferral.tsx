@@ -41,7 +41,7 @@ export default function Referrals() {
 
   useEffect(() => {
     fetchReferrals();
-  }, [userId, tab, fetchReferrals]);
+  }, [fetchReferrals]);
 
   // Handle input changes for the add/edit form
   const handleInputChange = (

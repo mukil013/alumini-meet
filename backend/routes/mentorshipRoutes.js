@@ -28,7 +28,7 @@ router.post("/follow/:groupId/:userId", ToggleFollow);
 
 /** ---------------------- POSTS ROUTES ---------------------- */
 router.post("/:groupId/addPost", upload.single("file"), AddPost);
-router.patch("/:groupId/updatePost/:postId", upload.single("file"), EditPost);
-router.delete("/:groupId/deletePost/:postId", DeletePost);
+router.patch("/:groupId/updatePost/:postIndex", upload.single("file"), EditPost);
+router.delete("/:groupId/deletePost/:postIndex", DeletePost);
 
 module.exports = router;

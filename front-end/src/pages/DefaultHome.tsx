@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
-import "./style/Profile.css";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import "./style/DefaultHome.css";
 
 interface User {
   firstName: string;
@@ -20,29 +22,60 @@ interface User {
   userId: string;
 }
 
+interface Event {
+  _id: string;
+  title: string;
+  description: string;
+  date: string;
+}
+
+interface Project {
+  _id: string;
+  projectTitle: string;
+  projectDescription: string;
+}
+
 export default function DefaultHome() {
   const [user, setUser] = useState<User | null>(null);
+  const [events, setEvents] = useState<Event[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
         const storedUser = sessionStorage.getItem("user");
         if (!storedUser) throw new Error("User not authenticated");
-        const parsedUser = JSON.parse(storedUser);
-        setUser(parsedUser);
-        setLoading(false);
+        setUser(JSON.parse(storedUser));
       } catch (error) {
-        console.error("Error fetching profile:", error);
-        setError(
-          error instanceof Error ? error.message : "Failed to load profile"
-        );
-        setLoading(false);
+        setError(error instanceof Error ? error.message : "Failed to load profile");
+      }
+    };
+
+    const fetchEvents = async () => {
+      try {
+        const response = await axios.get("http://localhost:8000/event/getAllEvents");
+        setEvents(response.data.events || []);
+      } catch (error) {
+        console.error("Failed to fetch events:", error);
+      }
+    };
+
+    const fetchProjects = async () => {
+      try {
+        const response = await axios.get("http://localhost:8000/project/getAllProjects");
+        setProjects(response.data.projects || []);
+      } catch (error) {
+        console.error("Failed to fetch projects:", error);
       }
     };
 
     fetchUserProfile();
+    fetchEvents();
+    fetchProjects();
+    setLoading(false);
   }, []);
 
   if (loading) return <div className="loading">Loading...</div>;
@@ -52,84 +85,45 @@ export default function DefaultHome() {
   return (
     <div className="profile-container">
       <div className="profile-card">
-        <img
-          src=""
-          alt={`logged in as ${(user.role === 'user') ? 'student' : user.role}`}
-          className="profile-img"
-        />
-        <h1 className="profile-name">{`${user.firstName} ${user.lastName}`}</h1>
-        <p className="email-id">{user.email}</p>
-        <p className="education">
-          <b>Education:</b> {user.dept}, {user.batch}
-        </p>
+        <h1>{`${user.firstName} ${user.lastName}`}</h1>
+        <p>{user.email}</p>
+        <p><b>Education:</b> {user.dept}, {user.batch}</p>
         <div className="bio">
           <b>Bio:</b> {user.bio || "No bio available"}
         </div>
+      </div>
 
-        <div className="skills-section">
-          <h3>Skills</h3>
-          <div className="skills">
-            {user.skills != undefined
-              ? user.skills.map((skill, index) => (
-                  <div className="skill" key={index}>
-                    {skill}
-                  </div>
-                ))
-              : ""}
-          </div>
-        </div>
-
-        <div className="social-links">
-          <h3>Social Links</h3>
-          <div className="links">
-            {user.linkedIn && (
-              <a
-                href={user.linkedIn || "#"}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                LinkedIn
-              </a>
-            )}
-            {user.github && (
-              <a
-                href={user.github || "#"}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                GitHub
-              </a>
-            )}
-            {user.twitter && (
-              <a
-                href={user.twitter || "#"}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Twitter
-              </a>
-            )}
-          </div>
-        </div>
-
-        <div className="interests-section">
-          <h3>Interests</h3>
-          <div className="interests">
-            {user.interests != undefined
-              ? user.interests.map((interest, index) => (
-                  <div className="interest" key={index}>
-                    {interest}
-                  </div>
-                ))
-              : ""}
-          </div>
-        </div>
-
-        {user.companyName && (
-          <div className="company">
-            <b>Company:</b> {user.companyName}
-          </div>
+      {/* Upcoming Events Section */}
+      <div className="profile-card">
+        <h2>Upcoming Events</h2>
+        {events.length === 0 ? (
+          <p>No upcoming events.</p>
+        ) : (
+          events.map((event) => (
+            <div key={event._id} className="event-card">
+              <h3>{event.title}</h3>
+              <p>{event.description}</p>
+              <p><b>Date:</b> {new Date(event.date).toLocaleDateString()}</p>
+            </div>
+          ))
         )}
+        <button className="view-more-btn" onClick={() => navigate("/home/event")}>View All Events</button>
+      </div>
+
+      {/* Featured Projects Section */}
+      <div className="profile-card">
+        <h2>Featured Projects</h2>
+        {projects.length === 0 ? (
+          <p>No featured projects.</p>
+        ) : (
+          projects.map((project) => (
+            <div key={project._id} className="project-card">
+              <h3>{project.projectTitle}</h3>
+              <p>{project.projectDescription}</p>
+            </div>
+          ))
+        )}
+        <button className="view-more-btn" onClick={() => navigate("/home/projects")}>View All Projects</button>
       </div>
     </div>
   );

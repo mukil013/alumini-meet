@@ -17,7 +17,7 @@ export default function Mentorship() {
   const [following, setFollowing] = useState([]);
   const { role, userId } = JSON.parse(sessionStorage.getItem("user")!);
   const [currentPage, setCurrentPage] = useState("explore");
-  const [selectedGroup, setSelectedGroup] = useState(null);
+  const [selectedGroup, setSelectedGroup] = useState("");
 
   // Post State
   const [showPostForm, setShowPostForm] = useState(false);
@@ -31,6 +31,7 @@ export default function Mentorship() {
   const [groupTitle, setGroupTitle] = useState("");
   const [groupDescription, setGroupDescription] = useState("");
   const [image, setImage] = useState<File | null>(null);
+  const [postIndex, setPostIndex] = useState("");
 
   async function fetchGroups() {
     try {
@@ -199,9 +200,10 @@ export default function Mentorship() {
                 onClick={() => setSelectedGroup(group)}
                 title={group.groupTitle}
               >
-                <div>
+                <div className="nameHolder">
                   <h2>{group.groupTitle}</h2>
                   <p>{group.groupDescription}</p>
+                  <p><strong>Followers : </strong>{group.followers.length}</p>
                 </div>
                 <button
                   className="follow-btn"
@@ -244,9 +246,10 @@ export default function Mentorship() {
                 onClick={() => setSelectedGroup(group)}
                 title={group.groupTitle}
               >
-                <div>
+                 <div className="nameHolder">
                   <h2>{group.groupTitle}</h2>
                   <p>{group.groupDescription}</p>
+                  <p><strong>Followers : </strong>{group.followers.length}</p>
                 </div>
                 <button
                   className="follow-btn"
@@ -323,9 +326,10 @@ export default function Mentorship() {
                 className="mentorship-card"
                 onClick={() => setSelectedGroup(group)}
               >
-                <div>
+                <div className="nameHolder">
                   <h2>{group.groupTitle}</h2>
                   <p>{group.groupDescription}</p>
+                  <p><strong>Followers : </strong>{group.followers.length}</p>
                 </div>
               </div>
             ))
@@ -353,7 +357,7 @@ export default function Mentorship() {
               <button onClick={() => setShowPostForm(true)}>+ Add Post</button>
             )}
             {selectedGroup.posts && selectedGroup.posts.length > 0 ? (
-              selectedGroup.posts.map((post) => (
+              selectedGroup.posts.map((post: any, index: any) => (
                 <div key={post._id} className="post-card">
                   <h3>{post.post.title}</h3>
                   <p>{post.post.description}</p>
@@ -374,6 +378,7 @@ export default function Mentorship() {
                           setPostTitle(post.post.title);
                           setPostDescription(post.post.description);
                           setShowPostForm(true);
+                          setPostIndex(index)
                         }}
                       >
                         Edit
@@ -402,7 +407,7 @@ export default function Mentorship() {
           <form
             onSubmit={
               editingPost
-                ? (e) => handleEditPost(e, selectedGroup._id)
+                ? (e) => handleEditPost(e, selectedGroup._id, postIndex)
                 : (e) => handleAddPost(e, selectedGroup._id)
             }
             className="post-form"
