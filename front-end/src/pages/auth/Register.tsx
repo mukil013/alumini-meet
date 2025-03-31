@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./style/Register.css";
 import logo from "../../assets/logo.png";
 import { Link } from "react-router-dom";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import { mainUrlPrefix } from "../../main";
 
 export default function Register() {
@@ -26,6 +26,8 @@ export default function Register() {
     gender: "",
     role: "",
   });
+
+  console.log(role)
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -333,6 +335,7 @@ export default function Register() {
                       alert("New OTP sent!");
                     } catch (error) {
                       setVerificationError("Failed to resend OTP.");
+                      console.error(error)
                     }
                   }}
                 >

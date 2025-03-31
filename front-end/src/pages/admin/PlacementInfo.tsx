@@ -44,7 +44,7 @@ export default function PlacementInfo() {
         setLoading(false);
       }
     };
-
+    console.log(loading,error);
     fetchAllPlacements();
   }, []);
 

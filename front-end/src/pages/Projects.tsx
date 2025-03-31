@@ -59,7 +59,7 @@ export default function Projects() {
   };
 
   // Add a new project
-  const handleAddProject = async (e) => {
+  const handleAddProject = async (e: any) => {
     e.preventDefault();
     try {
       const formDataToSend = new FormData();

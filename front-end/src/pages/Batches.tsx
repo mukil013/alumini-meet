@@ -42,7 +42,7 @@ export default function Batches() {
   const filteredUsers = useMemo(() => {
     if (!selectedBatch) return [];
 
-    let batchUsers = allUsers.filter((user) => user.batch == selectedBatch);
+    const batchUsers = allUsers.filter((user: any) => user.batch == selectedBatch);
 
     if (!searchTerm) return batchUsers;
 
@@ -105,7 +105,7 @@ export default function Batches() {
     });
   }, [allUsers, selectedBatch, searchTerm, filterField]);
 
-  const handleBatchClick = (batch) => {
+  const handleBatchClick = (batch: any) => {
     setSelectedBatch(batch);
     setIsDialogOpen(true);
     setSearchTerm("");
