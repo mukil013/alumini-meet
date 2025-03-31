@@ -1,4 +1,4 @@
-import React, { useEffect, useState, ChangeEvent, KeyboardEvent } from "react";
+import { useEffect, useState, ChangeEvent, KeyboardEvent } from "react";
 import axios from "axios";
 import "./style/Profile.css";
 import { mainUrlPrefix } from "../main";

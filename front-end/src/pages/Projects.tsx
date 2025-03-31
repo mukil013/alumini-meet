@@ -41,7 +41,7 @@ export default function Projects() {
   }, [userId, role, fetchProjects]);
 
   // Handle input changes
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: any) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -124,7 +124,7 @@ export default function Projects() {
         <div className="projects-grid">
           {(tab === "Explore"
             ? projects
-            : projects.filter((project) => project.userId === userId)
+            : projects.filter((project: any) => project.userId === userId)
           ).map((project: any) => (
             <div key={project._id} className="project-card">
               {project.upiQR && (

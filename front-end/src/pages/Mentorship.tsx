@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "./style/Mentor.css";
 import { mainUrlPrefix } from "../main";
 
@@ -19,7 +19,7 @@ export default function Mentorship() {
   const userId = sessionStorage.getItem("user")!;
   const role = sessionStorage.getItem("role")!;
   const [currentPage, setCurrentPage] = useState("explore");
-  const [selectedGroup, setSelectedGroup] = useState("");
+  const [selectedGroup, setSelectedGroup] = useState<any>("");
 
   // Post State
   const [showPostForm, setShowPostForm] = useState(false);
@@ -32,7 +32,7 @@ export default function Mentorship() {
   // Group creation state
   const [groupTitle, setGroupTitle] = useState("");
   const [groupDescription, setGroupDescription] = useState("");
-  const [image, setImage] = useState<File | null>(null);
+  const [image] = useState<File | null>(null);
   const [postIndex, setPostIndex] = useState("");
 
   async function fetchGroups() {

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import "./style/Events.css";
 import loader from "../assets/Iphone-spinner-2.gif";
