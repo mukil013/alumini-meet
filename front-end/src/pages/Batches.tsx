@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import "./style/Batches.css";
+import { mainUrlPrefix } from "../main";
 
 export default function Batches() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -19,7 +20,7 @@ export default function Batches() {
 
       try {
         const response = await axios.get(
-          "http://localhost:8000/admin/getAllUsers"
+          `${mainUrlPrefix}/admin/getAllUsers`
         );
         if (response.data && response.data.users) {
           setAllUsers(response.data.users);

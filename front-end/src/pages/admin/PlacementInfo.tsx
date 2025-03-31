@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./style/PlacementInfo.css";
+import { mainUrlPrefix } from "../../main";
 
 // Define the type for a placement object
 interface Placement {
@@ -33,7 +34,7 @@ export default function PlacementInfo() {
     const fetchAllPlacements = async () => {
       try {
         const response = await axios.get<Placement[]>(
-          "http://localhost:8000/placement/getAllPlacement"
+          `${mainUrlPrefix}/placement/getAllPlacement`
         );
         setPlacements(response.data);
         setLoading(false);
@@ -51,7 +52,7 @@ export default function PlacementInfo() {
     e.preventDefault();
     try {
       const response = await axios.post<Placement>(
-        "http://localhost:8000/placement/addPlacement",
+        `${mainUrlPrefix}/placement/addPlacement`,
         newPlacement
       );
       setPlacements([...placements, response.data]);
