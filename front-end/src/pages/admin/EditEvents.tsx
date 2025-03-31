@@ -4,10 +4,10 @@ import "./style/EditEvent.css";
 import { mainUrlPrefix } from "../../main";
 
 export default function Events() {
-  const [events, setEvents] = useState([]);
+  const [events, setEvents] = useState<unknown>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [currentEvent, setCurrentEvent] = useState(null);
-  const [formData, setFormData] = useState({
+  const [currentEvent, setCurrentEvent] = useState<any>(null);
+  const [formData, setFormData] = useState<any>({
     eventImg: null, // This will hold the File object for new uploads
     eventTitle: "",
     eventDescription: "",
@@ -35,7 +35,7 @@ export default function Events() {
     }
   };
 
-  const handleChange = (e) => {
+  const handleChange = (e: any) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
@@ -51,7 +51,7 @@ export default function Events() {
     setIsDialogOpen(true);
   };
 
-  const openEditDialog = (event) => {
+  const openEditDialog = (event: any) => {
     setCurrentEvent(event);
     setFormData({
       eventImg: null, // Reset eventImg for editing (file input won't accept strings)
@@ -111,7 +111,7 @@ export default function Events() {
     }
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (id: any) => {
     if (window.confirm("Are you sure you want to delete this event?")) {
       setLoading(true);
       setError("");
@@ -142,7 +142,7 @@ export default function Events() {
         {events.length === 0 ? (
           <p>No events found.</p>
         ) : (
-          events.map((event) => (
+          events.map((event: any) => (
             <li key={event._id}>
               <div className="event-item">
                 <img
@@ -188,7 +188,7 @@ export default function Events() {
                   name="eventImg"
                   accept=".jpg,.png,.jpeg"
                   onChange={(e) =>
-                    setFormData({ ...formData, eventImg: e.target.files[0] })
+                    setFormData({ ...formData, eventImg: e.target.files[0] ?? null })
                   }
                 />
                 {/* Display current image if editing */}

@@ -7,7 +7,7 @@ export default function Placement() {
   const [placements, setPlacements] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [atsResult, setAtsResult] = useState(null);
+  const [atsResult, setAtsResult] = useState<any>(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isLoadingAts, setIsLoadingAts] = useState(false);
@@ -31,7 +31,7 @@ export default function Placement() {
     fetchAllPlacements();
   }, []);
 
-  const handleFileChange = (e) => {
+  const handleFileChange = (e: any) => {
     setSelectedFile(e.target.files[0]);
   };
 
@@ -84,9 +84,6 @@ export default function Placement() {
               src={placement.companyImageUrl || 'https://via.placeholder.com/150'}
               alt={`${placement.companyName} logo`}
               className="company-logo"
-              onError={(e) => {
-                e.target.src = 'https://via.placeholder.com/150';
-              }}
             />
             <h2>{placement.companyName}</h2>
             <p><strong>Role:</strong> {placement.jobRole}</p>
