@@ -52,7 +52,7 @@ export default function Mentorship() {
   const [groupTitle, setGroupTitle] = useState("");
   const [groupDescription, setGroupDescription] = useState("");
   const [image] = useState<File | null>(null);
-  const [postIndex, setPostIndex] = useState<number | null>(null);
+  const [postIndex, setPostIndex] = useState<number>(-1);
 
   async function fetchGroups() {
     try {
@@ -428,8 +428,8 @@ export default function Mentorship() {
           <form
             onSubmit={
               editingPost
-                ? (e) => handleEditPost(e, selectedGroup._id, postIndex)
-                : (e) => handleAddPost(e, selectedGroup._id)
+                ? (e) => handleEditPost(e, selectedGroup!._id, postIndex)
+                : (e) => handleAddPost(e, selectedGroup!._id)
             }
             className="post-form"
           >
