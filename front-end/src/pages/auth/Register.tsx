@@ -27,8 +27,6 @@ export default function Register() {
     role: "",
   });
 
-  console.log(role)
-
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
