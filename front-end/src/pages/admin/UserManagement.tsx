@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import './style/UserManagement.css';
+import { mainUrlPrefix } from "../../main";
 
 interface User {
   _id: string;
@@ -31,7 +32,7 @@ const UserManagement = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/admin/getAllUsers");
+        const response = await axios.get(`${mainUrlPrefix}/admin/getAllUsers`);
         setUsers(response.data.users);
       } catch (error) {
         console.error("Error fetching users:", error);
@@ -47,7 +48,7 @@ const UserManagement = () => {
 
     try {
       await axios.patch(
-        `http://localhost:8000/user/updateUserProfile/${selectedUser._id}`,
+        `${mainUrlPrefix}/user/updateUserProfile/${selectedUser._id}`,
         selectedUser
       );
       setUsers(
@@ -71,7 +72,7 @@ const UserManagement = () => {
     if (!confirmDelete) return;
 
     try {
-      await axios.delete(`http://localhost:8000/admin/deleteUser/${id}`);
+      await axios.delete(`${mainUrlPrefix}/admin/deleteUser/${id}`);
       setUsers(users.filter((user) => user._id !== id));
       alert("User deleted successfully");
     } catch (error) {

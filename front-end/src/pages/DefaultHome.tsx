@@ -49,7 +49,7 @@ export default function DefaultHome() {
       try {
         const userId = sessionStorage.getItem("user");
         // Use the stored user's id to fetch updated profile
-        const response = await axios.get(`http://localhost:8000/user/getUser/${userId}`);
+        const response = await axios.get(`${mainUrlPrefix}/user/getUser/${userId}`);
         // Assume the API response returns updated data in response.data.userDetail
         const updatedUser = response.data.userDetail;
         setUser(updatedUser);

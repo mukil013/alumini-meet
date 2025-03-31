@@ -1,6 +1,7 @@
 import React, { useEffect, useState, ChangeEvent, KeyboardEvent } from "react";
 import axios from "axios";
 import "./style/Profile.css";
+import { mainUrlPrefix } from "../main";
 
 interface User {
   _id: string;
@@ -41,7 +42,7 @@ export default function Profile() {
         if (!userId) throw new Error("User not authenticated");
   
         const response = await axios.get(
-          `http://localhost:8000/user/getUser/${userId}`
+          `${mainUrlPrefix}/user/getUser/${userId}`
         );
   
         console.log("API Response:", response.data); // ✅ Debug: Log the API response
@@ -152,13 +153,13 @@ export default function Profile() {
       if (selectedFile) data.append("userImg", selectedFile);
 
       // Update request
-      await axios.post(`http://localhost:8000/user/updateProfile/${id}`, data, {
+      await axios.post(`${mainUrlPrefix}/user/updateProfile/${id}`, data, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
       // Refetch user data to ensure we have latest version
       const fetchResponse = await axios.get(
-        `http://localhost:8000/user/getUser/${id}`
+        `${mainUrlPrefix}/user/getUser/${id}`
       );
 
       const updatedUser = fetchResponse.data.userDetail;

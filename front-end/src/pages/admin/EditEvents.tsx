@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./style/EditEvent.css";
+import { mainUrlPrefix } from "../../main";
 
 export default function Events() {
   const [events, setEvents] = useState([]);
@@ -22,7 +23,7 @@ export default function Events() {
   const fetchEvents = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:8000/event/getAllEvents"
+        `${mainUrlPrefix}/event/getAllEvents`
       );
       console.log(response.data.events);
       setEvents(response.data.events);
@@ -82,7 +83,7 @@ export default function Events() {
 
       if (currentEvent) {
         await axios.put(
-          `http://localhost:8000/event/editEvent/${currentEvent._id}`,
+          `${mainUrlPrefix}/event/editEvent/${currentEvent._id}`,
           formDataToSend,
           {
             headers: { "Content-Type": "multipart/form-data" },
@@ -91,7 +92,7 @@ export default function Events() {
         alert("Event updated successfully!");
       } else {
         await axios.post(
-          "http://localhost:8000/event/addEvents",
+          `${mainUrlPrefix}/event/addEvents`,
           formDataToSend,
           {
             headers: { "Content-Type": "multipart/form-data" },
@@ -116,7 +117,7 @@ export default function Events() {
       setError("");
 
       try {
-        await axios.delete(`http://localhost:8000/event/deleteEvent/${id}`);
+        await axios.delete(`${mainUrlPrefix}/event/deleteEvent/${id}`);
         alert("Event deleted successfully!");
         fetchEvents();
       } catch (error) {
