@@ -10,7 +10,7 @@ export default function Projects() {
   const [projects, setProjects] = useState([]);
   const [fundRaiser, setFundRaiser] = useState(false);
   const [addProjectForm, setAddProjectForm] = useState(false);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<any>({
     projectTitle: "",
     projectDescription: "",
     gitLink: "",
@@ -43,16 +43,16 @@ export default function Projects() {
   // Handle input changes
   const handleInputChange = (e: any) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
+    setFormData((prev: any) => ({
       ...prev,
       [name]: value,
     }));
   };
 
   // Handle file uploads
-  const handleFileChange = (fieldName: any) => (e) => {
+  const handleFileChange = (fieldName: any) => (e: any) => {
     const file = e.target.files[0];
-    setFormData((prev) => ({
+    setFormData((prev: any) => ({
       ...prev,
       [fieldName]: file,
     }));

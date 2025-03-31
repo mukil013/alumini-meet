@@ -17,8 +17,8 @@ interface Placement {
 
 export default function PlacementInfo() {
   const [placements, setPlacements] = useState<Placement[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string>("");
+  const [, setLoading] = useState<boolean>(true);
+  const [, setError] = useState<string>("");
   const [isAddDialogOpen, setIsAddDialogOpen] = useState<boolean>(false);
   const [newPlacement, setNewPlacement] = useState<Placement>({
     companyName: "",

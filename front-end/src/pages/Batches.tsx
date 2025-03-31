@@ -41,9 +41,7 @@ export default function Batches() {
   // Memoized filtered users for better performance
   const filteredUsers = useMemo(() => {
     if (!selectedBatch) return [];
-
     const batchUsers = allUsers.filter((user: any) => user.batch == selectedBatch);
-
     if (!searchTerm) return batchUsers;
 
     const lowerSearchTerm = searchTerm.toLowerCase();
@@ -105,7 +103,7 @@ export default function Batches() {
     });
   }, [allUsers, selectedBatch, searchTerm, filterField]);
 
-  const handleBatchClick = (batch: any) => {
+  const handleBatchClick = (batch: string) => {
     setSelectedBatch(batch);
     setIsDialogOpen(true);
     setSearchTerm("");

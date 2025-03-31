@@ -8,7 +8,7 @@ import { mainUrlPrefix } from "../../main";
 export default function Register() {
   const SendOTPLinkBackend = `${mainUrlPrefix}/user/sendOtp`;
   const VerificationLinkBackend = `${mainUrlPrefix}/user/verifyOtp`;
-  const [role, setRole] = useState("");
+  const [, setRole] = useState("");
   const [next, setNext] = useState(false);
   const [isVerificationDialogOpen, setIsVerificationDialogOpen] = useState(false);
   const [verificationCode, setVerificationCode] = useState("");

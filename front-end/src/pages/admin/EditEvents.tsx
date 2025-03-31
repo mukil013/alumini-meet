@@ -68,7 +68,7 @@ export default function Events() {
     });
     setIsDialogOpen(true);
   };
-
+  
   const openEditDialog = (event: Event) => {
     setCurrentEvent(event);
     setFormData({
@@ -156,7 +156,7 @@ export default function Events() {
         {events.length === 0 ? (
           <p>No events found.</p>
         ) : (
-          events.map((event) => (
+          events.map((event: any) => (
             <li key={event._id}>
               <div className="event-item">
                 <img
