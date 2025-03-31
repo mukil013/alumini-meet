@@ -32,12 +32,12 @@ export default function Login() {
 
       // Save tokens to sessionStorage
       const { accessToken, refreshToken, userDetail } = response.data;
+      const { userId, role } = userDetail
       sessionStorage.setItem("accessToken", accessToken);
       sessionStorage.setItem("refreshToken", refreshToken);
-      sessionStorage.setItem("user", JSON.stringify(userDetail));
+      sessionStorage.setItem("user", userId);
+      sessionStorage.setItem("role", role)
 
-      // Redirect based on role
-      const role = userDetail.role;
       switch (role) {
         case "user":
           nav("/home");

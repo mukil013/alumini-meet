@@ -67,7 +67,6 @@ const sendOTP = async (req, res) => {
   }
 };
 
-// Verify OTP and register user
 const verifyOTP = async (req, res) => {
   const { code, ...userData } = req.body;
   const email = userData.email;
@@ -100,7 +99,7 @@ const verifyOTP = async (req, res) => {
       });
     }
 
-    // Create new user
+    // Create new user, include userImg if provided
     const user = await User.create({
       firstName: userData.firstName,
       lastName: userData.lastName,
@@ -111,12 +110,14 @@ const verifyOTP = async (req, res) => {
       role: userData.role,
       batch: userData.batch,
       dept: userData.dept,
+      // Optional userImg field
+      userImg: req.file
+        ? { data: req.file.buffer, contentType: req.file.mimetype }
+        : undefined,
     });
 
-    // Clear OTP after successful verification
     otpStore.delete(email);
 
-    // Prepare user details for response
     const userDetail = {
       firstName: user.firstName,
       lastName: user.lastName,
@@ -128,9 +129,13 @@ const verifyOTP = async (req, res) => {
       role: user.role,
       dept: user.dept,
       batch: user.batch,
+      bio: user.bio,
+      github: user.github,
+      companyName: user.companyName,
+      twitter: user.twitter,
+      linkedIn: user.linkedIn,
     };
 
-    // Send success response
     res.status(200).json({
       status: "Success",
       message: "User registered successfully.",
@@ -170,10 +175,10 @@ const validateUser = async (req, res) => {
       dept: user.dept,
       batch: user.batch,
       bio: user.bio,
-      github:  user.github,
+      github: user.github,
       companyName: user.companyName,
       twitter: user.twitter,
-      linkedIn: user.linkedIn
+      linkedIn: user.linkedIn,
     };
 
     res.status(200).json({
@@ -189,10 +194,11 @@ const validateUser = async (req, res) => {
   }
 };
 
-// Update user profile
+// Update user profile (with optional image upload)
 const updateProfile = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { userId } = req.params;
+    // Prepare update object from request body
     const updatedProfile = {
       firstName: req.body.firstName,
       lastName: req.body.lastName,
@@ -211,7 +217,15 @@ const updateProfile = async (req, res) => {
       companyName: req.body.companyName,
     };
 
-    const user = await User.findById(id);
+    // If an image is uploaded, add userImg field
+    if (req.file) {
+      updatedProfile.userImg = {
+        data: req.file.buffer,
+        contentType: req.file.mimetype,
+      };
+    }
+
+    const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({
         status: "failure",
@@ -234,7 +248,7 @@ const updateProfile = async (req, res) => {
       }
     }
 
-    await User.findByIdAndUpdate(req.params.id, updatedProfile, { new: true });
+    await User.findByIdAndUpdate(userId, updatedProfile, { new: true });
     res.status(200).json({
       status: "Success",
       message: "Profile updated successfully.",
@@ -247,9 +261,35 @@ const updateProfile = async (req, res) => {
   }
 };
 
+const getUserById = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const _id = userId;
+    const userDetails = await User.findById(_id);
+    const user = await User.findById(req.params.id);
+    if (!userDetails) {
+      return res.status(404).json({
+        status: "failure",
+        message: "User not found.",
+      });
+    }
+    res.status(200).json({
+      status: "Success",
+      message: "User fetched successfully.",
+      userDetail: userDetails,
+    });
+  } catch (e) {
+    res.status(500).json({
+      status: "failure",
+      message: `Cannot get user: ${e.message}`,
+    });
+  }
+};
+
 module.exports = {
   sendOTP,
   verifyOTP,
   validateUser,
   updateProfile,
+  getUserById,
 };

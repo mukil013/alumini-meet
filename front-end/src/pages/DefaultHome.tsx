@@ -47,9 +47,12 @@ export default function DefaultHome() {
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const storedUser = sessionStorage.getItem("user");
-        if (!storedUser) throw new Error("User not authenticated");
-        setUser(JSON.parse(storedUser));
+        const userId = sessionStorage.getItem("user");
+        // Use the stored user's id to fetch updated profile
+        const response = await axios.get(`http://localhost:8000/user/getUser/${userId}`);
+        // Assume the API response returns updated data in response.data.userDetail
+        const updatedUser = response.data.userDetail;
+        setUser(updatedUser);
       } catch (error) {
         setError(error instanceof Error ? error.message : "Failed to load profile");
       }

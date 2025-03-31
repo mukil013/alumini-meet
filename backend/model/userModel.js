@@ -76,6 +76,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ["admin", "user", "alumini"]
   },
+  userImg: {
+    data: Buffer,
+    contentType: String
+  }
 });
 
 

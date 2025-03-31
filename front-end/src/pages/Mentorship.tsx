@@ -16,7 +16,8 @@ function arrayBufferToBase64(buffer: number[]): string {
 export default function Mentorship() {
   const [community, setCommunity] = useState([]);
   const [following, setFollowing] = useState([]);
-  const { role, userId } = JSON.parse(sessionStorage.getItem("user")!);
+  const userId = sessionStorage.getItem("user")!;
+  const role = sessionStorage.getItem("role")!;
   const [currentPage, setCurrentPage] = useState("explore");
   const [selectedGroup, setSelectedGroup] = useState("");
 

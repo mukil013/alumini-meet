@@ -4,7 +4,8 @@ import "./style/Projects.css";
 import { mainUrlPrefix } from "../main";
 
 export default function Referrals() {
-  const { role, userId } = JSON.parse(sessionStorage.getItem("user")!);
+  const userId = sessionStorage.getItem("user")!;
+  const role = sessionStorage.getItem("role")!;
   const [tab, setTab] = useState("Explore");
   const [referrals, setReferrals] = useState([]);
   const [loading, setLoading] = useState(true);

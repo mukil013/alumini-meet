@@ -5,7 +5,8 @@ import { mainUrlPrefix } from "../main";
 
 export default function Projects() {
   const [tab, setTab] = useState("Explore");
-  const { role, userId } = JSON.parse(sessionStorage.getItem("user")!);
+  const userId = sessionStorage.getItem("user")?.trim();
+  const role = sessionStorage.getItem("role")?.trim();
   const [projects, setProjects] = useState([]);
   const [fundRaiser, setFundRaiser] = useState(false);
   const [addProjectForm, setAddProjectForm] = useState(false);
