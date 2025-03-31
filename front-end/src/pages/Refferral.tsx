@@ -1,7 +1,15 @@
 import axios from "axios";
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import "./style/Projects.css";
 import { mainUrlPrefix } from "../main";
+
+interface Refferal{
+  _id: string;
+  referraltitle: string;
+  jobDescription: string;
+  applyLink: string;
+  userId: string;
+}
 
 export default function Referrals() {
   const userId = sessionStorage.getItem("user")!;
@@ -11,7 +19,7 @@ export default function Referrals() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [addReferralForm, setAddReferralForm] = useState(false);
-  const [editingReferral, setEditingReferral] = useState(null);
+  const [editingReferral, setEditingReferral] = useState<Refferal | null>(null);
   const [formData, setFormData] = useState({
     referraltitle: "",
     jobDescription: "",
@@ -165,7 +173,7 @@ export default function Referrals() {
         {referrals.length === 0 ? (
           <p>No referrals found.</p>
         ) : (
-          referrals.map((referral: any) => (
+          referrals.map((referral: Refferal) => (
             <div key={referral._id} className="project-card">
               <h3>{referral.referraltitle}</h3>
               <p>

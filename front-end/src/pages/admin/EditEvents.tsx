@@ -1,14 +1,32 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, FormEvent, ChangeEvent } from "react";
 import axios from "axios";
 import "./style/EditEvent.css";
 import { mainUrlPrefix } from "../../main";
 
+interface Event {
+  _id: string;
+  eventTitle: string;
+  eventDescription: string;
+  applyLink: string;
+  eventImg: {
+    data: string;
+    contentType: string;
+  };
+}
+
+interface FormData {
+  eventImg: File | null;
+  eventTitle: string;
+  eventDescription: string;
+  applyLink: string;
+}
+
 export default function Events() {
-  const [events, setEvents] = useState<unknown>([]);
+  const [events, setEvents] = useState<Event[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [currentEvent, setCurrentEvent] = useState<any>(null);
-  const [formData, setFormData] = useState<any>({
-    eventImg: null, // This will hold the File object for new uploads
+  const [currentEvent, setCurrentEvent] = useState<Event | null>(null);
+  const [formData, setFormData] = useState<FormData>({
+    eventImg: null,
     eventTitle: "",
     eventDescription: "",
     applyLink: "",
@@ -22,9 +40,7 @@ export default function Events() {
 
   const fetchEvents = async () => {
     try {
-      const response = await axios.get(
-        `${mainUrlPrefix}/event/getAllEvents`
-      );
+      const response = await axios.get(`${mainUrlPrefix}/event/getAllEvents`);
       console.log(response.data.events);
       setEvents(response.data.events);
     } catch (error) {
@@ -35,7 +51,9 @@ export default function Events() {
     }
   };
 
-  const handleChange = (e: any) => {
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
@@ -50,11 +68,11 @@ export default function Events() {
     });
     setIsDialogOpen(true);
   };
-
-  const openEditDialog = (event: any) => {
+  
+  const openEditDialog = (event: Event) => {
     setCurrentEvent(event);
     setFormData({
-      eventImg: null, // Reset eventImg for editing (file input won't accept strings)
+      eventImg: null,
       eventTitle: event.eventTitle,
       eventDescription: event.eventDescription,
       applyLink: event.applyLink,
@@ -62,7 +80,7 @@ export default function Events() {
     setIsDialogOpen(true);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
@@ -70,7 +88,7 @@ export default function Events() {
     try {
       const formDataToSend = new FormData();
       if (formData.eventImg instanceof File) {
-        formDataToSend.append("eventImg", formData.eventImg); // Append new image if uploaded
+        formDataToSend.append("eventImg", formData.eventImg);
       }
       formDataToSend.append("eventTitle", formData.eventTitle);
       formDataToSend.append("eventDescription", formData.eventDescription);
@@ -91,13 +109,9 @@ export default function Events() {
         );
         alert("Event updated successfully!");
       } else {
-        await axios.post(
-          `${mainUrlPrefix}/event/addEvents`,
-          formDataToSend,
-          {
-            headers: { "Content-Type": "multipart/form-data" },
-          }
-        );
+        await axios.post(`${mainUrlPrefix}/event/addEvents`, formDataToSend, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
         alert("Event added successfully!");
       }
 
@@ -111,7 +125,7 @@ export default function Events() {
     }
   };
 
-  const handleDelete = async (id: any) => {
+  const handleDelete = async (id: string) => {
     if (window.confirm("Are you sure you want to delete this event?")) {
       setLoading(true);
       setError("");
@@ -146,9 +160,7 @@ export default function Events() {
             <li key={event._id}>
               <div className="event-item">
                 <img
-                  src={`data:image/jpeg;base64,${event.eventImg.toString(
-                    "base64"
-                  )}`}
+                  src={`data:image/jpeg;base64,${event.eventImg.toString()}`}
                   alt="event image"
                 />
                 <div className="event-title">{event.eventTitle}</div>
@@ -187,14 +199,15 @@ export default function Events() {
                   type="file"
                   name="eventImg"
                   accept=".jpg,.png,.jpeg"
-                  onChange={(e) =>
-                    setFormData({ ...formData, eventImg: e.target.files[0] ?? null })
+                  onChange={(e: any) =>
+                    setFormData({ ...formData, eventImg: e.target.files[0] })
                   }
                 />
-                {/* Display current image if editing */}
                 {currentEvent && (
                   <img
-                    src={currentEvent.eventImg}
+                    src={`data:${
+                      currentEvent.eventImg.contentType
+                    };base64,${currentEvent.eventImg.data.toString()}`}
                     alt="current event"
                     style={{ width: "100px", marginTop: "10px" }}
                   />

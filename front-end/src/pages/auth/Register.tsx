@@ -333,6 +333,7 @@ export default function Register() {
                       alert("New OTP sent!");
                     } catch (error) {
                       setVerificationError("Failed to resend OTP.");
+                      console.error(error)
                     }
                   }}
                 >

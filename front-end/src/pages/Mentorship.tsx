@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "./style/Mentor.css";
 import { mainUrlPrefix } from "../main";
 
@@ -13,13 +13,32 @@ function arrayBufferToBase64(buffer: number[]): string {
   return window.btoa(binary);
 }
 
+interface Group {
+  _id: string;
+  groupTitle: string;
+  groupDescription: string;
+  userId: string;
+  followers: string[];
+  posts: {
+    _id: string;
+    post: {
+      title: string;
+      description: string;
+      image?: {
+        data: number[];
+        contentType: string;
+      };
+    };
+  }[];
+}
+
 export default function Mentorship() {
   const [community, setCommunity] = useState([]);
   const [following, setFollowing] = useState([]);
   const userId = sessionStorage.getItem("user")!;
   const role = sessionStorage.getItem("role")!;
   const [currentPage, setCurrentPage] = useState("explore");
-  const [selectedGroup, setSelectedGroup] = useState("");
+  const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
 
   // Post State
   const [showPostForm, setShowPostForm] = useState(false);
@@ -32,8 +51,8 @@ export default function Mentorship() {
   // Group creation state
   const [groupTitle, setGroupTitle] = useState("");
   const [groupDescription, setGroupDescription] = useState("");
-  const [image, setImage] = useState<File | null>(null);
-  const [postIndex, setPostIndex] = useState("");
+  const [image] = useState<File | null>(null);
+  const [postIndex, setPostIndex] = useState<number>(-1);
 
   async function fetchGroups() {
     try {
@@ -117,7 +136,7 @@ export default function Mentorship() {
     }
   };
 
-  const handleEditPost = async (e: React.FormEvent, groupId: string, postIndex: string) => {
+  const handleEditPost = async (e: React.FormEvent, groupId: string, postIndex: number) => {
     e.preventDefault();
     const formData = new FormData();
     formData.append("title", postTitle);
@@ -195,7 +214,7 @@ export default function Mentorship() {
       {currentPage === "explore" && (
         <div className="mentor-content-page">
           {community.length > 0 ? (
-            community.map((group: any) => (
+            community.map((group: Group) => (
               <div
                 key={group._id}
                 className="mentorship-card"
@@ -241,7 +260,7 @@ export default function Mentorship() {
       {currentPage === "following" && (
         <div className="mentor-content-page">
           {following.length > 0 ? (
-            following.map((group: any) => (
+            following.map((group: Group) => (
               <div
                 key={group._id}
                 className="mentorship-card"
@@ -322,7 +341,7 @@ export default function Mentorship() {
             </dialog>
           )}
           {community.length > 0 ? (
-            community.map((group: any) => (
+            community.map((group: Group) => (
               <div
                 key={group._id}
                 className="mentorship-card"
@@ -359,7 +378,7 @@ export default function Mentorship() {
               <button onClick={() => setShowPostForm(true)}>+ Add Post</button>
             )}
             {selectedGroup.posts && selectedGroup.posts.length > 0 ? (
-              selectedGroup.posts.map((post: any, index: any) => (
+              selectedGroup.posts.map((post: any, index: number) => (
                 <div key={post._id} className="post-card">
                   <h3>{post.post.title}</h3>
                   <p>{post.post.description}</p>
@@ -409,8 +428,8 @@ export default function Mentorship() {
           <form
             onSubmit={
               editingPost
-                ? (e) => handleEditPost(e, selectedGroup._id, postIndex)
-                : (e) => handleAddPost(e, selectedGroup._id)
+                ? (e) => handleEditPost(e, selectedGroup!._id, postIndex)
+                : (e) => handleAddPost(e, selectedGroup!._id)
             }
             className="post-form"
           >

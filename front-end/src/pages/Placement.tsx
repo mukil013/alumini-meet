@@ -1,13 +1,30 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import "./style/Placement.css";
 import { mainPythonUrl, mainUrlPrefix } from "../main";
+
+
+interface Ats{
+  ats_score: string;
+  missing_keywords:string[];
+}
+
+interface Placement{
+  _id: string;
+  companyImageUrl: string;
+  companyName: string;
+  jobRole: string;
+  jobType: string;
+  location: string;
+  jobDescription: string;
+  applyLink: string;
+}
 
 export default function Placement() {
   const [placements, setPlacements] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [atsResult, setAtsResult] = useState<any>(null);
+  const [atsResult, setAtsResult] = useState<Ats | null>(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isLoadingAts, setIsLoadingAts] = useState(false);
@@ -78,7 +95,7 @@ export default function Placement() {
   return (
     <div className="placement-container">
       <div className="placements-grid">
-        {placements.map((placement: any) => (
+        {placements.map((placement: Placement) => (
           <div key={placement._id} className="placement-card">
             <img
               src={placement.companyImageUrl || 'https://via.placeholder.com/150'}
@@ -140,3 +157,4 @@ export default function Placement() {
     </div>
   );
 }
+

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import "./style/Batches.css";
 import { mainUrlPrefix } from "../main";
@@ -41,9 +41,7 @@ export default function Batches() {
   // Memoized filtered users for better performance
   const filteredUsers = useMemo(() => {
     if (!selectedBatch) return [];
-
-    const batchUsers = allUsers.filter((user) => user.batch == selectedBatch);
-
+    const batchUsers = allUsers.filter((user: any) => user.batch == selectedBatch);
     if (!searchTerm) return batchUsers;
 
     const lowerSearchTerm = searchTerm.toLowerCase();

@@ -1,8 +1,16 @@
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import "./style/Events.css";
 import loader from "../assets/Iphone-spinner-2.gif";
 import { mainUrlPrefix } from "../main";
+
+interface Event {
+  _id: string;
+  eventImg: string;
+  eventTitle: string;
+  eventDescription: string;
+  applyLink: string
+}
 
 export default function Events() {
   const [events, setEvents] = useState([]);
@@ -13,12 +21,10 @@ export default function Events() {
 
   const fetchEvents = useCallback(async () => {
     try {
-      const response = await axios.get(
-        `${mainUrlPrefix}/event/getAllEvents`
-      );
+      const response = await axios.get(`${mainUrlPrefix}/event/getAllEvents`);
       setEvents(response.data.events);
       setLoading(false);
-      console.log(response.data.events)
+      console.log(response.data.events);
     } catch (error) {
       console.error("Error fetching events:", error);
       setError("Failed to fetch events. Please try again.");
@@ -54,7 +60,7 @@ export default function Events() {
         {events.length === 0 ? (
           <p>No events found.</p>
         ) : (
-          events.map((event: any) => (
+          events.map((event: Event) => (
             <li key={event._id} className="event-container">
               <img src={event.eventImg} alt="event picture" />
               <div className="event-details">

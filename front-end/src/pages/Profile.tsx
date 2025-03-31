@@ -1,4 +1,4 @@
-import React, { useEffect, useState, ChangeEvent, KeyboardEvent } from "react";
+import { useEffect, useState, ChangeEvent, KeyboardEvent } from "react";
 import axios from "axios";
 import "./style/Profile.css";
 import { mainUrlPrefix } from "../main";
@@ -45,12 +45,12 @@ export default function Profile() {
           `${mainUrlPrefix}/user/getUser/${userId}`
         );
   
-        console.log("API Response:", response.data); // ✅ Debug: Log the API response
+        console.log("API Response:", response.data); 
   
-        let updatedUser = response.data.userDetail;
+        const updatedUser = response.data.userDetail;
   
         if (updatedUser.userImg && updatedUser.userImg.data) {
-          console.log("Raw Buffer Data:", updatedUser.userImg.data); // ✅ Debug: Log raw buffer data
+          console.log("Raw Buffer Data:", updatedUser.userImg.data);
   
           const blob = new Blob([new Uint8Array(updatedUser.userImg.data)], {
             type: updatedUser.userImg.contentType,
@@ -168,7 +168,7 @@ export default function Profile() {
       setError("");
     } catch (error) {
       console.error("Error updating profile:", error);
-      setError(error.message || "Failed to update profile");
+      setError("Error updating profile");
     }
   };
 
