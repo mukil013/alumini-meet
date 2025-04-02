@@ -1,8 +1,8 @@
+import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import "./style/DefaultHome.css";
 import { mainUrlPrefix } from "../main";
+import "./style/DefaultHome.css";
 
 interface User {
   firstName: string;
@@ -25,7 +25,7 @@ interface User {
 
 interface Event {
   _id: string;
-  title: string;
+  eventTitle: string;
   description: string;
   date: string;
 }
@@ -48,13 +48,15 @@ export default function DefaultHome() {
     const fetchUserProfile = async () => {
       try {
         const userId = sessionStorage.getItem("user");
-        // Use the stored user's id to fetch updated profile
-        const response = await axios.get(`${mainUrlPrefix}/user/getUser/${userId}`);
-        // Assume the API response returns updated data in response.data.userDetail
+        const response = await axios.get(
+          `${mainUrlPrefix}/user/getUser/${userId}`,
+        );
         const updatedUser = response.data.userDetail;
         setUser(updatedUser);
       } catch (error) {
-        setError(error instanceof Error ? error.message : "Failed to load profile");
+        setError(
+          error instanceof Error ? error.message : "Failed to load profile",
+        );
       }
     };
 
@@ -69,7 +71,9 @@ export default function DefaultHome() {
 
     const fetchProjects = async () => {
       try {
-        const response = await axios.get(`${mainUrlPrefix}/project/getAllProjects`);
+        const response = await axios.get(
+          `${mainUrlPrefix}/project/getAllProjects`,
+        );
         setProjects(response.data.projects || []);
       } catch (error) {
         console.error("Failed to fetch projects:", error);
@@ -91,7 +95,9 @@ export default function DefaultHome() {
       <div className="profile-card">
         <h1>{`${user.firstName} ${user.lastName}`}</h1>
         <p>{user.email}</p>
-        <p><b>Education:</b> {user.dept}, {user.batch}</p>
+        <p>
+          <b>Education:</b> {user.dept}, {user.batch}
+        </p>
         <div className="bio">
           <b>Bio:</b> {user.bio || "No bio available"}
         </div>
@@ -105,13 +111,16 @@ export default function DefaultHome() {
         ) : (
           events.map((event) => (
             <div key={event._id} className="event-card">
-              <h3>{event.title}</h3>
-              <p>{event.description}</p>
-              <p><b>Date:</b> {new Date(event.date).toLocaleDateString()}</p>
+              <p>{event.eventTitle}</p>
             </div>
           ))
         )}
-        <button className="view-more-btn" onClick={() => navigate("/home/event")}>View All Events</button>
+        <button
+          className="view-more-btn"
+          onClick={() => navigate("/home/event")}
+        >
+          View All Events
+        </button>
       </div>
 
       {/* Featured Projects Section */}
@@ -127,7 +136,12 @@ export default function DefaultHome() {
             </div>
           ))
         )}
-        <button className="view-more-btn" onClick={() => navigate("/home/projects")}>View All Projects</button>
+        <button
+          className="view-more-btn"
+          onClick={() => navigate("/home/projects")}
+        >
+          View All Projects
+        </button>
       </div>
     </div>
   );

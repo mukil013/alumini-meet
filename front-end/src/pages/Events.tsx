@@ -6,14 +6,14 @@ import { mainUrlPrefix } from "../main";
 
 interface Event {
   _id: string;
-  eventImg: string;
   eventTitle: string;
   eventDescription: string;
-  applyLink: string
+  applyLink: string;
+  eventImg?: string; // Optional in case image is not present
 }
 
 export default function Events() {
-  const [events, setEvents] = useState([]);
+  const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -22,12 +22,15 @@ export default function Events() {
   const fetchEvents = useCallback(async () => {
     try {
       const response = await axios.get(`${mainUrlPrefix}/event/getAllEvents`);
-      setEvents(response.data.events);
-      setLoading(false);
-      console.log(response.data.events);
+      if (response.data.status === "Success") {
+        setEvents(response.data.events);
+      } else {
+        throw new Error("Invalid response structure");
+      }
     } catch (error) {
       console.error("Error fetching events:", error);
       setError("Failed to fetch events. Please try again.");
+    } finally {
       setLoading(false);
     }
   }, []);
@@ -60,9 +63,16 @@ export default function Events() {
         {events.length === 0 ? (
           <p>No events found.</p>
         ) : (
-          events.map((event: Event) => (
+          events.map((event) => (
             <li key={event._id} className="event-container">
-              <img src={event.eventImg} alt="event picture" />
+              <img
+                src={
+                  event.eventImg
+                    ? `${mainUrlPrefix}/event/getEventImage/${event._id}`
+                    : "https://via.placeholder.com/150"
+                }
+                alt="event"
+              />
               <div className="event-details">
                 <div className="event-title">{event.eventTitle}</div>
                 <div
