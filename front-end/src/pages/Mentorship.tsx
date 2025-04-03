@@ -402,10 +402,6 @@ export default function Mentorship() {
             {selectedGroup.posts && selectedGroup.posts.length > 0 ? (
               selectedGroup.posts.map((post: any, index: number) => (
                 <div key={post._id} className="post-card">
-                  <div className="post-content">
-                    <h3>{post.post.title}</h3>
-                    <p>{post.post.description}</p>
-                  </div>
                   {post.post.image && post.post.image.data && (
                     <img
                       src={`data:${post.post.image.contentType};base64,${arrayBufferToBase64(
@@ -414,9 +410,14 @@ export default function Mentorship() {
                       alt="Post"
                     />
                   )}
+                  <div className="post-content">
+                    <h1>{post.post.title.toUpperCase()}</h1>
+                    <p>{post.post.description}</p>
+                  </div>
                   {role === "alumini" && selectedGroup.userId === userId && (
                     <div className="post-actions">
                       <button
+                        title="Edit the post"
                         onClick={() => {
                           setEditingPost(post);
                           setPostTitle(post.post.title);
@@ -433,9 +434,10 @@ export default function Mentorship() {
                           fill="#e3e3e3"
                         >
                           <path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z" />
-                        </svg>{" "}
+                        </svg>
                       </button>
                       <button
+                        title="Delete the post"
                         onClick={() =>
                           handleDeletePost(post._id, selectedGroup._id)
                         }
@@ -463,44 +465,54 @@ export default function Mentorship() {
 
       {/* Add/Edit Post Modal */}
       {showPostForm && (
-        <dialog open={showPostForm}>
-          <form
-            onSubmit={
-              editingPost
-                ? (e) => handleEditPost(e, selectedGroup!._id, postIndex)
-                : (e) => handleAddPost(e, selectedGroup!._id)
-            }
-            className="post-form"
-          >
-            <h3>{editingPost ? "Edit Post" : "Add Post"}</h3>
-            <input
-              type="text"
-              placeholder="Post Title"
-              value={postTitle}
-              onChange={(e) => setPostTitle(e.target.value)}
-              required
-            />
-            <textarea
-              placeholder="Post Description"
-              value={postDescription}
-              onChange={(e) => setPostDescription(e.target.value)}
-              required
-            ></textarea>
-            <input type="file" accept="image/*" onChange={handleFileChange} />
-            <button type="submit">
-              {editingPost ? "Update Post" : "Add Post"}
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setShowPostForm(false);
-                setEditingPost(null);
-              }}
+        <div className="dialog-overlay">
+          <dialog open={showPostForm} className="dialog-box">
+            <form
+              onSubmit={
+                editingPost
+                  ? (e) => handleEditPost(e, selectedGroup!._id, postIndex)
+                  : (e) => handleAddPost(e, selectedGroup!._id)
+              }
+              className="post-form"
             >
-              Cancel
-            </button>
-          </form>
-        </dialog>
+              <h3>{editingPost ? "Edit Post" : "Add Post"}</h3>
+              <div className="form-inputs">
+                <input
+                  type="text"
+                  placeholder="Post Title"
+                  value={postTitle}
+                  onChange={(e) => setPostTitle(e.target.value)}
+                  required
+                />
+                <textarea
+                  placeholder="Post Description"
+                  value={postDescription}
+                  onChange={(e) => setPostDescription(e.target.value)}
+                  required
+                ></textarea>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                />
+              </div>
+              <div className="form-actions">
+                <button type="submit">
+                  {editingPost ? "Update Post" : "Add Post"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowPostForm(false);
+                    setEditingPost(null);
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </dialog>
+        </div>
       )}
     </div>
   );
