@@ -106,7 +106,7 @@ export default function Placement() {
             <p><strong>Role:</strong> {placement.jobRole}</p>
             <p><strong>Type:</strong> {placement.jobType}</p>
             <p><strong>Location:</strong> {placement.location}</p>
-            <div className="actions">
+            <div className="placement-user-actions">
               <button 
                 className="ats-btn"
                 onClick={() => openDialog(placement.jobDescription)}

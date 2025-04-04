@@ -24,7 +24,11 @@ export default function Navbar() {
         <li className="common-nav-list-items">
           <Link
             to="/admin/user-management"
-            className={isActive("/admin/user-management") ? "active" : "" + "common-nav-link"}
+            className={
+              isActive("/admin/user-management")
+                ? "active"
+                : "" + "common-nav-link"
+            }
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -59,9 +63,9 @@ export default function Navbar() {
         </li>
         <li className="common-nav-list-items">
           <Link
-            to="#"
+            to="/admin/CMS"
             className={
-              isActive("#") ? "active" : "" + "common-nav-link"
+              isActive("/admin/CMS") ? "active" : "" + "common-nav-link"
             }
           >
             <svg
@@ -80,7 +84,9 @@ export default function Navbar() {
           <Link
             to="/admin/placement-info"
             className={
-              isActive("/admin/placement-info") ? "active" : "" + "common-nav-link"
+              isActive("/admin/placement-info")
+                ? "active"
+                : "" + "common-nav-link"
             }
           >
             <svg

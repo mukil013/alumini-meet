@@ -18,6 +18,8 @@ import EditEvent from "./pages/admin/EditEvents.tsx";
 import ProtectedRoute from "./pages/ProtectedRoute.tsx";
 import { StrictMode } from "react";
 import DefaultHome from "./pages/DefaultHome.tsx";
+import ContentModeration from "./pages/admin/ContentModeration.tsx";
+import TopCompanies from "./pages/TopCompanies.tsx";
 
 const router = Bro([
   {
@@ -60,6 +62,10 @@ const router = Bro([
             path: "event",
             Component: Events,
           },
+          {
+            path: "top-companies",
+            Component: TopCompanies,
+          },
         ],
       },
     ],
@@ -81,6 +87,10 @@ const router = Bro([
         Component: UserManagement,
       },
       {
+        path: "CMS",
+        Component: ContentModeration,
+      },
+      {
         path: "placement-info",
         Component: PlacementInfo,
       },
@@ -98,5 +108,5 @@ export const mainPythonUrl = "http://127.0.0.1:5000"; //"https://alumini-meet-py
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <RouterProvider router={router} />
-  </StrictMode>,
+  </StrictMode>
 );

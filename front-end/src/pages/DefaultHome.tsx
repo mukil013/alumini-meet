@@ -49,13 +49,13 @@ export default function DefaultHome() {
       try {
         const userId = sessionStorage.getItem("user");
         const response = await axios.get(
-          `${mainUrlPrefix}/user/getUser/${userId}`,
+          `${mainUrlPrefix}/user/getUser/${userId}`
         );
         const updatedUser = response.data.userDetail;
         setUser(updatedUser);
       } catch (error) {
         setError(
-          error instanceof Error ? error.message : "Failed to load profile",
+          error instanceof Error ? error.message : "Failed to load profile"
         );
       }
     };
@@ -72,7 +72,7 @@ export default function DefaultHome() {
     const fetchProjects = async () => {
       try {
         const response = await axios.get(
-          `${mainUrlPrefix}/project/getAllProjects`,
+          `${mainUrlPrefix}/project/getAllProjects`
         );
         setProjects(response.data.projects || []);
       } catch (error) {
@@ -123,9 +123,9 @@ export default function DefaultHome() {
         </button>
       </div>
 
-      {/* Featured Projects Section */}
+      {/* Recent Projects Section */}
       <div className="profile-card">
-        <h2>Featured Projects</h2>
+        <h2>Recent Projects</h2>
         {projects.length === 0 ? (
           <p>No featured projects.</p>
         ) : (
