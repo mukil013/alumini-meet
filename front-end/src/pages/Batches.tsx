@@ -152,10 +152,6 @@ export default function Batches() {
               </p>
             ) : (
               <>
-                <p className="result-count">
-                  {filteredUsers.length}{" "}
-                  {filteredUsers.length === 1 ? "member" : "members"} found
-                </p>
                 <ul className="user-list">
                   {filteredUsers.map((user: any) => (
                     <li key={user._id} className="user-item">

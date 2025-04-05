@@ -9,7 +9,10 @@ interface Event {
   eventTitle: string;
   eventDescription: string;
   applyLink: string;
-  eventImg?: string; // Optional in case image is not present
+  eventImg?: {
+    data: string;
+    contentType: string;
+  };
 }
 
 export default function Events() {
@@ -57,6 +60,11 @@ export default function Events() {
     setSelectedDescription("");
   };
 
+  const getImageUrl = (event: Event) => {
+    if (!event.eventImg) return "https://via.placeholder.com/150";
+    return `data:${event.eventImg.contentType};base64,${event.eventImg.data}`;
+  };
+
   return (
     <>
       <ul id="events-body">
@@ -66,12 +74,9 @@ export default function Events() {
           events.map((event) => (
             <li key={event._id} className="event-container">
               <img
-                src={
-                  event.eventImg
-                    ? `${mainUrlPrefix}/event/getEventImage/${event._id}`
-                    : "https://via.placeholder.com/150"
-                }
-                alt="event"
+                src={getImageUrl(event)}
+                alt={event.eventTitle}
+                loading="lazy"
               />
               <div className="event-details">
                 <div className="event-title">{event.eventTitle}</div>

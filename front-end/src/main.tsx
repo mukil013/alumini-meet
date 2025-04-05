@@ -20,6 +20,7 @@ import { StrictMode } from "react";
 import DefaultHome from "./pages/DefaultHome.tsx";
 import ContentModeration from "./pages/admin/ContentModeration.tsx";
 import TopCompanies from "./pages/TopCompanies.tsx";
+import EditTopCompanies from "./pages/admin/EditTopCompanies.tsx";
 
 const router = Bro([
   {
@@ -97,6 +98,10 @@ const router = Bro([
       {
         path: "edit-event",
         Component: EditEvent,
+      },
+      {
+        path: "edit-top-companies",
+        Component: EditTopCompanies,
       },
     ],
   },

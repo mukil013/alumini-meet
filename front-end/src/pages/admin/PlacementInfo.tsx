@@ -22,6 +22,8 @@ export default function PlacementInfo() {
   const [editingPlacement, setEditingPlacement] = useState<Placement | null>(
     null,
   );
+  const [showDescriptionDialog, setShowDescriptionDialog] = useState<boolean>(false);
+  const [selectedDescription, setSelectedDescription] = useState<string>("");
   const [formPlacement, setFormPlacement] = useState<Placement>({
     companyName: "",
     jobRole: "",
@@ -115,6 +117,25 @@ export default function PlacementInfo() {
     });
   };
 
+  const truncateDescription = (description: string, lines: number = 4) => {
+    const lineHeight = 1.5; // Approximate line height in em
+    const maxHeight = lines * lineHeight;
+    return {
+      truncated: description.length > 150 ? description.substring(0, 150) + '...' : description,
+      isTruncated: description.length > 150
+    };
+  };
+
+  const handleReadMore = (e: React.MouseEvent, description: string) => {
+    e.stopPropagation(); // Prevent card click event
+    setSelectedDescription(description);
+    setShowDescriptionDialog(true);
+  };
+
+  const handleCloseDescriptionDialog = () => {
+    setShowDescriptionDialog(false);
+  };
+
   return (
     <div className="placement-container">
       <button
@@ -144,6 +165,19 @@ export default function PlacementInfo() {
             <p>
               <strong>Location:</strong> {placement.location}
             </p>
+            <div className="company-description-container">
+              <div className="company-description">
+                {truncateDescription(placement.jobDescription).truncated}
+              </div>
+              {truncateDescription(placement.jobDescription).isTruncated && (
+                <button 
+                  className="read-more-btn"
+                  onClick={(e) => handleReadMore(e, placement.jobDescription)}
+                >
+                  Read more...
+                </button>
+              )}
+            </div>
             <div className="form-actions">
               <button onClick={() => openEditDialog(placement)}>Edit</button>
               <button onClick={() => handleDeletePlacement(placement._id)}>
@@ -270,6 +304,20 @@ export default function PlacementInfo() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {showDescriptionDialog && (
+        <div className="description-dialog">
+          <div className="description-dialog-content">
+            <h3>Job Description</h3>
+            <div className="description-content">
+              {selectedDescription.split('\n').map((line, index) => (
+                <p key={index}>{line}</p>
+              ))}
+            </div>
+            <button onClick={handleCloseDescriptionDialog}>Close</button>
           </div>
         </div>
       )}

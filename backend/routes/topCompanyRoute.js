@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const companyController = require('../controllers/companyController');
+const companyController = require('../controller/topCompaniesController');
 
 // Public routes
 router.get('/companies', companyController.getAllCompanies);
@@ -14,5 +14,6 @@ router.delete('/companies/:id', companyController.deleteCompany);
 
 // Open comment system
 router.post('/companies/:companyId/comments', companyController.addComment);
+router.delete('/companies/:companyId/comments/:commentId', companyController.deleteComment);
 
 module.exports = router;

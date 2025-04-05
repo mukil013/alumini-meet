@@ -157,28 +157,6 @@ export default function ContentModeration() {
                   <strong>Followers:</strong> {group.followers.length}
                 </p>
               </div>
-              <button
-                className="follow-btn"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  toggleFollow(group._id);
-                }}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  height="24px"
-                  viewBox="0 -960 960 960"
-                  width="24px"
-                  fill="#fff"
-                  className={
-                    group.followers.includes(userId)
-                      ? "svgFollow"
-                      : "svgUnfollow"
-                  }
-                >
-                  <path d="M440-280h80v-160h160v-80H520v-160h-80v160H280v80h160v160Z..." />
-                </svg>
-              </button>
             </div>
           ))
         ) : (

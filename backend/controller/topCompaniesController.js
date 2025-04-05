@@ -93,3 +93,31 @@ exports.addComment = async (req, res) => {
     res.status(400).json({ message: "Error adding comment", error: error.message });
   }
 };
+
+// Delete alumni comment
+exports.deleteComment = async (req, res) => {
+  try {
+    const { companyId, commentId } = req.params;
+    
+    const company = await Company.findById(companyId);
+    if (!company) {
+      return res.status(404).json({ message: "Company not found" });
+    }
+    
+    // Filter out the comment to be deleted
+    const updatedAlumni = company.alumni.filter(
+      comment => comment._id.toString() !== commentId
+    );
+    
+    // Update the company with the filtered alumni array
+    const updatedCompany = await Company.findByIdAndUpdate(
+      companyId,
+      { alumni: updatedAlumni },
+      { new: true, runValidators: true }
+    );
+    
+    res.json({ message: "Comment deleted successfully", company: updatedCompany });
+  } catch (error) {
+    res.status(400).json({ message: "Error deleting comment", error: error.message });
+  }
+};

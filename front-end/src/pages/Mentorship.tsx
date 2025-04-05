@@ -82,7 +82,7 @@ export default function Mentorship() {
   const toggleFollow = async (groupId: string) => {
     try {
       await axios.post(
-        `${mainUrlPrefix}/mentorship/follow/${groupId}/${userId}`,
+        `${mainUrlPrefix}/mentorship/follow/${groupId}/${userId}`
       );
       fetchGroups();
     } catch (error) {
@@ -123,7 +123,7 @@ export default function Mentorship() {
       await axios.post(
         `${mainUrlPrefix}/mentorship/${groupId}/addPost`,
         formData,
-        { headers: { "Content-Type": "multipart/form-data" } },
+        { headers: { "Content-Type": "multipart/form-data" } }
       );
       setShowPostForm(false);
       setPostTitle("");
@@ -138,36 +138,36 @@ export default function Mentorship() {
   const handleEditPost = async (
     e: React.FormEvent,
     groupId: string,
-    postIndex: number,
+    postIndex: number
   ) => {
-    e.preventDefault();
-    const formData = new FormData();
-    formData.append("title", postTitle);
-    formData.append("description", postDescription);
-    if (postImage) {
-      formData.append("file", postImage);
-    }
-
     try {
+      e.preventDefault();
+      const formData = new FormData();
+      formData.append("title", postTitle);
+      formData.append("description", postDescription);
+      if (postImage) {
+        formData.append("file", postImage);
+      }
       await axios.post(
         `${mainUrlPrefix}/mentorship/${groupId}/updatePost/${postIndex}`,
         formData,
-        { headers: { "Content-Type": "multipart/form-data" } },
+        { headers: { "Content-Type": "multipart/form-data" } }
       );
       setShowPostForm(false);
       setPostTitle("");
       setPostDescription("");
       setPostImage(null);
+      setEditingPost(null);
       fetchGroups();
     } catch (error) {
-      console.error("Error adding post:", error);
+      console.error("Error updating post:", error);
     }
   };
 
   const handleDeletePost = async (postIndex: string, groupId: string) => {
     try {
       await axios.delete(
-        `${mainUrlPrefix}/mentorship/${groupId}/deletePost/${postIndex}`,
+        `${mainUrlPrefix}/mentorship/${groupId}/deletePost/${postIndex}`
       );
       fetchGroups();
     } catch (error) {
@@ -404,8 +404,10 @@ export default function Mentorship() {
                 <div key={post._id} className="post-card">
                   {post.post.image && post.post.image.data && (
                     <img
-                      src={`data:${post.post.image.contentType};base64,${arrayBufferToBase64(
-                        post.post.image.data.data,
+                      src={`data:${
+                        post.post.image.contentType
+                      };base64,${arrayBufferToBase64(
+                        post.post.image.data.data
                       )}`}
                       alt="Post"
                     />

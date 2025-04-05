@@ -1,6 +1,5 @@
 const User = require("../model/userModel");
 const nodemailer = require("nodemailer");
-const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 
 dotenv.config();

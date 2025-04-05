@@ -101,6 +101,23 @@ export default function Navbar() {
             <p>Placement Info</p>
           </Link>
         </li>
+        <li className="common-nav-list-items">
+          <Link
+            to="/admin/edit-top-companies"
+            className={isActive("/admin/edit-top-companies") ? "active" : "" + "common-nav-link"}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 -960 960 960"
+              width="24px"
+              fill="#e3e3e3"
+            >
+              <path d="m136-240-56-56 212-212q35-35 85-35t85 35l46 46q12 12 28.5 12t28.5-12l178-178H640v-80h240v240h-80v-103L621-405q-35 35-85 35t-85-35l-47-47q-11-11-28-11t-28 11L136-240Z" />
+            </svg>
+            <p>Top Companies</p>
+          </Link>
+        </li>
       </ul>
       <div className="common-profile-and-logout">
         {/* <hr className="common-nav-ruler" /> */}

@@ -91,57 +91,68 @@ export default function DefaultHome() {
   if (!user) return <div className="no-data">No user data found</div>;
 
   return (
-    <div className="profile-container">
-      <div className="profile-card">
-        <h1>{`${user.firstName} ${user.lastName}`}</h1>
-        <p>{user.email}</p>
-        <p>
-          <b>Education:</b> {user.dept}, {user.batch}
-        </p>
-        <div className="bio">
-          <b>Bio:</b> {user.bio || "No bio available"}
+    <div className="home-container">
+      <div className="two"></div>
+      <div className="home-card user-details">
+        <div className="one">
+          <h1>{`${user.firstName} ${user.lastName}`}</h1>
+          <p>{user.email}</p>
+          <p>
+            <b>Education:</b> {user.dept}, {user.batch}
+          </p>
+          <div className="bio">
+            <b>Bio:</b> {user.bio || "No bio available"}
+          </div>
         </div>
       </div>
 
       {/* Upcoming Events Section */}
-      <div className="profile-card">
-        <h2>Upcoming Events</h2>
-        {events.length === 0 ? (
-          <p>No upcoming events.</p>
-        ) : (
-          events.map((event) => (
-            <div key={event._id} className="event-card">
-              <p>{event.eventTitle}</p>
-            </div>
-          ))
-        )}
-        <button
-          className="view-more-btn"
-          onClick={() => navigate("/home/event")}
-        >
-          View All Events
-        </button>
+      <div className="home-card event-details">
+        <div className="one">
+          <h2>Upcoming Events</h2>
+          {events.length === 0 ? (
+            <p>No upcoming events.</p>
+          ) : (
+            events.map((event) => (
+              <div key={event._id} className="event-card">
+                <p>{event.eventTitle}</p>
+              </div>
+            ))
+          )}
+          <button
+            className="view-more-btn"
+            onClick={() => navigate("/home/event")}
+          >
+            View All Events
+          </button>
+        </div>
+        <div className="two">
+        </div>
       </div>
 
       {/* Recent Projects Section */}
-      <div className="profile-card">
-        <h2>Recent Projects</h2>
-        {projects.length === 0 ? (
-          <p>No featured projects.</p>
-        ) : (
-          projects.map((project) => (
-            <div key={project._id} className="project-card">
-              <h3>{project.projectTitle}</h3>
-              <p>{project.projectDescription}</p>
-            </div>
-          ))
-        )}
-        <button
-          className="view-more-btn"
-          onClick={() => navigate("/home/projects")}
-        >
-          View All Projects
-        </button>
+      <div className="home-card project-details">
+        <div className="two">
+        </div>
+        <div className="one">
+          <h2>Recent Projects</h2>
+          {projects.length === 0 ? (
+            <p>No featured projects.</p>
+          ) : (
+            projects.map((project) => (
+              <div key={project._id} className="project-card">
+                <h3>{project.projectTitle}</h3>
+                <p>{project.projectDescription}</p>
+              </div>
+            ))
+          )}
+          <button
+            className="view-more-btn"
+            onClick={() => navigate("/home/projects")}
+          >
+            View All Projects
+          </button>
+        </div>
       </div>
     </div>
   );
