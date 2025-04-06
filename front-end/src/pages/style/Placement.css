@@ -102,7 +102,8 @@
 .dialog-content {
   height: 70vh;
   width: 50vw;
-  background-color: #ffffffc9;
+  min-width: fit-content;
+  background-color: #ffffff;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -117,10 +118,9 @@
   overflow-y: auto;
 }
 dialog {
-  border: 1px solid #ccc;
+  border: 1px solid #fff;
   border-radius: 8px;
-  padding: 20px;
-  position: fixed;
+  position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -132,6 +132,7 @@ dialog::backdrop {
 }
 .dialog-actions {
   width: 20vw;
+  min-width: fit-content;
   display: flex;
   gap: 1rem;
 }

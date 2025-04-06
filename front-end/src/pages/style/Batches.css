@@ -11,13 +11,13 @@
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  align-content: center;
+  align-content: start;
   gap: 1rem;
 }
 #batches li {
   list-style: none;
-  height: 25vh;
-  width: 20vw;
+  height: 15rem;
+  width: 15rem;
 }
 #batches li button {
   height: 100%;
@@ -76,6 +76,7 @@
 
 .dialog-header {
   width: 100%;
+  min-width: fit-content;
   background-color: #fff;
   border: 1px dashed #9e9e9e;
   border-radius: 1rem;

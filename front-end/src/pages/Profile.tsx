@@ -20,7 +20,10 @@ interface User {
   companyName: string;
   batch: number;
   role: string;
-  userImg?: string;
+  userImg?: string | {
+    data: number[];
+    contentType: string;
+  };
 }
 
 export default function Profile() {
@@ -51,14 +54,22 @@ export default function Profile() {
   
         if (updatedUser.userImg && updatedUser.userImg.data) {
           console.log("Raw Buffer Data:", updatedUser.userImg.data);
-  
-          const blob = new Blob([new Uint8Array(updatedUser.userImg.data)], {
-            type: updatedUser.userImg.contentType,
-          });
-  
-          updatedUser.userImg = URL.createObjectURL(blob);
-  
-          console.log("Blob URL:", updatedUser.userImg); // ✅ Debug: Log the generated Blob URL
+          console.log("Content Type:", updatedUser.userImg.contentType);
+          
+          // Convert the buffer data to a base64 string using btoa
+          const uint8Array = new Uint8Array(updatedUser.userImg.data);
+          let binaryString = '';
+          for (let i = 0; i < uint8Array.length; i++) {
+            binaryString += String.fromCharCode(uint8Array[i]);
+          }
+          const base64String = btoa(binaryString);
+          
+          // Create a data URL for the image
+          updatedUser.userImg = `data:${updatedUser.userImg.contentType};base64,${base64String}`;
+          
+          console.log("Image URL:", updatedUser.userImg); // Debug: Log the generated image URL
+        } else {
+          console.log("No image data found in user profile");
         }
   
         setUser(updatedUser);
@@ -75,6 +86,34 @@ export default function Profile() {
     fetchUserProfile();
   }, []);
   
+  // Function to handle image display
+  const getImageUrl = (userData: User | null) => {
+    if (!userData) return "";
+    
+    if (userData.userImg) {
+      if (typeof userData.userImg === 'string') {
+        // If userImg is already a string (URL or data URL), return it
+        return userData.userImg;
+      } else if (userData.userImg.data && userData.userImg.contentType) {
+        // If userImg is an object with data, process it
+        try {
+          const uint8Array = new Uint8Array(userData.userImg.data);
+          let binaryString = '';
+          for (let i = 0; i < uint8Array.length; i++) {
+            binaryString += String.fromCharCode(uint8Array[i]);
+          }
+          const base64String = btoa(binaryString);
+          return `data:${userData.userImg.contentType};base64,${base64String}`;
+        } catch (error) {
+          console.error("Error processing image data:", error);
+          return "";
+        }
+      }
+    }
+    
+    // Default image if no valid image data
+    return "https://static.vecteezy.com/system/resources/thumbnails/036/280/651/small_2x/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg";
+  };
 
   const openEditDialog = () => {
     if (user) {
@@ -147,8 +186,9 @@ export default function Profile() {
         if (value) data.append(key, value as string);
       });
 
-      data.append("interests", interests.join(","));
-      data.append("skills", skills.join(","));
+      // Send skills and interests as arrays
+      data.append("skills", JSON.stringify(skills));
+      data.append("interests", JSON.stringify(interests));
 
       if (selectedFile) data.append("userImg", selectedFile);
 
@@ -163,6 +203,10 @@ export default function Profile() {
       );
 
       const updatedUser = fetchResponse.data.userDetail;
+      
+      // No need to process the image here as we'll use getImageUrl function
+      console.log("Updated user data:", updatedUser);
+      
       setUser(updatedUser);
       setIsEditDialogOpen(false);
       setError("");
@@ -180,12 +224,13 @@ export default function Profile() {
     <div className="profile-container">
       <div className="profile-card">
         <img
-          src={
-            user?.userImg ||
-            "https://static.vecteezy.com/system/resources/thumbnails/036/280/651/small_2x/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg"
-          }
+          src={getImageUrl(user)}
           alt={`logged in as ${user.role === "user" ? "student" : user.role}`}
           className="profile-img"
+          onError={(e) => {
+            // Fallback if image fails to load
+            e.currentTarget.src = "https://static.vecteezy.com/system/resources/thumbnails/036/280/651/small_2x/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg";
+          }}
         />
         <h1 className="profile-name">{`${user.firstName} ${user.lastName}`}</h1>
         <p className="email-id">{user.email}</p>

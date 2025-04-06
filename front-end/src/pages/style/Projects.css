@@ -58,7 +58,9 @@
   align-items: center;
   border: 1px solid #9e9e9e;
   position: relative;
-  overflow: hidden;
+}
+.project-card img{
+  width: 100%;
 }
 
 .project-card h3 {
@@ -187,4 +189,115 @@
   display: flex;
   flex-direction: column;
   gap: 1rem;
+}
+
+.no-referrals-message {
+  width: 100%;
+  text-align: center;
+  padding: 2rem;
+  background-color: #f8f9fa;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin: 1rem 0;
+  grid-column: 1 / -1;
+}
+
+.no-referrals-message p {
+  font-size: 1.1rem;
+  color: #666;
+  margin: 0;
+  font-weight: 500;
+}
+
+.referral-description {
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.referral-description p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.referral-description p.truncated {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-height: 6em; /* 4 lines * 1.5 line-height */
+}
+
+.referral-description p.expanded {
+  display: block;
+}
+
+.read-more-btn {
+  background: none;
+  border: none;
+  color: #007bff;
+  padding: 0.25rem 0;
+  font-size: 0.9rem;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.read-more-btn:hover {
+  color: #0056b3;
+  text-decoration: underline;
+}
+
+/* Description Dialog Styles */
+.description-dialog {
+  max-width: 600px;
+  width: 90%;
+}
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.dialog-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #666;
+  padding: 0;
+  line-height: 1;
+}
+
+.close-btn:hover {
+  color: #333;
+}
+
+.dialog-content {
+  padding: 0.5rem 0;
+}
+
+.full-description {
+  margin: 1rem 0;
+  line-height: 1.6;
+  max-height: 60vh;
+  overflow-y: auto;
+  padding: 0.5rem;
+  background-color: #f9f9f9;
+  border-radius: 0.5rem;
+}
+
+.full-description p {
+  margin: 0;
+  white-space: pre-wrap;
 }

@@ -72,23 +72,25 @@ exports.getAlumniUsers = async (req, res) => {
 // Unprotected comment system
 exports.addComment = async (req, res) => {
   try {
-    const company = await Company.findById(req.params.companyId);
-    const userId = req.body.userId; // Expecting userId in request body
+    const { companyId } = req.params;
+    const { remarks } = req.body;
+    const userId = req.user ? req.user._id : req.body.userId; // Get user ID from auth or request body
 
-    const updatedCompany = await Company.findByIdAndUpdate(
-      req.params.companyId,
-      {
-        $push: {
-          alumni: { 
-            user: userId, 
-            remarks: req.body.remarks 
-          }
-        }
-      },
-      { new: true, runValidators: true }
-    );
+    const company = await Company.findById(companyId);
+    if (!company) {
+      return res.status(404).json({ message: "Company not found" });
+    }
 
-    res.json(updatedCompany);
+    // Add the comment to the company
+    company.alumni.push({
+      user: userId,
+      remarks: remarks
+    });
+
+    // Save the updated company
+    const updatedCompany = await company.save();
+
+    res.json({ message: "Comment added successfully", company: updatedCompany });
   } catch (error) {
     res.status(400).json({ message: "Error adding comment", error: error.message });
   }
@@ -119,5 +121,37 @@ exports.deleteComment = async (req, res) => {
     res.json({ message: "Comment deleted successfully", company: updatedCompany });
   } catch (error) {
     res.status(400).json({ message: "Error deleting comment", error: error.message });
+  }
+};
+
+// Update alumni comment
+exports.updateComment = async (req, res) => {
+  try {
+    const { companyId, commentId } = req.params;
+    const { remarks } = req.body;
+    
+    const company = await Company.findById(companyId);
+    if (!company) {
+      return res.status(404).json({ message: "Company not found" });
+    }
+    
+    // Find and update the specific comment
+    const commentIndex = company.alumni.findIndex(
+      comment => comment._id.toString() === commentId
+    );
+    
+    if (commentIndex === -1) {
+      return res.status(404).json({ message: "Comment not found" });
+    }
+    
+    // Update the comment
+    company.alumni[commentIndex].remarks = remarks;
+    
+    // Save the updated company
+    const updatedCompany = await company.save();
+    
+    res.json({ message: "Comment updated successfully", company: updatedCompany });
+  } catch (error) {
+    res.status(400).json({ message: "Error updating comment", error: error.message });
   }
 };

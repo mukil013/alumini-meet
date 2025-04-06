@@ -221,3 +221,9 @@
 textarea {
   width: 100%;
 }
+@media screen and (max-width: 1080px) {
+  .mentor-dialog-box{
+    width: 100%;
+    height: 80%;
+  }
+}

@@ -15,5 +15,6 @@ router.delete('/companies/:id', companyController.deleteCompany);
 // Open comment system
 router.post('/companies/:companyId/comments', companyController.addComment);
 router.delete('/companies/:companyId/comments/:commentId', companyController.deleteComment);
+router.put('/companies/:companyId/comments/:commentId', companyController.updateComment);
 
 module.exports = router;

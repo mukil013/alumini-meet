@@ -12,6 +12,7 @@ export default function Login() {
     email: "",
     password: "",
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -27,16 +28,18 @@ export default function Login() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsLoading(true);
+
     try {
       const response = await axios.post(LoginLinkBackend, formData);
 
-      // Save tokens to sessionStorage
       const { accessToken, refreshToken, userDetail } = response.data;
-      const { userId, role } = userDetail
+      const { userId, role, company } = userDetail;
       sessionStorage.setItem("accessToken", accessToken);
       sessionStorage.setItem("refreshToken", refreshToken);
       sessionStorage.setItem("user", userId);
-      sessionStorage.setItem("role", role)
+      sessionStorage.setItem("role", role);
+      sessionStorage.setItem("company", company);
 
       switch (role) {
         case "user":
@@ -63,6 +66,8 @@ export default function Login() {
             "Login failed. Please check your credentials."
         );
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -102,7 +107,7 @@ export default function Login() {
                 Forgot password
               </Link>
             </label>
-            <input type="submit" value="Login" />
+            <input type="submit" value={isLoading ? "Logging in..." : "Login"} disabled={isLoading} />
             <p>
               Don't have an account? <Link to="/register">Register</Link>
             </p>

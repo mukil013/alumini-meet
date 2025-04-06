@@ -1,7 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import "./style/TopCompanies.css";
 import { mainUrlPrefix } from "../main";
+
+interface Alumni {
+  _id: string;
+  name: string;
+  profilePic: string;
+  remarks: string;
+  user: string;
+}
 
 interface Company {
   _id: string;
@@ -10,12 +18,7 @@ interface Company {
   description: string;
   website: string;
   workers: string[];
-  alumni: Array<{
-    _id: string;
-    name: string;
-    profilePic: string;
-    remarks: string;
-  }>;
+  alumni: Alumni[];
 }
 
 interface User {
@@ -25,127 +28,174 @@ interface User {
 }
 
 export default function TopCompanies() {
-  const [companies, setCompanies] = useState<Company[]>([]);
-  const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [comment, setComment] = useState("");
-  const [user, setUser] = useState<User | null>(null);
-  const [showDescriptionDialog, setShowDescriptionDialog] = useState(false);
-  const [selectedDescription, setSelectedDescription] = useState("");
+  const [state, setState] = useState({
+    companies: [] as Company[],
+    selectedCompany: null as Company | null,
+    loading: true,
+    error: null as string | null,
+    successMessage: null as string | null,
+    comment: "",
+    user: null as User | null,
+    showDescriptionDialog: false,
+    selectedDescription: "",
+    editingComment: null as { id: string; text: string } | null,
+    operationLoading: false
+  });
 
-  useEffect(() => {
-    try {
-      const userStr = sessionStorage.getItem("user");
-      if (userStr) {
-        try {
-          const userData = JSON.parse(userStr);
-          setUser(userData);
-        } catch (parseError) {
-          console.error("Error parsing user data:", parseError);
-          // Set a default user or leave as null
-        }
-      }
-    } catch (err) {
-      console.error("Error accessing sessionStorage:", err);
-    }
-    fetchCompanies();
-  }, []);
+  const {
+    companies,
+    selectedCompany,
+    loading,
+    error,
+    successMessage,
+    comment,
+    user,
+    showDescriptionDialog,
+    selectedDescription,
+    editingComment,
+    operationLoading
+  } = state;
 
-  const fetchCompanies = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.get(`${mainUrlPrefix}/top-companies/companies`);
-      setCompanies(response.data);
-      setError(null);
-    } catch (err) {
-      setError("Failed to load companies. Please try again later.");
-      console.error("Error fetching companies:", err);
-    } finally {
-      setLoading(false);
-    }
+  const updateState = (newState: Partial<typeof state>) => {
+    setState(prev => ({ ...prev, ...newState }));
   };
 
+  const getUserData = useCallback(() => {
+    try {
+      const userStr = sessionStorage.getItem("user");
+      const role = sessionStorage.getItem("role");
+      const company = sessionStorage.getItem("company");
+
+      if (userStr && role) {
+        return {
+          _id: userStr,
+          name: company || "User",
+          role: role
+        };
+      }
+      return null;
+    } catch (err) {
+      console.error("Error accessing sessionStorage:", err);
+      return null;
+    }
+  }, []);
+
+  const fetchCompanies = useCallback(async () => {
+    try {
+      updateState({ loading: true, error: null });
+      const response = await axios.get(`${mainUrlPrefix}/top-companies/companies`);
+      
+      // Debug companies data
+      console.log("Companies data:", response.data);
+      
+      updateState({ companies: response.data, loading: false });
+    } catch (err) {
+      console.error("Error fetching companies:", err);
+      updateState({ 
+        error: "Failed to load companies. Please try again later.",
+        loading: false 
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    const userData = getUserData();
+    updateState({ user: userData });
+    
+    // Debug user data
+    console.log("User data:", userData);
+    
+    fetchCompanies();
+  }, [getUserData, fetchCompanies]);
+
+  const canComment = useCallback((company: Company) => {
+    if (!user) return false;
+    
+    // Check if user is an alumni
+    if (user.role !== "alumni") return false;
+    
+    // Check if user works at this company
+    return company.workers.includes(user._id);
+  }, [user]);
+
+  const hasCommented = useCallback((company: Company) => {
+    if (!user) return false;
+    return company.alumni.some(alum => alum.user === user._id);
+  }, [user]);
+
+  const canModifyComment = useCallback((alumniUserId: string, action: 'edit' | 'delete') => {
+    if (!user) return false;
+    return action === 'edit' 
+      ? user._id === alumniUserId 
+      : user._id === alumniUserId || user.role === "admin";
+  }, [user]);
+
   const handleCompanyClick = (company: Company) => {
-    setSelectedCompany(company);
+    updateState({ selectedCompany: company });
   };
 
   const handleCloseModal = () => {
-    setSelectedCompany(null);
-    setComment("");
+    updateState({ 
+      selectedCompany: null,
+      comment: "",
+      editingComment: null
+    });
   };
 
   const handleReadMore = (description: string) => {
-    setSelectedDescription(description);
-    setShowDescriptionDialog(true);
+    updateState({
+      showDescriptionDialog: true,
+      selectedDescription: description
+    });
   };
 
   const handleCloseDescriptionDialog = () => {
-    setShowDescriptionDialog(false);
+    updateState({ showDescriptionDialog: false });
   };
 
-  const truncateDescription = (description: string, maxLines: number = 4) => {
+  const truncateDescription = (description: string, maxLines = 4) => {
     const lines = description.split('\n');
-    if (lines.length <= maxLines) return description;
-    
-    return lines.slice(0, maxLines).join('\n') + '...';
-  };
-
-  const canComment = (company: Company) => {
-    if (!user) return false;
-    if (user.role !== "alumni") return false;
-    return company.workers.includes(user._id);
-  };
-
-  const hasCommented = (company: Company) => {
-    if (!user) return false;
-    return company.alumni.some(alum => alum._id === user._id);
-  };
-
-  const canDeleteComment = (alumniId: string) => {
-    if (!user) return false;
-    return user._id === alumniId || user.role === "admin";
+    return lines.length <= maxLines 
+      ? description 
+      : lines.slice(0, maxLines).join('\n') + '...';
   };
 
   const handleAddComment = async () => {
     if (!selectedCompany || !comment.trim() || !user) return;
 
     try {
-      setLoading(true);
+      updateState({ operationLoading: true });
+      
       const token = sessionStorage.getItem("token");
-      await axios.post(
+      const response = await axios.post(
         `${mainUrlPrefix}/top-companies/companies/${selectedCompany._id}/comments`,
         { remarks: comment },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      // Update the local state
-      const updatedCompany = {
-        ...selectedCompany,
-        alumni: [
-          ...selectedCompany.alumni,
-          {
-            _id: user._id,
-            name: user.name,
-            profilePic: "", // You might want to add profile picture handling
-            remarks: comment
-          }
-        ]
-      };
-
-      setCompanies(companies.map(company => 
+      // Get the updated company from the response
+      const updatedCompany = response.data.company;
+      
+      // Update the local state with the new company data
+      const updatedCompanies = companies.map(company => 
         company._id === selectedCompany._id ? updatedCompany : company
-      ));
-      setSelectedCompany(updatedCompany);
-      setComment("");
-      setSuccessMessage("Comment added successfully!");
-      setTimeout(() => setSuccessMessage(null), 3000);
+      );
+
+      updateState({
+        companies: updatedCompanies,
+        selectedCompany: updatedCompany,
+        comment: "",
+        operationLoading: false,
+        successMessage: "Comment added successfully!"
+      });
+
+      setTimeout(() => updateState({ successMessage: null }), 3000);
     } catch (err) {
-      setError("Failed to add comment. Please try again.");
       console.error("Error adding comment:", err);
-    } finally {
-      setLoading(false);
+      updateState({ 
+        error: "Failed to add comment. Please try again.",
+        operationLoading: false 
+      });
     }
   };
 
@@ -153,30 +203,79 @@ export default function TopCompanies() {
     if (!window.confirm("Are you sure you want to delete this comment?")) return;
 
     try {
-      setLoading(true);
+      updateState({ operationLoading: true });
       const token = sessionStorage.getItem("token");
+      
       await axios.delete(
         `${mainUrlPrefix}/top-companies/companies/${companyId}/comments/${alumniId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      // Update the local state
       const updatedCompany = {
         ...selectedCompany!,
         alumni: selectedCompany!.alumni.filter(alum => alum._id !== alumniId)
       };
 
-      setCompanies(companies.map(company => 
+      const updatedCompanies = companies.map(company => 
         company._id === companyId ? updatedCompany : company
-      ));
-      setSelectedCompany(updatedCompany);
-      setSuccessMessage("Comment deleted successfully!");
-      setTimeout(() => setSuccessMessage(null), 3000);
+      );
+
+      updateState({
+        companies: updatedCompanies,
+        selectedCompany: updatedCompany,
+        operationLoading: false,
+        successMessage: "Comment deleted successfully!"
+      });
+
+      setTimeout(() => updateState({ successMessage: null }), 3000);
     } catch (err) {
-      setError("Failed to delete comment. Please try again.");
       console.error("Error deleting comment:", err);
-    } finally {
-      setLoading(false);
+      updateState({ 
+        error: "Failed to delete comment. Please try again.",
+        operationLoading: false 
+      });
+    }
+  };
+
+  const handleEditComment = async (companyId: string, commentId: string, newText: string) => {
+    if (!newText.trim()) return;
+
+    try {
+      updateState({ operationLoading: true });
+      const token = sessionStorage.getItem("token");
+      
+      await axios.put(
+        `${mainUrlPrefix}/top-companies/companies/${companyId}/comments/${commentId}`,
+        { remarks: newText },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      const updatedCompany = {
+        ...selectedCompany!,
+        alumni: selectedCompany!.alumni.map(alum => 
+          alum._id === commentId ? { ...alum, remarks: newText } : alum
+        )
+      };
+
+      const updatedCompanies = companies.map(company => 
+        company._id === companyId ? updatedCompany : company
+      );
+
+      updateState({
+        companies: updatedCompanies,
+        selectedCompany: updatedCompany,
+        editingComment: null,
+        operationLoading: false,
+        successMessage: "Comment updated successfully!"
+      });
+
+      setTimeout(() => updateState({ successMessage: null }), 3000);
+    } catch (err) {
+      console.error("Error updating comment:", err);
+      updateState({ 
+        error: "Failed to update comment. Please try again.",
+        operationLoading: false 
+      });
     }
   };
 
@@ -229,51 +328,103 @@ export default function TopCompanies() {
             <div className="company-description-container">
               <p>{selectedCompany.description}</p>
             </div>
-            <a href={selectedCompany.website} target="_blank" rel="noopener noreferrer">
+            <a href={selectedCompany.website} target="_blank" rel="noopener noreferrer" className="website-link">
               Visit Website
             </a>
 
             <div className="alumni-list">
               <h3>Alumni Comments</h3>
-              {selectedCompany.alumni.map(alumni => (
-                <div key={alumni._id} className="alumni-card">
-                  <div className="alumni-header">
-                    <img
-                      src={alumni.profilePic || "/default-profile.png"}
-                      alt={alumni.name}
-                      className="profile-pic"
-                    />
-                    <h4>{alumni.name}</h4>
+              {selectedCompany.alumni.length === 0 ? (
+                <p className="no-comments">No comments yet</p>
+              ) : (
+                selectedCompany.alumni.map(alumni => (
+                  <div key={alumni._id} className="alumni-card">
+                    <div className="alumni-header">
+                      <img
+                        src={alumni.profilePic || "/default-profile.png"}
+                        alt={alumni.name}
+                        className="profile-pic"
+                      />
+                      <h4>{alumni.name}</h4>
+                    </div>
+                    {editingComment?.id === alumni._id ? (
+                      <div className="edit-comment-form">
+                        <textarea
+                          value={editingComment.text}
+                          onChange={(e) => updateState({ 
+                            editingComment: { ...editingComment, text: e.target.value }
+                          })}
+                          placeholder="Edit your comment..."
+                        />
+                        <div className="edit-comment-actions">
+                          <button
+                            onClick={() => handleEditComment(selectedCompany._id, alumni._id, editingComment.text)}
+                            disabled={!editingComment.text.trim() || operationLoading}
+                          >
+                            {operationLoading ? "Saving..." : "Save"}
+                          </button>
+                          <button onClick={() => updateState({ editingComment: null })}>
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        <p className="remarks">{alumni.remarks}</p>
+                        <div className="comment-actions">
+                          {canModifyComment(alumni.user, 'edit') && (
+                            <button
+                              className="edit-comment-btn"
+                              onClick={() => updateState({ 
+                                editingComment: { id: alumni._id, text: alumni.remarks }
+                              })}
+                            >
+                              Edit Comment
+                            </button>
+                          )}
+                          {canModifyComment(alumni.user, 'delete') && (
+                            <button
+                              className="delete-comment-btn"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteComment(selectedCompany._id, alumni._id);
+                              }}
+                            >
+                              Delete Comment
+                            </button>
+                          )}
+                        </div>
+                      </>
+                    )}
                   </div>
-                  <p className="remarks">{alumni.remarks}</p>
-                  {canDeleteComment(alumni._id) && (
-                    <button
-                      className="delete-comment-btn"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDeleteComment(selectedCompany._id, alumni._id);
-                      }}
-                    >
-                      Delete Comment
-                    </button>
-                  )}
-                </div>
-              ))}
+                ))
+              )}
             </div>
+
+            {/* Debug information */}
+            {user && (
+              <div className="debug-info" style={{ marginTop: '20px', padding: '10px', background: '#f5f5f5', borderRadius: '5px' }}>
+                <p>User ID: {user._id}</p>
+                <p>User Role: {user.role}</p>
+                <p>Can Comment: {canComment(selectedCompany) ? 'Yes' : 'No'}</p>
+                <p>Has Commented: {hasCommented(selectedCompany) ? 'Yes' : 'No'}</p>
+                <p>Company Workers: {selectedCompany.workers.join(', ')}</p>
+              </div>
+            )}
 
             {canComment(selectedCompany) && !hasCommented(selectedCompany) && (
               <div className="add-comment-section">
                 <h4>Add Your Comment</h4>
                 <textarea
                   value={comment}
-                  onChange={(e) => setComment(e.target.value)}
+                  onChange={(e) => updateState({ comment: e.target.value })}
                   placeholder="Share your experience working at this company..."
                 />
                 <button
                   onClick={handleAddComment}
-                  disabled={!comment.trim() || loading}
+                  disabled={!comment.trim() || operationLoading}
                 >
-                  {loading ? "Adding..." : "Add Comment"}
+                  {operationLoading ? "Adding..." : "Add Comment"}
                 </button>
               </div>
             )}

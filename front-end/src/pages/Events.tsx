@@ -62,7 +62,23 @@ export default function Events() {
 
   const getImageUrl = (event: Event) => {
     if (!event.eventImg) return "https://via.placeholder.com/150";
-    return `data:${event.eventImg.contentType};base64,${event.eventImg.data}`;
+    
+    // Handle the image data based on its type
+    let imageData = event.eventImg.data;
+    
+    // If it's not already a string, try to convert it
+    if (typeof imageData !== 'string') {
+      try {
+        // Use a more browser-compatible approach
+        const uint8Array = new Uint8Array(Object.values(imageData));
+        imageData = btoa(String.fromCharCode.apply(null, Array.from(uint8Array)));
+      } catch (error) {
+        console.error("Error converting image data:", error);
+        return "https://via.placeholder.com/150";
+      }
+    }
+      
+    return `data:${event.eventImg.contentType};base64,${imageData}`;
   };
 
   return (

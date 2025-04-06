@@ -113,10 +113,23 @@ const getEventImage = async (req, res) => {
 const getAllEvents = async (req, res) => {
   try {
     const events = await Event.find();
+    
+    // Format the events to ensure image data is properly handled
+    const formattedEvents = events.map(event => {
+      const eventObj = event.toObject();
+      
+      // Convert Buffer to base64 string for the frontend
+      if (eventObj.eventImg && eventObj.eventImg.data) {
+        eventObj.eventImg.data = eventObj.eventImg.data.toString('base64');
+      }
+      
+      return eventObj;
+    });
+    
     res.status(200).json({
       status: "Success",
       message: "Fetched all events successfully.",
-      events: events,
+      events: formattedEvents,
     });
   } catch (error) {
     res.status(500).json({
@@ -151,6 +164,35 @@ const deleteEvent = async (req, res) => {
   }
 };
 
+const getEventById = async (req, res) => {
+  try {
+    const event = await Event.findById(req.params.id);
+    if (!event) {
+      return res.status(404).json({
+        status: "Failure",
+        message: "Event not found",
+      });
+    }
+
+    // Convert the event to a plain object and format the image data
+    const eventObj = event.toObject();
+    if (eventObj.eventImg && eventObj.eventImg.data) {
+      eventObj.eventImg.data = eventObj.eventImg.data.toString('base64');
+    }
+
+    res.status(200).json({
+      status: "Success",
+      message: "Event fetched successfully",
+      event: eventObj,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: "Failure",
+      message: `Cannot fetch event: ${error.message}`,
+    });
+  }
+};
+
 module.exports = {
   handleFileUpload,
   addEvent,
@@ -158,4 +200,5 @@ module.exports = {
   deleteEvent,
   editEvent,
   getEventImage,
+  getEventById,
 };

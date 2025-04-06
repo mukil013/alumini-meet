@@ -14,6 +14,7 @@ export default function Register() {
   const [verificationCode, setVerificationCode] = useState("");
   const [verificationError, setVerificationError] = useState("");
   const [registeredEmail, setRegisteredEmail] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -54,22 +55,25 @@ export default function Register() {
       return;
     }
 
+    setIsLoading(true);
     try {
       await axios.post(SendOTPLinkBackend, { email: formData.email });
       setIsVerificationDialogOpen(true); 
       setRegisteredEmail(formData.email); 
-      window.location.href = "/login"
     } catch (error) {
       if (axios.isAxiosError(error)) {
         alert(error.response?.data?.message || "Error sending OTP.");
       } else {
         alert("An error occurred. Please try again.");
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleVerificationSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
     try {
       // Verify OTP and register user
       const response = await axios.post(VerificationLinkBackend, {
@@ -96,6 +100,9 @@ export default function Register() {
         });
         setRole("");
         setNext(false);
+        
+        // Redirect to login after successful registration
+        window.location.href = "/login";
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -103,6 +110,8 @@ export default function Register() {
       } else {
         setVerificationError("An error occurred. Please try again.");
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -294,7 +303,7 @@ export default function Register() {
                     <option value="others">Other</option>
                   </select>
                 </label>
-                <input type="submit" value="Register" />
+                <input type="submit" value={isLoading ? "Processing..." : "Register"} disabled={isLoading} />
                 <p className="redirect">
                   Already have an account? <Link to="/login">Login</Link>
                 </p>
@@ -324,20 +333,24 @@ export default function Register() {
                 <p className="error">{verificationError}</p>
               )}
               <div className="action-btns">
-                <button type="submit">Verify</button>
+                <button type="submit" disabled={isLoading}>{isLoading ? "Verifying..." : "Verify"}</button>
                 <button
                   type="button"
                   onClick={async () => {
                     try {
+                      setIsLoading(true);
                       await axios.post(SendOTPLinkBackend, { email: registeredEmail });
                       alert("New OTP sent!");
                     } catch (error) {
                       setVerificationError("Failed to resend OTP.");
                       console.error(error)
+                    } finally {
+                      setIsLoading(false);
                     }
                   }}
+                  disabled={isLoading}
                 >
-                  Resend Code
+                  {isLoading ? "Sending..." : "Resend Code"}
                 </button>
               </div>
              <button className="cancel" onClick={() => setIsVerificationDialogOpen(false)}>Cancel</button>
