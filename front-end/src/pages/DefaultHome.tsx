@@ -42,7 +42,6 @@ export default function DefaultHome() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserProfile = async () => {

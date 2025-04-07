@@ -90,9 +90,7 @@ export default function Placement() {
     setSelectedFile(null);
   };
 
-  const truncateDescription = (description: string, lines: number = 4) => {
-    const lineHeight = 1.5; // Approximate line height in em
-    const maxHeight = lines * lineHeight;
+  const truncateDescription = (description: string) => {
     return {
       truncated: description.length > 150 ? description.substring(0, 150) + '...' : description,
       isTruncated: description.length > 150
@@ -100,7 +98,7 @@ export default function Placement() {
   };
 
   const handleReadMore = (e: React.MouseEvent, description: string) => {
-    e.stopPropagation(); // Prevent card click event
+    e.stopPropagation();
     setSelectedDescription(description);
     setShowDescriptionDialog(true);
   };

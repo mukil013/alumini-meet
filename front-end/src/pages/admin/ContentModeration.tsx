@@ -33,9 +33,7 @@ interface Group {
 
 export default function ContentModeration() {
   const [community, setCommunity] = useState<Group[]>([]);
-  const userId = sessionStorage.getItem("user")!;
-  const role = sessionStorage.getItem("role")!;
-  const [currentPage, setCurrentPage] = useState("explore");
+  const [currentPage, ] = useState("explore");
   const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
 
   const [showPostForm, setShowPostForm] = useState(false);
@@ -43,7 +41,7 @@ export default function ContentModeration() {
   const [postDescription, setPostDescription] = useState("");
   const [postImage, setPostImage] = useState<File | null>(null);
   const [editingPost, setEditingPost] = useState<any>(null);
-  const [postIndex, setPostIndex] = useState<number>(-1);
+  const [postIndex, ] = useState<number>(-1);
 
   async function fetchGroups() {
     try {
@@ -57,17 +55,6 @@ export default function ContentModeration() {
   useEffect(() => {
     fetchGroups();
   }, [currentPage]);
-
-  const toggleFollow = async (groupId: string) => {
-    try {
-      await axios.post(
-        `${mainUrlPrefix}/mentorship/follow/${groupId}/${userId}`
-      );
-      fetchGroups();
-    } catch (error) {
-      console.error("Error following/unfollowing group:", error);
-    }
-  };
 
   const handleAddPost = async (e: React.FormEvent, groupId: string) => {
     e.preventDefault();
@@ -178,7 +165,7 @@ export default function ContentModeration() {
               </div>
             </div>
             {selectedGroup.posts.length > 0 ? (
-              selectedGroup.posts.map((post, index) => (
+              selectedGroup.posts.map((post) => (
                 <div key={post._id} className="post-card">
                   {post.post.image?.data && (
                     <img

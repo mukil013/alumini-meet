@@ -18,7 +18,6 @@ export default function Referrals() {
   const [referrals, setReferrals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [expandedDescriptions, setExpandedDescriptions] = useState<Record<string, boolean>>({});
   const [selectedReferral, setSelectedReferral] = useState<Refferal | null>(null);
   const [addReferralForm, setAddReferralForm] = useState(false);
   const [editingReferral, setEditingReferral] = useState<Refferal | null>(null);
@@ -27,14 +26,6 @@ export default function Referrals() {
     jobDescription: "",
     applyLink: "",
   });
-
-  // Toggle description expansion
-  const toggleDescription = (referralId: string) => {
-    setExpandedDescriptions(prev => ({
-      ...prev,
-      [referralId]: !prev[referralId]
-    }));
-  };
 
   // Open description dialog
   const openDescriptionDialog = (referral: Refferal) => {
