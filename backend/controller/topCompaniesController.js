@@ -1,157 +1,123 @@
 const Company = require("../model/topCompanyModel");
-const User = require("../model/userModel");
 
-// Public access endpoints
-exports.getAllCompanies = async (req, res) => {
-  try {
-    const companies = await Company.find().populate(
-      "alumni.user",
-      "firstName lastName position"
-    );
-    res.json(companies);
-  } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+exports.getCompany = async (req, res) => {
+  try{
+    const response = await Company.find()
+    res.status(201).json(response);
+  }catch(error){
+    res.status(500).json({ error: error.message });
   }
-};
+}
 
-exports.getCompanyAlumni = async (req, res) => {
+// Company CRUD operations
+exports.addCompany = async (req, res) => {
   try {
-    const company = await Company.findById(req.params.id).populate(
-      "alumni.user",
-      "firstName lastName batch position profilePicture"
-    );
-    res.json(company?.alumni || []);
+    const newCompany = await Company.create(req.body);
+    res.status(201).json(newCompany);
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
-  }
-};
-
-// Unprotected admin endpoints
-exports.createCompany = async (req, res) => {
-  try {
-    const company = new Company(req.body);
-    await company.save();
-    res.status(201).json(company);
-  } catch (error) {
-    res.status(400).json({ message: "Error creating company", error: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
 
 exports.updateCompany = async (req, res) => {
   try {
-    const company = await Company.findByIdAndUpdate(
+    const updatedCompany = await Company.findByIdAndUpdate(
       req.params.id,
       req.body,
-      { new: true, runValidators: true }
+      { new: true }
     );
-    res.json(company);
+    
+    if (!updatedCompany) return res.status(404).json({ message: "Company not found" });
+    res.json(updatedCompany);
   } catch (error) {
-    res.status(400).json({ message: "Error updating company", error: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
 
 exports.deleteCompany = async (req, res) => {
   try {
-    await Company.findByIdAndDelete(req.params.id);
+    const deletedCompany = await Company.findByIdAndDelete(req.params.id);
+    if (!deletedCompany) return res.status(404).json({ message: "Company not found" });
     res.json({ message: "Company deleted successfully" });
   } catch (error) {
-    res.status(400).json({ message: "Error deleting company", error: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
 
-// Public user data
-exports.getAlumniUsers = async (req, res) => {
+// Alumni Remarks Operations
+exports.addRemarks = async (req, res) => {
   try {
-    const alumni = await User.find({ role: "alumni" }).select("firstName lastName _id");
-    res.json(alumni);
-  } catch (error) {
-    res.status(500).json({ message: "Error fetching alumni", error: error.message });
-  }
-};
+    const company = await Company.findById(req.params.companyId);
+    if (!company) return res.status(404).json({ message: "Company not found" });
 
-// Unprotected comment system
-exports.addComment = async (req, res) => {
-  try {
-    const { companyId } = req.params;
-    const { remarks } = req.body;
-    const userId = req.user ? req.user._id : req.body.userId; // Get user ID from auth or request body
-
-    const company = await Company.findById(companyId);
-    if (!company) {
-      return res.status(404).json({ message: "Company not found" });
-    }
-
-    // Add the comment to the company
     company.alumni.push({
-      user: userId,
-      remarks: remarks
+      userId: req.body.userId,
+      remarks: req.body.remarks,
     });
 
-    // Save the updated company
-    const updatedCompany = await company.save();
-
-    res.json({ message: "Comment added successfully", company: updatedCompany });
+    await company.save();
+    res.json(company);
   } catch (error) {
-    res.status(400).json({ message: "Error adding comment", error: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
 
-// Delete alumni comment
-exports.deleteComment = async (req, res) => {
+exports.updateRemarks = async (req, res) => {
   try {
-    const { companyId, commentId } = req.params;
-    
-    const company = await Company.findById(companyId);
-    if (!company) {
-      return res.status(404).json({ message: "Company not found" });
-    }
-    
-    // Filter out the comment to be deleted
-    const updatedAlumni = company.alumni.filter(
-      comment => comment._id.toString() !== commentId
+    const company = await Company.findById(req.params.companyId);
+    if (!company) return res.status(404).json({ message: "Company not found" });
+
+    const alumniIndex = company.alumni.findIndex(
+      a => a.userId === req.params.userId
     );
     
-    // Update the company with the filtered alumni array
-    const updatedCompany = await Company.findByIdAndUpdate(
-      companyId,
-      { alumni: updatedAlumni },
-      { new: true, runValidators: true }
-    );
+    if (alumniIndex === -1) return res.status(404).json({ message: "Remarks not found" });
     
-    res.json({ message: "Comment deleted successfully", company: updatedCompany });
+    company.alumni[alumniIndex].remarks = req.body.remarks;
+    await company.save();
+    res.json(company);
   } catch (error) {
-    res.status(400).json({ message: "Error deleting comment", error: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
 
-// Update alumni comment
-exports.updateComment = async (req, res) => {
+exports.deleteRemarks = async (req, res) => {
   try {
-    const { companyId, commentId } = req.params;
-    const { remarks } = req.body;
-    
-    const company = await Company.findById(companyId);
-    if (!company) {
-      return res.status(404).json({ message: "Company not found" });
-    }
-    
-    // Find and update the specific comment
-    const commentIndex = company.alumni.findIndex(
-      comment => comment._id.toString() === commentId
+    const company = await Company.findById(req.params.companyId);
+    if (!company) return res.status(404).json({ message: "Company not found" });
+
+    const initialLength = company.alumni.length;
+    company.alumni = company.alumni.filter(
+      a => a.userId !== req.params.userId
     );
-    
-    if (commentIndex === -1) {
-      return res.status(404).json({ message: "Comment not found" });
+
+    if (initialLength === company.alumni.length) {
+      return res.status(404).json({ message: "Remarks not found" });
     }
-    
-    // Update the comment
-    company.alumni[commentIndex].remarks = remarks;
-    
-    // Save the updated company
-    const updatedCompany = await company.save();
-    
-    res.json({ message: "Comment updated successfully", company: updatedCompany });
+
+    await company.save();
+    res.json({ message: "Remarks deleted successfully" });
   } catch (error) {
-    res.status(400).json({ message: "Error updating comment", error: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
+
+exports.deleteRemarksAdmin = async (req, res) => {
+  try{
+    const { Id } = req.params;
+    const company = await Company.findById(req.params.companyId);
+    const initialLength = company.alumni.length;
+    company.alumni = company.alumni.filter(
+      a => a._Id !== Id
+    );
+
+    if (initialLength === company.alumni.length) {
+      return res.status(404).json({ message: "Remarks not found" });
+    }
+
+    await company.save();
+    res.json({ message: "Remarks deleted successfully" });
+  }catch(err){
+
+  }
+}

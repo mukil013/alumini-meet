@@ -34,12 +34,12 @@ export default function Login() {
       const response = await axios.post(LoginLinkBackend, formData);
 
       const { accessToken, refreshToken, userDetail } = response.data;
-      const { userId, role, company } = userDetail;
+      const { userId, role, companyName } = userDetail;
       sessionStorage.setItem("accessToken", accessToken);
       sessionStorage.setItem("refreshToken", refreshToken);
       sessionStorage.setItem("user", userId);
       sessionStorage.setItem("role", role);
-      sessionStorage.setItem("company", company);
+      sessionStorage.setItem("company", companyName);
 
       switch (role) {
         case "user":

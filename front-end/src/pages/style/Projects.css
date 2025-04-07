@@ -249,19 +249,14 @@
   text-decoration: underline;
 }
 
-/* Description Dialog Styles */
-.description-dialog {
-  max-width: 600px;
-  width: 90%;
-}
-
 .dialog-header {
+  width: 100%;
+  height: fit-content;
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;
   padding-bottom: 0.5rem;
-  border-bottom: 1px solid #eee;
 }
 
 .dialog-header h2 {
@@ -270,11 +265,10 @@
 }
 
 .close-btn {
-  background: none;
+  background: transparent;
   border: none;
   font-size: 1.5rem;
   cursor: pointer;
-  color: #666;
   padding: 0;
   line-height: 1;
 }
@@ -283,21 +277,13 @@
   color: #333;
 }
 
-.dialog-content {
-  padding: 0.5rem 0;
-}
-
-.full-description {
-  margin: 1rem 0;
-  line-height: 1.6;
-  max-height: 60vh;
-  overflow-y: auto;
-  padding: 0.5rem;
-  background-color: #f9f9f9;
-  border-radius: 0.5rem;
+.dialog-content{
+  
 }
 
 .full-description p {
-  margin: 0;
+  margin: auto;
+  width: 100%;
   white-space: pre-wrap;
+  text-align: justify;
 }

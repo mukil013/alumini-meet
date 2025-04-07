@@ -5,7 +5,7 @@ import Home from "./pages/Home.tsx";
 import Register from "./pages/auth/Register.tsx";
 import Login from "./pages/auth/Login.tsx";
 import Batches from "./pages/Batches.tsx";
-import Profile from "./pages/Profile.tsx";
+import ProfileNew from "./pages/ProfileNew.tsx";
 import Projects from "./pages/Projects.tsx";
 import Placement from "./pages/Placement.tsx";
 import Mentorship from "./pages/Mentorship.tsx";
@@ -41,7 +41,7 @@ const router = Bro([
           },
           {
             path: "profile",
-            Component: Profile,
+            Component: ProfileNew,
           },
           {
             path: "Refferral",

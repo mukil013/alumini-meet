@@ -10,10 +10,10 @@
 }
 
 .event-container {
-  height: 20rem;
+  height: 22rem;
   width: 100%;
   border: none;
-  padding: 0;
+  padding: 1rem;
   border-radius: 0.5rem;
   list-style: none;
   display: flex;

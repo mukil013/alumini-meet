@@ -286,12 +286,12 @@ export default function Referrals() {
           <div className="dialog-box">
             <div className="dialog-header">
               <h2>{selectedReferral.referraltitle}</h2>
-              <button 
+              <div 
                 className="close-btn"
                 onClick={closeDescriptionDialog}
               >
-                x
-              </button>
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="darkred"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
+              </div>
             </div>
             <div className="dialog-content">
               <div className="full-description">

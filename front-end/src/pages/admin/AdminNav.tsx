@@ -19,7 +19,7 @@ export default function Navbar() {
 
   return (
     <nav className="common-nav">
-      <div className="common-nav-logo">Alumini meet</div>
+      <div className="common-nav-logo">Alumni meet</div>
       <ul className="common-nav-list">
         <li className="common-nav-list-items">
           <Link

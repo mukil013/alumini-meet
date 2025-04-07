@@ -24,7 +24,7 @@ interface Group {
       title: string;
       description: string;
       image?: {
-        data: number[];
+        data: number[] | any;
         contentType: string;
       };
     };

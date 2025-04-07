@@ -1,20 +1,15 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const companyController = require('../controller/topCompaniesController');
+const companyController = require("../controller/topCompaniesController");
 
-// Public routes
-router.get('/companies', companyController.getAllCompanies);
-router.get('/companies/:id/alumni', companyController.getCompanyAlumni);
-router.get('/alumni-users', companyController.getAlumniUsers);
+router.get("/", companyController.getCompany);
+router.post("/", companyController.addCompany);
+router.put("/:id", companyController.updateCompany);
+router.delete("/:id", companyController.deleteCompany);
 
-// Unprotected admin endpoints
-router.post('/companies', companyController.createCompany);
-router.put('/companies/:id', companyController.updateCompany);
-router.delete('/companies/:id', companyController.deleteCompany);
-
-// Open comment system
-router.post('/companies/:companyId/comments', companyController.addComment);
-router.delete('/companies/:companyId/comments/:commentId', companyController.deleteComment);
-router.put('/companies/:companyId/comments/:commentId', companyController.updateComment);
+router.post("/:companyId/alumni", companyController.addRemarks);
+router.put("/:companyId/alumni/:userId", companyController.updateRemarks);
+router.delete("/:companyId/alumni/:userId", companyController.deleteRemarks);
+router.delete("/:companyId/admin-delete/:Id", companyController.deleteRemarksAdmin)
 
 module.exports = router;

@@ -34,12 +34,6 @@
   background-color: #fff;
 }
 
-/* Event Background */
-.event-details .img {
-  background-image:
-    url('https://imgs.search.brave.com/6hF-fvBviibIleEmjAG1pQflWDPacIXZjSPQwGiR4oM/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWcu/ZnJlZXBpay5jb20v/cHJlbWl1bS1waG90/by9zaWxob3VldHRl/cy1jb25jZXJ0LWNy/b3dkLWV2ZW50LXdp/dGgtbG90LXBlb3Bs/ZS1iaWctY2x1Yi1u/aWdodC1wYXJ0eV8z/NjcwMzgtMTExLmpw/Zz9zZW10PWFpc19o/eWJyaWQmdz03NDA');
-}
-
 /* Project Background */
 .project-details .img {
   background-image:
@@ -48,7 +42,7 @@
 
 .user-details{
   height: 50vh;
-  width: 50%;
+  width: 100%;
   background-image: linear-gradient(-45deg, #f4d35e, #ffafcc, #a2d2ff);
   display: flex;
   flex-direction: column;

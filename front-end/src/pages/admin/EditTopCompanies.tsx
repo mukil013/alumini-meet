@@ -3,6 +3,12 @@ import axios from "axios";
 import { mainUrlPrefix } from "../../main";
 import "./style/EditTopCompanies.css";
 
+interface Alumni {
+  _id: string;
+  user: string;
+  remarks: string;
+}
+
 interface Company {
   _id: string;
   name: string;
@@ -12,27 +18,14 @@ interface Company {
   alumni: Alumni[];
 }
 
-interface Alumni {
-  _id: string;
-  user: {
-    _id: string;
-    firstName: string;
-    lastName: string;
-    batch: string;
-    position: string;
-    profilePicture: string;
-  };
-  remarks: string;
-}
-
 export default function EditTopCompanies() {
   const [companies, setCompanies] = useState<Company[]>([]);
   const [formData, setFormData] = useState<Partial<Company>>({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
 
-  // Get user data from sessionStorage
   const token = sessionStorage.getItem("token") || "";
 
   useEffect(() => {
@@ -42,10 +35,10 @@ export default function EditTopCompanies() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const companiesRes = await axios.get(`${mainUrlPrefix}/top-companies/companies`);
-      setCompanies(companiesRes.data);
-    } catch (err) {
-      setError("Failed to load data: " + err);
+      const res = await axios.get(`${mainUrlPrefix}/top-companies`);
+      setCompanies(res.data);
+    } catch (err: any) {
+      setError("Failed to load data: " + (err.response?.data?.message || err.message));
     } finally {
       setLoading(false);
     }
@@ -56,9 +49,8 @@ export default function EditTopCompanies() {
     setLoading(true);
     try {
       const url = formData._id
-        ? `${mainUrlPrefix}/top-companies/companies/${formData._id}`
-        : `${mainUrlPrefix}/top-companies/companies`;
-
+        ? `${mainUrlPrefix}/top-companies/${formData._id}`
+        : `${mainUrlPrefix}/top-companies`;
       const method = formData._id ? "put" : "post";
 
       const { data } = await axios[method](url, formData, {
@@ -66,65 +58,57 @@ export default function EditTopCompanies() {
       });
 
       setCompanies((prev) =>
-        formData._id
-          ? prev.map((c) => (c._id === data._id ? data : c))
-          : [...prev, data]
+        formData._id ? prev.map((c) => (c._id === data._id ? data : c)) : [...prev, data]
       );
 
       setFormData({});
       setSuccessMessage(`Company ${formData._id ? "updated" : "added"} successfully!`);
       setTimeout(() => setSuccessMessage(""), 3000);
-    } catch (err) {
-      setError("Operation failed: " + err);
+    } catch (err: any) {
+      setError("Operation failed: " + (err.response?.data?.message || err.message));
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (window.confirm("Are you sure you want to delete this company?")) {
-      setLoading(true);
-      try {
-        await axios.delete(`${mainUrlPrefix}/top-companies/companies/${id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setCompanies((prev) => prev.filter((c) => c._id !== id));
-        setSuccessMessage("Company deleted successfully!");
-        setTimeout(() => setSuccessMessage(""), 3000);
-      } catch (err) {
-        setError("Delete failed: " + err);
-      } finally {
-        setLoading(false);
-      }
+    if (!window.confirm("Are you sure you want to delete this company?")) return;
+    setLoading(true);
+    try {
+      await axios.delete(`${mainUrlPrefix}/top-companies/${id}`);
+      setCompanies((prev) => prev.filter((c) => c._id !== id));
+      setSuccessMessage("Company deleted successfully!");
+      setTimeout(() => setSuccessMessage(""), 3000);
+    } catch (err: any) {
+      setError("Delete failed: " + (err.response?.data?.message || err.message));
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleDeleteComment = async (companyId: string, alumniId: string) => {
-    if (window.confirm("Are you sure you want to delete this comment?")) {
-      setLoading(true);
-      try {
-        // Use the new endpoint to delete the comment
-        await axios.delete(
-          `${mainUrlPrefix}/top-companies/companies/${companyId}/comments/${alumniId}`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        
-        // Update the local state by removing the deleted comment
-        setCompanies(prev => 
-          prev.map(c => 
-            c._id === companyId 
-              ? { ...c, alumni: c.alumni.filter(a => a._id !== alumniId) } 
-              : c
-          )
-        );
-        
-        setSuccessMessage("Comment deleted successfully!");
-        setTimeout(() => setSuccessMessage(""), 3000);
-      } catch (err) {
-        setError("Failed to delete comment: " + err);
-      } finally {
-        setLoading(false);
-      }
+    if (!window.confirm("Are you sure you want to delete this comment?")) return;
+    setLoading(true);
+    try {
+      const company = companies.find(c => c._id === companyId);
+      const alumni = company?.alumni.find(a => a._id === alumniId);
+      if (!alumni) throw new Error("Alumni comment not found");
+
+      await axios.delete(`${mainUrlPrefix}/top-companies/${companyId}/admin-delete/${alumni.user}`);
+
+      setCompanies(prev =>
+        prev.map(company =>
+          company._id === companyId
+            ? { ...company, alumni: company.alumni.filter(a => a._id !== alumniId) }
+            : company
+        )
+      );
+      setSuccessMessage("Comment deleted successfully!");
+      setTimeout(() => setSuccessMessage(""), 3000);
+    } catch (err: any) {
+      setError("Failed to delete comment: " + (err.response?.data?.message || err.message));
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -133,73 +117,43 @@ export default function EditTopCompanies() {
   return (
     <div className="edit-top-companies-container">
       <h1>Manage Top Companies</h1>
-      
+
       {error && <div className="error-message">{error}</div>}
       {successMessage && <div className="success-message">{successMessage}</div>}
-      
+
+      {/* Company Form */}
       <div className="add-company-section">
         <h2>{formData._id ? "Edit Company" : "Add New Company"}</h2>
         <form onSubmit={handleFormSubmit} className="company-form">
-          <div className="form-group">
-            <label htmlFor="name">Company Name:</label>
-            <input
-              id="name"
-              required
-              value={formData.name || ""}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="logo">Logo URL:</label>
-            <input
-              id="logo"
-              required
-              value={formData.logo || ""}
-              onChange={(e) =>
-                setFormData({ ...formData, logo: e.target.value })
-              }
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="description">Description:</label>
-            <textarea
-              id="description"
-              required
-              value={formData.description || ""}
-              onChange={(e) =>
-                setFormData({ ...formData, description: e.target.value })
-              }
-              rows={4}
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="website">Website:</label>
-            <input
-              id="website"
-              required
-              type="url"
-              value={formData.website || ""}
-              onChange={(e) =>
-                setFormData({ ...formData, website: e.target.value })
-              }
-            />
-          </div>
+          {["name", "logo", "description", "website"].map((field) => (
+            <div key={field} className="form-group">
+              <label htmlFor={field}>{field.charAt(0).toUpperCase() + field.slice(1)}:</label>
+              {field === "description" ? (
+                <textarea
+                  id={field}
+                  required
+                  value={formData.description || ""}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  rows={4}
+                />
+              ) : (
+                <input
+                  id={field}
+                  required
+                  type={field === "website" ? "url" : "text"}
+                  value={formData[field as keyof Company]?.toString() || ""}
+                  onChange={(e) => setFormData({ ...formData, [field]: e.target.value })}
+                />
+              )}
+            </div>
+          ))}
 
           <div className="form-buttons">
             <button type="submit" className="save-btn">
               {formData._id ? "Update" : "Add"} Company
             </button>
             {formData._id && (
-              <button
-                type="button"
-                className="cancel-btn"
-                onClick={() => setFormData({})}
-              >
+              <button type="button" className="cancel-btn" onClick={() => setFormData({})}>
                 Cancel Edit
               </button>
             )}
@@ -207,6 +161,7 @@ export default function EditTopCompanies() {
         </form>
       </div>
 
+      {/* Company List */}
       <div className="companies-list">
         <h2>Existing Companies</h2>
         {companies.length === 0 ? (
@@ -215,77 +170,61 @@ export default function EditTopCompanies() {
           <div className="companies-grid">
             {companies.map((company) => (
               <div key={company._id} className="company-card">
-                <img
-                  src={company.logo}
-                  alt={company.name}
-                  className="company-logo"
-                />
+                <img src={company.logo} alt={company.name} className="company-logo" />
                 <h3>{company.name}</h3>
                 <p className="company-description">{company.description}</p>
-                <a
-                  href={company.website}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="website-link"
-                >
+                <a href={company.website} target="_blank" rel="noopener noreferrer" className="website-link">
                   Visit Website
                 </a>
-                
+
                 <div className="admin-controls">
-                  <button
-                    className="edit-btn"
-                    onClick={() => setFormData(company)}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    className="delete-btn"
-                    onClick={() => handleDelete(company._id)}
-                  >
-                    Delete
-                  </button>
+                  <button title="Edit" onClick={() => setFormData(company)}>✏️</button>
+                  <button title="Delete" onClick={() => handleDelete(company._id)}>🗑️</button>
                 </div>
-                
-                <div className="alumni-comments">
-                  <h4>Alumni Comments ({company.alumni.length})</h4>
-                  {company.alumni.length === 0 ? (
-                    <p>No comments yet.</p>
-                  ) : (
-                    <div className="comments-list">
-                      {company.alumni.map((alumni) => (
-                        <div key={alumni._id} className="comment-card">
-                          <div className="comment-header">
-                            <img
-                              src={alumni.user.profilePicture || "/default-avatar.png"}
-                              alt={`${alumni.user.firstName} ${alumni.user.lastName}`}
-                              className="profile-pic"
-                            />
-                            <div>
-                              <h5>
-                                {alumni.user.firstName} {alumni.user.lastName}
-                              </h5>
-                              <p>
-                                Batch of {alumni.user.batch} • {alumni.user.position}
-                              </p>
-                            </div>
-                          </div>
-                          <p className="comment-text">"{alumni.remarks}"</p>
-                          <button
-                            className="delete-comment-btn"
-                            onClick={() => handleDeleteComment(company._id, alumni._id)}
-                          >
-                            Delete Comment
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
+
+                <button
+                  className="view-comments-btn"
+                  onClick={() => setSelectedCompany(selectedCompany?._id === company._id ? null : company)}
+                >
+                  {selectedCompany?._id === company._id ? "Hide Comments" : "View Comments"}
+                </button>
               </div>
             ))}
           </div>
         )}
       </div>
+
+      {/* Dialog Box */}
+      {selectedCompany && (
+        <div className="dialog-overlay" onClick={() => setSelectedCompany(null)}>
+          <div className="dialog-box" onClick={(e) => e.stopPropagation()}>
+            <button
+              className="close-dialog-btn"
+              onClick={() => setSelectedCompany(null)}
+            >
+              &times;
+            </button>
+            <h4>Alumni Comments for {selectedCompany.name}</h4>
+            {selectedCompany.alumni.length === 0 ? (
+              <p>No comments yet.</p>
+            ) : (
+              <div className="comments-list">
+                {selectedCompany.alumni.map((alumni) => (
+                  <div key={alumni._id} className="comment-card">
+                    <p className="comment-text">"{alumni.remarks}"</p>
+                    <button
+                      className="delete-comment-btn"
+                      onClick={() => handleDeleteComment(selectedCompany._id, alumni._id)}
+                    >
+                      🗑️ Delete Comment
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

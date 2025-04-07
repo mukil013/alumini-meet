@@ -120,8 +120,6 @@ export default function DefaultHome() {
             )}
           </div>
         </div>
-        <div className="img">
-        </div>
       </div>
 
       {/* Recent Projects Section */}
