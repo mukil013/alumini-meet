@@ -2,6 +2,7 @@ import { useEffect, useState, ChangeEvent, KeyboardEvent } from "react";
 import axios from "axios";
 import "./style/Profile.css";
 import { mainUrlPrefix } from "../main";
+import ProfileImage from "../components/ProfileImage";
 
 interface User {
   _id: string;
@@ -20,13 +21,10 @@ interface User {
   companyName: string;
   batch: number;
   role: string;
-  userImg?: string | {
-    data: number[];
-    contentType: string;
-  };
+  userImg: string;
 }
 
-export default function Profile() {
+export default function ProfileNew() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
@@ -50,25 +48,12 @@ export default function Profile() {
   
         console.log("API Response:", response.data); 
   
-        const updatedUser = response.data.userDetail;
-  
-        if (updatedUser.userImg && updatedUser.userImg.data) {
-          console.log("Raw Buffer Data:", updatedUser.userImg.data);
-          console.log("Content Type:", updatedUser.userImg.contentType);
-          
-          // Convert the buffer data to a base64 string
-          const uint8Array = new Uint8Array(updatedUser.userImg.data);
-          const base64String = btoa(String.fromCharCode.apply(null, Array.from(uint8Array)));
-          
-          // Create a data URL for the image
-          updatedUser.userImg = `data:${updatedUser.userImg.contentType};base64,${base64String}`;
-          
-          console.log("Image URL:", updatedUser.userImg); // Debug: Log the generated image URL
-        } else {
-          console.log("No image data found in user profile");
-          // Set a default image if none is provided
-          updatedUser.userImg = "https://via.placeholder.com/150";
-        }
+        // Create a simplified user object with a placeholder image
+        const userData = response.data.userDetail;
+        const updatedUser: User = {
+          ...userData,
+          userImg: "https://via.placeholder.com/200"
+        };
   
         setUser(updatedUser);
         setLoading(false);
@@ -83,35 +68,6 @@ export default function Profile() {
   
     fetchUserProfile();
   }, []);
-  
-  // Function to handle image display
-  const getImageUrl = (userData: User | null) => {
-    if (!userData) return "";
-    
-    if (userData.userImg) {
-      if (typeof userData.userImg === 'string') {
-        // If userImg is already a string (URL or data URL), return it
-        return userData.userImg;
-      } else if (userData.userImg.data && userData.userImg.contentType) {
-        // If userImg is an object with data, process it
-        try {
-          const uint8Array = new Uint8Array(userData.userImg.data);
-          let binaryString = '';
-          for (let i = 0; i < uint8Array.length; i++) {
-            binaryString += String.fromCharCode(uint8Array[i]);
-          }
-          const base64String = btoa(binaryString);
-          return `data:${userData.userImg.contentType};base64,${base64String}`;
-        } catch (error) {
-          console.error("Error processing image data:", error);
-          return "";
-        }
-      }
-    }
-    
-    // Default image if no valid image data
-    return "https://static.vecteezy.com/system/resources/thumbnails/036/280/651/small_2x/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg";
-  };
 
   const openEditDialog = () => {
     if (user) {
@@ -127,10 +83,8 @@ export default function Profile() {
         companyName: user.companyName,
         batch: user.batch,
       });
-
-      // Deduplicate and initialize chips
-      setInterests([...new Set(user.interests)]);
-      setSkills([...new Set(user.skills)]);
+      setInterests([...user.interests]);
+      setSkills([...user.skills]);
       setIsEditDialogOpen(true);
     }
   };
@@ -202,8 +156,8 @@ export default function Profile() {
 
       const updatedUser = fetchResponse.data.userDetail;
       
-      // No need to process the image here as we'll use getImageUrl function
-      console.log("Updated user data:", updatedUser);
+      // Simplify image handling - just use a placeholder for now
+      updatedUser.userImg = "https://via.placeholder.com/200";
       
       setUser(updatedUser);
       setIsEditDialogOpen(false);
@@ -221,22 +175,18 @@ export default function Profile() {
   return (
     <div className="profile-container">
       <div className="profile-card">
-        <img
-          src={getImageUrl(user)}
-          alt={`logged in as ${user.role === "user" ? "student" : user.role}`}
-          className="profile-img"
-          onError={(e) => {
-            // Fallback if image fails to load
-            e.currentTarget.src = "https://static.vecteezy.com/system/resources/thumbnails/036/280/651/small_2x/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg";
-          }}
+        <ProfileImage 
+          firstName={user.firstName} 
+          lastName={user.lastName} 
+          imageUrl={user.userImg} 
         />
         <h1 className="profile-name">{`${user.firstName} ${user.lastName}`}</h1>
         <p className="email-id">{user.email}</p>
         <p className="education">
-          <b>Education:</b> {user.dept}, {user.batch}
+          {user.dept} • Batch of {user.batch}
         </p>
         <div className="bio">
-          <b>Bio:</b> {user.bio || "No bio available"}
+          <p>{user.bio || "No bio available"}</p>
         </div>
         <div className="skills-section">
           <h3>Skills</h3>
@@ -484,4 +434,4 @@ export default function Profile() {
       )}
     </div>
   );
-}
+} 

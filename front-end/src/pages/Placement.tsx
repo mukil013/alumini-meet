@@ -29,6 +29,8 @@ export default function Placement() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isLoadingAts, setIsLoadingAts] = useState(false);
   const [currentJd, setCurrentJd] = useState("");
+  const [showDescriptionDialog, setShowDescriptionDialog] = useState(false);
+  const [selectedDescription, setSelectedDescription] = useState("");
 
   useEffect(() => {
     const fetchAllPlacements = async () => {
@@ -88,6 +90,23 @@ export default function Placement() {
     setSelectedFile(null);
   };
 
+  const truncateDescription = (description: string) => {
+    return {
+      truncated: description.length > 150 ? description.substring(0, 150) + '...' : description,
+      isTruncated: description.length > 150
+    };
+  };
+
+  const handleReadMore = (e: React.MouseEvent, description: string) => {
+    e.stopPropagation();
+    setSelectedDescription(description);
+    setShowDescriptionDialog(true);
+  };
+
+  const handleCloseDescriptionDialog = () => {
+    setShowDescriptionDialog(false);
+  };
+
   if (loading) return <div className="loading">Loading...</div>;
   if (error) return <div className="error">{error}</div>;
   if (placements.length === 0) return <div className="no-data">No placements found.</div>;
@@ -106,7 +125,20 @@ export default function Placement() {
             <p><strong>Role:</strong> {placement.jobRole}</p>
             <p><strong>Type:</strong> {placement.jobType}</p>
             <p><strong>Location:</strong> {placement.location}</p>
-            <div className="actions">
+            <div className="company-description-container">
+              <div className="company-description">
+                {truncateDescription(placement.jobDescription).truncated}
+              </div>
+              {truncateDescription(placement.jobDescription).isTruncated && (
+                <button 
+                  className="read-more-btn"
+                  onClick={(e) => handleReadMore(e, placement.jobDescription)}
+                >
+                  Read more...
+                </button>
+              )}
+            </div>
+            <div className="placement-user-actions">
               <button 
                 className="ats-btn"
                 onClick={() => openDialog(placement.jobDescription)}
@@ -119,7 +151,7 @@ export default function Placement() {
                 rel="noopener noreferrer"
                 className="apply-btn"
               >
-                Know more
+                Apply Now
               </a>
             </div>
           </div>
@@ -151,6 +183,20 @@ export default function Placement() {
               </button>
               <button onClick={closeDialog}>Close</button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {showDescriptionDialog && (
+        <div className="description-dialog">
+          <div className="description-dialog-content">
+            <h3>Job Description</h3>
+            <div className="description-content">
+              {selectedDescription.split('\n').map((line, index) => (
+                <p key={index}>{line}</p>
+              ))}
+            </div>
+            <button onClick={handleCloseDescriptionDialog}>Close</button>
           </div>
         </div>
       )}
