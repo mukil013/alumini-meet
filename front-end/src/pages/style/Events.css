@@ -90,11 +90,13 @@
 }
 
 .dialog-box {
+    position: fixed;
+    bottom: 2%;
     margin: auto;
     background: white;
     border-radius: 0.5rem;
     padding: 1.5rem;
-    min-width: 100%;
+    min-width: 90%;
     max-width: 500px;
     max-height: 80vh;
     overflow-y: auto;

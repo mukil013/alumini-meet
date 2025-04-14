@@ -18,7 +18,9 @@ export default function Referrals() {
   const [referrals, setReferrals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [selectedReferral, setSelectedReferral] = useState<Refferal | null>(null);
+  const [selectedReferral, setSelectedReferral] = useState<Refferal | null>(
+    null,
+  );
   const [addReferralForm, setAddReferralForm] = useState(false);
   const [editingReferral, setEditingReferral] = useState<Refferal | null>(null);
   const [formData, setFormData] = useState({
@@ -42,16 +44,16 @@ export default function Referrals() {
     try {
       setLoading(true);
       setError("");
-      
+
       let endpoint = "";
       if (tab === "Explore") {
         endpoint = `${mainUrlPrefix}/referral/getAllReferrals`;
       } else if (tab === "Yours") {
         endpoint = `${mainUrlPrefix}/referral/getUserReferrals/${userId}`;
       }
-      
+
       const response = await axios.get(endpoint);
-      
+
       if (response.data.status === "Success") {
         // Set referrals to the array from the response, or empty array if none
         setReferrals(
@@ -205,11 +207,9 @@ export default function Referrals() {
             <div key={referral._id} className="project-card">
               <h3>{referral.referraltitle}</h3>
               <div className="referral-description">
-                <p className="truncated">
-                  {referral.jobDescription}
-                </p>
+                <p className="truncated">{referral.jobDescription}</p>
                 {referral.jobDescription.length > 150 && (
-                  <button 
+                  <button
                     className="read-more-btn"
                     onClick={() => openDescriptionDialog(referral)}
                   >
@@ -223,7 +223,7 @@ export default function Referrals() {
                 rel="noopener noreferrer"
                 className="know-more-btn"
               >
-                Referral Link
+                <p>Referral Link</p>
               </a>
               {/* Show edit and delete if the referral belongs to the current alumni */}
               {role === "alumini" && referral.userId === userId && (
@@ -273,16 +273,15 @@ export default function Referrals() {
 
       {/* Description Dialog */}
       {selectedReferral && (
-        <div className="dialog-overlay">
+        <div
+          className="dialog-overlay"
+          onClick={() => closeDescriptionDialog()}
+        >
           <div className="dialog-box">
             <div className="dialog-header">
-              <h2>{selectedReferral.referraltitle}</h2>
-              <div 
-                className="close-btn"
-                onClick={closeDescriptionDialog}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="darkred"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
-              </div>
+              <h2 className="refferalHeader">
+                {selectedReferral.referraltitle}
+              </h2>
             </div>
             <div className="dialog-content">
               <div className="full-description">

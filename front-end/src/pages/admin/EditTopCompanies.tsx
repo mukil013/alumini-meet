@@ -38,7 +38,9 @@ export default function EditTopCompanies() {
       const res = await axios.get(`${mainUrlPrefix}/top-companies`);
       setCompanies(res.data);
     } catch (err: any) {
-      setError("Failed to load data: " + (err.response?.data?.message || err.message));
+      setError(
+        "Failed to load data: " + (err.response?.data?.message || err.message),
+      );
     } finally {
       setLoading(false);
     }
@@ -58,21 +60,28 @@ export default function EditTopCompanies() {
       });
 
       setCompanies((prev) =>
-        formData._id ? prev.map((c) => (c._id === data._id ? data : c)) : [...prev, data]
+        formData._id
+          ? prev.map((c) => (c._id === data._id ? data : c))
+          : [...prev, data],
       );
 
       setFormData({});
-      setSuccessMessage(`Company ${formData._id ? "updated" : "added"} successfully!`);
+      setSuccessMessage(
+        `Company ${formData._id ? "updated" : "added"} successfully!`,
+      );
       setTimeout(() => setSuccessMessage(""), 3000);
     } catch (err: any) {
-      setError("Operation failed: " + (err.response?.data?.message || err.message));
+      setError(
+        "Operation failed: " + (err.response?.data?.message || err.message),
+      );
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!window.confirm("Are you sure you want to delete this company?")) return;
+    if (!window.confirm("Are you sure you want to delete this company?"))
+      return;
     setLoading(true);
     try {
       await axios.delete(`${mainUrlPrefix}/top-companies/${id}`);
@@ -80,33 +89,44 @@ export default function EditTopCompanies() {
       setSuccessMessage("Company deleted successfully!");
       setTimeout(() => setSuccessMessage(""), 3000);
     } catch (err: any) {
-      setError("Delete failed: " + (err.response?.data?.message || err.message));
+      setError(
+        "Delete failed: " + (err.response?.data?.message || err.message),
+      );
     } finally {
       setLoading(false);
     }
   };
 
   const handleDeleteComment = async (companyId: string, alumniId: string) => {
-    if (!window.confirm("Are you sure you want to delete this comment?")) return;
+    if (!window.confirm("Are you sure you want to delete this comment?"))
+      return;
     setLoading(true);
     try {
-      const company = companies.find(c => c._id === companyId);
-      const alumni = company?.alumni.find(a => a._id === alumniId);
+      const company = companies.find((c) => c._id === companyId);
+      const alumni = company?.alumni.find((a) => a._id === alumniId);
       if (!alumni) throw new Error("Alumni comment not found");
 
-      await axios.delete(`${mainUrlPrefix}/top-companies/${companyId}/admin-delete/${alumni.user}`);
+      await axios.delete(
+        `${mainUrlPrefix}/top-companies/${companyId}/admin-delete/${alumni.user}`,
+      );
 
-      setCompanies(prev =>
-        prev.map(company =>
+      setCompanies((prev) =>
+        prev.map((company) =>
           company._id === companyId
-            ? { ...company, alumni: company.alumni.filter(a => a._id !== alumniId) }
-            : company
-        )
+            ? {
+                ...company,
+                alumni: company.alumni.filter((a) => a._id !== alumniId),
+              }
+            : company,
+        ),
       );
       setSuccessMessage("Comment deleted successfully!");
       setTimeout(() => setSuccessMessage(""), 3000);
     } catch (err: any) {
-      setError("Failed to delete comment: " + (err.response?.data?.message || err.message));
+      setError(
+        "Failed to delete comment: " +
+          (err.response?.data?.message || err.message),
+      );
     } finally {
       setLoading(false);
     }
@@ -119,7 +139,9 @@ export default function EditTopCompanies() {
       <h1>Manage Top Companies</h1>
 
       {error && <div className="error-message">{error}</div>}
-      {successMessage && <div className="success-message">{successMessage}</div>}
+      {successMessage && (
+        <div className="success-message">{successMessage}</div>
+      )}
 
       {/* Company Form */}
       <div className="add-company-section">
@@ -127,13 +149,17 @@ export default function EditTopCompanies() {
         <form onSubmit={handleFormSubmit} className="company-form">
           {["name", "logo", "description", "website"].map((field) => (
             <div key={field} className="form-group">
-              <label htmlFor={field}>{field.charAt(0).toUpperCase() + field.slice(1)}:</label>
+              <label htmlFor={field}>
+                {field.charAt(0).toUpperCase() + field.slice(1)}:
+              </label>
               {field === "description" ? (
                 <textarea
                   id={field}
                   required
                   value={formData.description || ""}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
                   rows={4}
                 />
               ) : (
@@ -142,7 +168,9 @@ export default function EditTopCompanies() {
                   required
                   type={field === "website" ? "url" : "text"}
                   value={formData[field as keyof Company]?.toString() || ""}
-                  onChange={(e) => setFormData({ ...formData, [field]: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, [field]: e.target.value })
+                  }
                 />
               )}
             </div>
@@ -153,7 +181,11 @@ export default function EditTopCompanies() {
               {formData._id ? "Update" : "Add"} Company
             </button>
             {formData._id && (
-              <button type="button" className="cancel-btn" onClick={() => setFormData({})}>
+              <button
+                type="button"
+                className="cancel-btn"
+                onClick={() => setFormData({})}
+              >
                 Cancel Edit
               </button>
             )}
@@ -170,23 +202,46 @@ export default function EditTopCompanies() {
           <div className="companies-grid">
             {companies.map((company) => (
               <div key={company._id} className="company-card">
-                <img src={company.logo} alt={company.name} className="company-logo" />
+                <img
+                  src={company.logo}
+                  alt={company.name}
+                  className="company-logo"
+                />
                 <h3>{company.name}</h3>
                 <p className="company-description">{company.description}</p>
-                <a href={company.website} target="_blank" rel="noopener noreferrer" className="website-link">
-                  Visit Website
-                </a>
+                <div className="company-actions">
+                  <a
+                    href={company.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="website-link"
+                  >
+                    Visit Website
+                  </a>
 
-                <div className="admin-controls">
-                  <button title="Edit" onClick={() => setFormData(company)}>✏️</button>
-                  <button title="Delete" onClick={() => handleDelete(company._id)}>🗑️</button>
+                  <div className="admin-controls">
+                    <button title="Edit" onClick={() => setFormData(company)}>
+                      ✏️
+                    </button>
+                    <button
+                      title="Delete"
+                      onClick={() => handleDelete(company._id)}
+                    >
+                      🗑️
+                    </button>
+                  </div>
                 </div>
-
                 <button
                   className="view-comments-btn"
-                  onClick={() => setSelectedCompany(selectedCompany?._id === company._id ? null : company)}
+                  onClick={() =>
+                    setSelectedCompany(
+                      selectedCompany?._id === company._id ? null : company,
+                    )
+                  }
                 >
-                  {selectedCompany?._id === company._id ? "Hide Comments" : "View Comments"}
+                  {selectedCompany?._id === company._id
+                    ? "Hide Comments"
+                    : "View Comments"}
                 </button>
               </div>
             ))}
@@ -196,7 +251,10 @@ export default function EditTopCompanies() {
 
       {/* Dialog Box */}
       {selectedCompany && (
-        <div className="dialog-overlay" onClick={() => setSelectedCompany(null)}>
+        <div
+          className="dialog-overlay"
+          onClick={() => setSelectedCompany(null)}
+        >
           <div className="dialog-box" onClick={(e) => e.stopPropagation()}>
             <button
               className="close-dialog-btn"
@@ -214,7 +272,9 @@ export default function EditTopCompanies() {
                     <p className="comment-text">"{alumni.remarks}"</p>
                     <button
                       className="delete-comment-btn"
-                      onClick={() => handleDeleteComment(selectedCompany._id, alumni._id)}
+                      onClick={() =>
+                        handleDeleteComment(selectedCompany._id, alumni._id)
+                      }
                     >
                       🗑️ Delete Comment
                     </button>

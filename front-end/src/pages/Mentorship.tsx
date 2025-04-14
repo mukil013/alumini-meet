@@ -323,31 +323,40 @@ export default function Mentorship() {
             </button>
           )}
           {showAddForm && (
-            <dialog open={showAddForm} className="dialog-box">
-              <form
-                onSubmit={handleAddCommunity}
-                className="add-community-form"
+            <div
+              className="dialog-overlay"
+              onClick={() => setShowAddForm(false)}
+            >
+              <dialog
+                open={showAddForm}
+                className="mentor-dialog-box"
+                onClick={(e) => e.stopPropagation()}
               >
-                <h3>Create a Mentorship Group</h3>
-                <input
-                  type="text"
-                  placeholder="Group Title"
-                  value={groupTitle}
-                  onChange={(e) => setGroupTitle(e.target.value)}
-                  required
-                />
-                <textarea
-                  placeholder="Group Description"
-                  value={groupDescription}
-                  onChange={(e) => setGroupDescription(e.target.value)}
-                  required
-                ></textarea>
-                <button type="submit">Add Group</button>
-                <button type="button" onClick={() => setShowAddForm(false)}>
-                  Cancel
-                </button>
-              </form>
-            </dialog>
+                <form
+                  onSubmit={handleAddCommunity}
+                  className="add-community-form"
+                >
+                  <h3>Create a Mentorship Group</h3>
+                  <input
+                    type="text"
+                    placeholder="Group Title"
+                    value={groupTitle}
+                    onChange={(e) => setGroupTitle(e.target.value)}
+                    required
+                  />
+                  <textarea
+                    placeholder="Group Description"
+                    value={groupDescription}
+                    onChange={(e) => setGroupDescription(e.target.value)}
+                    required
+                  ></textarea>
+                  <button type="submit">Add Group</button>
+                  <button type="button" onClick={() => setShowAddForm(false)}>
+                    Cancel
+                  </button>
+                </form>
+              </dialog>
+            </div>
           )}
           {community.length > 0 ? (
             community.map((group: Group) => (
@@ -468,7 +477,7 @@ export default function Mentorship() {
       {/* Add/Edit Post Modal */}
       {showPostForm && (
         <div className="dialog-overlay">
-          <dialog open={showPostForm} className="mentor-dialog-box">
+          <dialog open={showPostForm} className="dialog-box">
             <form
               onSubmit={
                 editingPost

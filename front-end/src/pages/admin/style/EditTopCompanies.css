@@ -160,6 +160,13 @@ h2 {
     transition: transform 0.2s;
 }
 
+.company-actions {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+}
+
 .company-card:hover {
     transform: translateY(-5px);
 }
@@ -185,7 +192,6 @@ h2 {
     display: inline-block;
     color: #2196f3;
     text-decoration: none;
-    margin-bottom: 1rem;
 }
 
 .website-link:hover {
