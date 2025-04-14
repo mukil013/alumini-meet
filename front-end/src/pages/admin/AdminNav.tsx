@@ -15,8 +15,6 @@ export default function Navbar() {
     return location.pathname === path;
   };
 
-  isActive("/home");
-
   return (
     <nav className="common-nav">
       <div className="common-nav-logo">Alumni meet</div>
@@ -104,7 +102,11 @@ export default function Navbar() {
         <li className="common-nav-list-items">
           <Link
             to="/admin/edit-top-companies"
-            className={isActive("/admin/edit-top-companies") ? "active" : "" + "common-nav-link"}
+            className={
+              isActive("/admin/edit-top-companies")
+                ? "active"
+                : "" + "common-nav-link"
+            }
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

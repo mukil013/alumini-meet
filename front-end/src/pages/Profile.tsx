@@ -20,10 +20,12 @@ interface User {
   companyName: string;
   batch: number;
   role: string;
-  userImg?: string | {
-    data: number[];
-    contentType: string;
-  };
+  userImg?:
+    | string
+    | {
+        data: number[];
+        contentType: string;
+      };
 }
 
 export default function Profile() {
@@ -38,81 +40,64 @@ export default function Profile() {
   const [newSkill, setNewSkill] = useState<string>("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
+  const userId = sessionStorage.getItem("user");
+
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const userId = sessionStorage.getItem("user");
         if (!userId) throw new Error("User not authenticated");
-  
+
         const response = await axios.get(
-          `${mainUrlPrefix}/user/getUser/${userId}`
+          `${mainUrlPrefix}/user/getUser/${userId}`,
         );
-  
-        console.log("API Response:", response.data); 
-  
+        console.log("Raw API Response:", response.data);
+
         const updatedUser = response.data.userDetail;
-  
-        if (updatedUser.userImg && updatedUser.userImg.data) {
-          console.log("Raw Buffer Data:", updatedUser.userImg.data);
-          console.log("Content Type:", updatedUser.userImg.contentType);
-          
-          // Convert the buffer data to a base64 string
-          const uint8Array = new Uint8Array(updatedUser.userImg.data);
-          const base64String = btoa(String.fromCharCode.apply(null, Array.from(uint8Array)));
-          
-          // Create a data URL for the image
-          updatedUser.userImg = `data:${updatedUser.userImg.contentType};base64,${base64String}`;
-          
-          console.log("Image URL:", updatedUser.userImg); // Debug: Log the generated image URL
-        } else {
-          console.log("No image data found in user profile");
-          // Set a default image if none is provided
-          updatedUser.userImg = "https://via.placeholder.com/150";
-        }
-  
+        console.log("User Image Data:", updatedUser.userImg);
+
         setUser(updatedUser);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching profile:", error);
         setError(
-          error instanceof Error ? error.message : "Failed to load profile"
+          error instanceof Error ? error.message : "Failed to load profile",
         );
         setLoading(false);
       }
     };
-  
+
     fetchUserProfile();
-  }, []);
-  
-  // Function to handle image display
+  }, [userId]);
+
   const getImageUrl = (userData: User | null) => {
     if (!userData) return "";
-    
-    if (userData.userImg) {
-      if (typeof userData.userImg === 'string') {
-        // If userImg is already a string (URL or data URL), return it
-        return userData.userImg;
-      } else if (userData.userImg.data && userData.userImg.contentType) {
-        // If userImg is an object with data, process it
-        try {
-          const uint8Array = new Uint8Array(userData.userImg.data);
-          let binaryString = '';
-          for (let i = 0; i < uint8Array.length; i++) {
-            binaryString += String.fromCharCode(uint8Array[i]);
-          }
-          const base64String = btoa(binaryString);
-          return `data:${userData.userImg.contentType};base64,${base64String}`;
-        } catch (error) {
-          console.error("Error processing image data:", error);
-          return "";
-        }
+
+    // If userImg is a string (URL or data URL), return it directly
+    if (typeof userData.userImg === "string") {
+      return userData.userImg;
+    }
+
+    // If userImg is an object with data and contentType
+    if (userData.userImg && Array.isArray(userData.userImg.data)) {
+      try {
+        const uint8Array = new Uint8Array(userData.userImg.data);
+        const base64String = btoa(
+          uint8Array.reduce(
+            (data, byte) => data + String.fromCharCode(byte),
+            "",
+          ),
+        );
+        return `data:${userData.userImg.contentType};base64,${base64String}`;
+      } catch (error) {
+        console.error("Error processing image data:", error);
       }
     }
-    
-    // Default image if no valid image data
+
+    // Return default image if no valid image data
     return "https://static.vecteezy.com/system/resources/thumbnails/036/280/651/small_2x/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg";
   };
 
+  // Open edit dialog
   const openEditDialog = () => {
     if (user) {
       setFormData({
@@ -135,19 +120,22 @@ export default function Profile() {
     }
   };
 
+  // Handle input change
   const handleInputChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Handle file change
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       setSelectedFile(e.target.files[0]);
     }
   };
 
+  // Handle adding interest
   const handleAddInterest = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && newInterest.trim()) {
       e.preventDefault();
@@ -156,6 +144,7 @@ export default function Profile() {
     }
   };
 
+  // Handle adding skill
   const handleAddSkill = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && newSkill.trim()) {
       e.preventDefault();
@@ -164,22 +153,24 @@ export default function Profile() {
     }
   };
 
+  // Remove interest
   const removeInterest = (index: number) => {
     setInterests((prev) => prev.filter((_, i) => i !== index));
   };
 
+  // Remove skill
   const removeSkill = (index: number) => {
     setSkills((prev) => prev.filter((_, i) => i !== index));
   };
 
+  // Handle profile edit submission
   const handleEdit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       if (!user) throw new Error("User not found");
-
       const id = user._id || sessionStorage.getItem("user")!;
-      const data = new FormData();
 
+      const data = new FormData();
       Object.entries(formData).forEach(([key, value]) => {
         if (value) data.append(key, value as string);
       });
@@ -195,16 +186,14 @@ export default function Profile() {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      // Refetch user data to ensure we have latest version
+      // Refetch user data to ensure we have the latest version
       const fetchResponse = await axios.get(
-        `${mainUrlPrefix}/user/getUser/${id}`
+        `${mainUrlPrefix}/user/getUser/${id}`,
       );
-
       const updatedUser = fetchResponse.data.userDetail;
-      
+
       // No need to process the image here as we'll use getImageUrl function
       console.log("Updated user data:", updatedUser);
-      
       setUser(updatedUser);
       setIsEditDialogOpen(false);
       setError("");
@@ -214,6 +203,7 @@ export default function Profile() {
     }
   };
 
+  // Render loading/error/no-data states
   if (loading) return <div className="loading">Loading...</div>;
   if (error) return <div className="error">{error}</div>;
   if (!user) return <div className="no-data">No user data found</div>;
@@ -221,15 +211,19 @@ export default function Profile() {
   return (
     <div className="profile-container">
       <div className="profile-card">
+        {/* Profile Image */}
         <img
           src={getImageUrl(user)}
           alt={`logged in as ${user.role === "user" ? "student" : user.role}`}
           className="profile-img"
           onError={(e) => {
             // Fallback if image fails to load
-            e.currentTarget.src = "https://static.vecteezy.com/system/resources/thumbnails/036/280/651/small_2x/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg";
+            e.currentTarget.src =
+              "https://static.vecteezy.com/system/resources/thumbnails/036/280/651/small_2x/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg";
           }}
         />
+
+        {/* Profile Details */}
         <h1 className="profile-name">{`${user.firstName} ${user.lastName}`}</h1>
         <p className="email-id">{user.email}</p>
         <p className="education">
@@ -238,6 +232,8 @@ export default function Profile() {
         <div className="bio">
           <b>Bio:</b> {user.bio || "No bio available"}
         </div>
+
+        {/* Skills */}
         <div className="skills-section">
           <h3>Skills</h3>
           <div className="skills">
@@ -248,6 +244,8 @@ export default function Profile() {
             ))}
           </div>
         </div>
+
+        {/* Social Links */}
         <div className="social-links">
           <h3>Social Links</h3>
           <div className="links">
@@ -268,6 +266,8 @@ export default function Profile() {
             )}
           </div>
         </div>
+
+        {/* Interests */}
         <div className="interests-section">
           <h3>Interests</h3>
           <div className="interests">
@@ -278,11 +278,15 @@ export default function Profile() {
             ))}
           </div>
         </div>
+
+        {/* Company Name */}
         {user.companyName && (
           <div className="company">
             <b>Company:</b> {user.companyName}
           </div>
         )}
+
+        {/* Edit Button */}
         <button className="edit-btn" onClick={openEditDialog}>
           Edit Profile
         </button>
@@ -297,6 +301,7 @@ export default function Profile() {
           <div className="dialog-box" onClick={(e) => e.stopPropagation()}>
             <h2>Edit Profile</h2>
             <form onSubmit={handleEdit}>
+              {/* First Name */}
               <div className="form-group">
                 <label>First Name</label>
                 <input
@@ -307,6 +312,8 @@ export default function Profile() {
                   required
                 />
               </div>
+
+              {/* Last Name */}
               <div className="form-group">
                 <label>Last Name</label>
                 <input
@@ -317,6 +324,8 @@ export default function Profile() {
                   required
                 />
               </div>
+
+              {/* Email */}
               <div className="form-group">
                 <label>Email</label>
                 <input
@@ -327,6 +336,8 @@ export default function Profile() {
                   required
                 />
               </div>
+
+              {/* Department */}
               <div className="form-group">
                 <label>Department</label>
                 <input
@@ -337,6 +348,8 @@ export default function Profile() {
                   required
                 />
               </div>
+
+              {/* Bio */}
               <div className="form-group">
                 <label>Bio</label>
                 <textarea
@@ -346,6 +359,8 @@ export default function Profile() {
                   required
                 />
               </div>
+
+              {/* LinkedIn */}
               <div className="form-group">
                 <label>LinkedIn</label>
                 <input
@@ -355,6 +370,8 @@ export default function Profile() {
                   onChange={handleInputChange}
                 />
               </div>
+
+              {/* GitHub */}
               <div className="form-group">
                 <label>GitHub</label>
                 <input
@@ -364,6 +381,8 @@ export default function Profile() {
                   onChange={handleInputChange}
                 />
               </div>
+
+              {/* Twitter */}
               <div className="form-group">
                 <label>Twitter</label>
                 <input
@@ -373,6 +392,8 @@ export default function Profile() {
                   onChange={handleInputChange}
                 />
               </div>
+
+              {/* Interests */}
               <div className="form-group">
                 <label>Interests</label>
                 <div className="chip-input">
@@ -406,6 +427,8 @@ export default function Profile() {
                   />
                 </div>
               </div>
+
+              {/* Skills */}
               <div className="form-group">
                 <label>Skills</label>
                 <div className="chip-input">
@@ -439,6 +462,8 @@ export default function Profile() {
                   />
                 </div>
               </div>
+
+              {/* Company Name */}
               <div className="form-group">
                 <label>Company Name</label>
                 <input
@@ -448,6 +473,8 @@ export default function Profile() {
                   onChange={handleInputChange}
                 />
               </div>
+
+              {/* Batch */}
               <div className="form-group">
                 <label>Batch</label>
                 <input
@@ -458,6 +485,8 @@ export default function Profile() {
                   required
                 />
               </div>
+
+              {/* Profile Image */}
               <div className="form-group">
                 <label>Profile Image (optional)</label>
                 <input
@@ -467,6 +496,8 @@ export default function Profile() {
                   onChange={handleFileChange}
                 />
               </div>
+
+              {/* Submit Buttons */}
               <button type="submit">Save Changes</button>
               <button
                 type="button"

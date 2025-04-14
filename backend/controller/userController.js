@@ -148,6 +148,22 @@ const verifyOTP = async (req, res) => {
   }
 };
 
+const registerAdmin = async (req, res) => {
+  try {
+    const { ...userData } = req.body;
+    User.create(userData);
+    res.status(200).json({
+      status: "Success",
+      message: "Admin registered successfully.",
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: "failure",
+      message: `Registration failed: ${error.message}`,
+    });
+  }
+};
+
 // Validate user login
 const validateUser = async (req, res) => {
   try {
@@ -308,4 +324,5 @@ module.exports = {
   validateUser,
   updateProfile,
   getUserById,
+  registerAdmin,
 };

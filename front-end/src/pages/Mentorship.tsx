@@ -82,7 +82,7 @@ export default function Mentorship() {
   const toggleFollow = async (groupId: string) => {
     try {
       await axios.post(
-        `${mainUrlPrefix}/mentorship/follow/${groupId}/${userId}`
+        `${mainUrlPrefix}/mentorship/follow/${groupId}/${userId}`,
       );
       fetchGroups();
     } catch (error) {
@@ -123,7 +123,7 @@ export default function Mentorship() {
       await axios.post(
         `${mainUrlPrefix}/mentorship/${groupId}/addPost`,
         formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
+        { headers: { "Content-Type": "multipart/form-data" } },
       );
       setShowPostForm(false);
       setPostTitle("");
@@ -138,7 +138,7 @@ export default function Mentorship() {
   const handleEditPost = async (
     e: React.FormEvent,
     groupId: string,
-    postIndex: number
+    postIndex: number,
   ) => {
     try {
       e.preventDefault();
@@ -151,7 +151,7 @@ export default function Mentorship() {
       await axios.post(
         `${mainUrlPrefix}/mentorship/${groupId}/updatePost/${postIndex}`,
         formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
+        { headers: { "Content-Type": "multipart/form-data" } },
       );
       setShowPostForm(false);
       setPostTitle("");
@@ -167,7 +167,7 @@ export default function Mentorship() {
   const handleDeletePost = async (postIndex: string, groupId: string) => {
     try {
       await axios.delete(
-        `${mainUrlPrefix}/mentorship/${groupId}/deletePost/${postIndex}`
+        `${mainUrlPrefix}/mentorship/${groupId}/deletePost/${postIndex}`,
       );
       fetchGroups();
     } catch (error) {
@@ -407,7 +407,7 @@ export default function Mentorship() {
                       src={`data:${
                         post.post.image.contentType
                       };base64,${arrayBufferToBase64(
-                        post.post.image.data.data
+                        post.post.image.data.data,
                       )}`}
                       alt="Post"
                     />
@@ -468,7 +468,7 @@ export default function Mentorship() {
       {/* Add/Edit Post Modal */}
       {showPostForm && (
         <div className="dialog-overlay">
-          <dialog open={showPostForm} className="dialog-box">
+          <dialog open={showPostForm} className="mentor-dialog-box">
             <form
               onSubmit={
                 editingPost

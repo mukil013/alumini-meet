@@ -47,13 +47,13 @@ export default function DefaultHome() {
       try {
         const userId = sessionStorage.getItem("user");
         const response = await axios.get(
-          `${mainUrlPrefix}/user/getUser/${userId}`
+          `${mainUrlPrefix}/user/getUser/${userId}`,
         );
         const updatedUser = response.data.userDetail;
         setUser(updatedUser);
       } catch (error) {
         setError(
-          error instanceof Error ? error.message : "Failed to load profile"
+          error instanceof Error ? error.message : "Failed to load profile",
         );
       }
     };
@@ -70,7 +70,7 @@ export default function DefaultHome() {
     const fetchProjects = async () => {
       try {
         const response = await axios.get(
-          `${mainUrlPrefix}/project/getAllProjects`
+          `${mainUrlPrefix}/project/getAllProjects`,
         );
         setProjects(response.data.projects || []);
       } catch (error) {
@@ -91,53 +91,49 @@ export default function DefaultHome() {
   return (
     <div className="home-container">
       <div className="home-card user-details">
-          <h2 className="home-title">{`${user.firstName} ${user.lastName}`}</h2>
-          <p><b>Email:</b> {user.email}</p>
-          <p>
-            <b>Education:</b> {user.dept}, {user.batch}
-          </p>
-          <div className="bio">
-            <b>Bio:</b> {user.bio || "No bio available"}
+        <h2 className="home-title">{`${user.firstName} ${user.lastName}`}</h2>
+        <p>
+          <b>Email:</b> {user.email}
+        </p>
+        <p>
+          <b>Education:</b> {user.dept}, {user.batch}
+        </p>
+        <div className="bio">
+          <b>Bio:</b> {user.bio || "No bio available"}
         </div>
       </div>
 
       {/* Upcoming Events Section */}
       <div className="home-card event-details">
-        <div className="one">
-          <h2 className="home-title">Upcoming Events</h2>
-          <div className="event-card-container">
-            {events.length === 0 ? (
-              <p>No upcoming events.</p>
-            ) : (
-              events.map((event) => (
-                <div key={event._id} className="home-event-card">
-                  <h3>{event.eventTitle}</h3>
-                  <p>{event.eventDescription}</p>
-                </div>
-              ))
-            )}
-          </div>
+        <h2 className="home-title">Upcoming Events</h2>
+        <div className="event-card-container">
+          {events.length === 0 ? (
+            <p>No upcoming events.</p>
+          ) : (
+            events.map((event) => (
+              <div key={event._id} className="home-event-card">
+                <h3>{event.eventTitle}</h3>
+                <p>{event.eventDescription}</p>
+              </div>
+            ))
+          )}
         </div>
       </div>
 
       {/* Recent Projects Section */}
       <div className="home-card project-details">
-        <div className="img">
-        </div>
-        <div className="one">
-          <h2 className="home-title">Recent Projects</h2>
-          <div className="project-card-container">
-            {projects.length === 0 ? (
-              <p>No featured projects.</p>
-            ) : (
-              projects.map((project) => (
-                <div key={project._id} className="home-project-card">
-                  <h3>{project.projectTitle}</h3>
-                  <p>{project.projectDescription}</p>
-                </div>
-              ))
-            )}
-          </div>
+        <h2 className="home-title">Recent Projects</h2>
+        <div className="project-card-container">
+          {projects.length === 0 ? (
+            <p>No featured projects.</p>
+          ) : (
+            projects.map((project) => (
+              <div key={project._id} className="home-project-card">
+                <h3>{project.projectTitle}</h3>
+                <p>{project.projectDescription}</p>
+              </div>
+            ))
+          )}
         </div>
       </div>
     </div>

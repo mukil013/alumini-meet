@@ -15,7 +15,7 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -49,21 +49,19 @@ export default function Login() {
           nav("/home");
           break;
         case "admin":
-          nav("/admin-home");
+          nav("/admin/user-management");
           break;
-        default:
-          nav("/home");
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const axiosError = error as AxiosError<{ message: string }>;
         console.error(
           "Error during login:",
-          axiosError.response?.data?.message || axiosError.message
+          axiosError.response?.data?.message || axiosError.message,
         );
         alert(
           axiosError.response?.data?.message ||
-            "Login failed. Please check your credentials."
+            "Login failed. Please check your credentials.",
         );
       }
     } finally {
@@ -107,7 +105,11 @@ export default function Login() {
                 Forgot password
               </Link>
             </label>
-            <input type="submit" value={isLoading ? "Logging in..." : "Login"} disabled={isLoading} />
+            <input
+              type="submit"
+              value={isLoading ? "Logging in..." : "Login"}
+              disabled={isLoading}
+            />
             <p>
               Don't have an account? <Link to="/register">Register</Link>
             </p>

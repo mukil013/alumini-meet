@@ -2,7 +2,6 @@ import { useEffect, useState, ChangeEvent, KeyboardEvent } from "react";
 import axios from "axios";
 import "./style/Profile.css";
 import { mainUrlPrefix } from "../main";
-import ProfileImage from "../components/ProfileImage";
 
 interface User {
   _id: string;
@@ -21,10 +20,15 @@ interface User {
   companyName: string;
   batch: number;
   role: string;
-  userImg: string;
+  userImg?:
+    | string
+    | {
+        data: number[];
+        contentType: string;
+      };
 }
 
-export default function ProfileNew() {
+export default function Profile() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
@@ -36,39 +40,86 @@ export default function ProfileNew() {
   const [newSkill, setNewSkill] = useState<string>("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
+  const userId = sessionStorage.getItem("user");
+
+  // Fetch user profile data on mount
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const userId = sessionStorage.getItem("user");
         if (!userId) throw new Error("User not authenticated");
-  
         const response = await axios.get(
-          `${mainUrlPrefix}/user/getUser/${userId}`
+          `${mainUrlPrefix}/user/getUser/${userId}`,
         );
-  
-        console.log("API Response:", response.data); 
-  
-        // Create a simplified user object with a placeholder image
-        const userData = response.data.userDetail;
-        const updatedUser: User = {
-          ...userData,
-          userImg: "https://via.placeholder.com/200"
-        };
-  
+        console.log("Raw API Response:", response.data);
+        const updatedUser = response.data.userDetail;
+
+        // Process user image
+        if (
+          updatedUser.userImg &&
+          typeof updatedUser.userImg === "object" &&
+          Array.isArray(updatedUser.userImg.data)
+        ) {
+          console.log("Raw Buffer Data:", updatedUser.userImg.data);
+          console.log("Content Type:", updatedUser.userImg.contentType);
+
+          // Convert buffer data to base64 string
+          const uint8Array = new Uint8Array(updatedUser.userImg.data);
+          const binaryString = Array.from(uint8Array)
+            .map((byte) => String.fromCharCode(byte))
+            .join("");
+          const base64String = btoa(binaryString);
+
+          // Create a data URL for the image
+          updatedUser.userImg = `data:${updatedUser.userImg.contentType};base64,${base64String}`;
+          console.log("Generated Image URL:", updatedUser.userImg); // Debug: Log the generated image URL
+        } else {
+          console.log("No image data found in user profile");
+          // Set a default image if none is provided
+          updatedUser.userImg = "https://via.placeholder.com/150";
+        }
+
         setUser(updatedUser);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching profile:", error);
         setError(
-          error instanceof Error ? error.message : "Failed to load profile"
+          error instanceof Error ? error.message : "Failed to load profile",
         );
         setLoading(false);
       }
     };
-  
-    fetchUserProfile();
-  }, []);
 
+    fetchUserProfile();
+  }, [userId]);
+
+  // Function to handle image display
+  const getImageUrl = (userData: User | null) => {
+    if (!userData) return "";
+    if (typeof userData.userImg === "string") {
+      // If userImg is already a string (URL or data URL), return it
+      return userData.userImg;
+    } else if (
+      userData.userImg &&
+      Array.isArray(userData.userImg.data) &&
+      userData.userImg.contentType
+    ) {
+      try {
+        const uint8Array = new Uint8Array(userData.userImg.data);
+        const binaryString = Array.from(uint8Array)
+          .map((byte) => String.fromCharCode(byte))
+          .join("");
+        const base64String = btoa(binaryString);
+        return `data:${userData.userImg.contentType};base64,${base64String}`;
+      } catch (error) {
+        console.error("Error processing image data:", error);
+        return "";
+      }
+    }
+    // Default image if no valid image data
+    return "https://static.vecteezy.com/system/resources/thumbnails/036/280/651/small_2x/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg";
+  };
+
+  // Open edit dialog
   const openEditDialog = () => {
     if (user) {
       setFormData({
@@ -83,25 +134,30 @@ export default function ProfileNew() {
         companyName: user.companyName,
         batch: user.batch,
       });
-      setInterests([...user.interests]);
-      setSkills([...user.skills]);
+
+      // Deduplicate and initialize chips
+      setInterests([...new Set(user.interests)]);
+      setSkills([...new Set(user.skills)]);
       setIsEditDialogOpen(true);
     }
   };
 
+  // Handle input change
   const handleInputChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Handle file change
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       setSelectedFile(e.target.files[0]);
     }
   };
 
+  // Handle adding interest
   const handleAddInterest = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && newInterest.trim()) {
       e.preventDefault();
@@ -110,6 +166,7 @@ export default function ProfileNew() {
     }
   };
 
+  // Handle adding skill
   const handleAddSkill = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && newSkill.trim()) {
       e.preventDefault();
@@ -118,22 +175,24 @@ export default function ProfileNew() {
     }
   };
 
+  // Remove interest
   const removeInterest = (index: number) => {
     setInterests((prev) => prev.filter((_, i) => i !== index));
   };
 
+  // Remove skill
   const removeSkill = (index: number) => {
     setSkills((prev) => prev.filter((_, i) => i !== index));
   };
 
+  // Handle profile edit submission
   const handleEdit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       if (!user) throw new Error("User not found");
-
       const id = user._id || sessionStorage.getItem("user")!;
-      const data = new FormData();
 
+      const data = new FormData();
       Object.entries(formData).forEach(([key, value]) => {
         if (value) data.append(key, value as string);
       });
@@ -149,16 +208,14 @@ export default function ProfileNew() {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      // Refetch user data to ensure we have latest version
+      // Refetch user data to ensure we have the latest version
       const fetchResponse = await axios.get(
-        `${mainUrlPrefix}/user/getUser/${id}`
+        `${mainUrlPrefix}/user/getUser/${id}`,
       );
-
       const updatedUser = fetchResponse.data.userDetail;
-      
-      // Simplify image handling - just use a placeholder for now
-      updatedUser.userImg = "https://via.placeholder.com/200";
-      
+
+      // No need to process the image here as we'll use getImageUrl function
+      console.log("Updated user data:", updatedUser);
       setUser(updatedUser);
       setIsEditDialogOpen(false);
       setError("");
@@ -168,6 +225,7 @@ export default function ProfileNew() {
     }
   };
 
+  // Render loading/error/no-data states
   if (loading) return <div className="loading">Loading...</div>;
   if (error) return <div className="error">{error}</div>;
   if (!user) return <div className="no-data">No user data found</div>;
@@ -175,19 +233,30 @@ export default function ProfileNew() {
   return (
     <div className="profile-container">
       <div className="profile-card">
-        <ProfileImage 
-          firstName={user.firstName} 
-          lastName={user.lastName} 
-          imageUrl={user.userImg} 
+        {/* Profile Image */}
+        <img
+          src={getImageUrl(user)}
+          alt={`logged in as ${user.role === "user" ? "student" : user.role}`}
+          className="profile-img"
+          style={{ width: "200px", borderRadius: "100%" }}
+          onError={(e) => {
+            // Fallback if image fails to load
+            e.currentTarget.src =
+              "https://static.vecteezy.com/system/resources/thumbnails/036/280/651/small_2x/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg";
+          }}
         />
+
+        {/* Profile Details */}
         <h1 className="profile-name">{`${user.firstName} ${user.lastName}`}</h1>
         <p className="email-id">{user.email}</p>
         <p className="education">
-          {user.dept} • Batch of {user.batch}
+          <b>Education:</b> {user.dept}, {user.batch}
         </p>
         <div className="bio">
-          <p>{user.bio || "No bio available"}</p>
+          <b>Bio:</b> {user.bio || "No bio available"}
         </div>
+
+        {/* Skills */}
         <div className="skills-section">
           <h3>Skills</h3>
           <div className="skills">
@@ -198,6 +267,8 @@ export default function ProfileNew() {
             ))}
           </div>
         </div>
+
+        {/* Social Links */}
         <div className="social-links">
           <h3>Social Links</h3>
           <div className="links">
@@ -218,6 +289,8 @@ export default function ProfileNew() {
             )}
           </div>
         </div>
+
+        {/* Interests */}
         <div className="interests-section">
           <h3>Interests</h3>
           <div className="interests">
@@ -228,11 +301,15 @@ export default function ProfileNew() {
             ))}
           </div>
         </div>
+
+        {/* Company Name */}
         {user.companyName && (
           <div className="company">
             <b>Company:</b> {user.companyName}
           </div>
         )}
+
+        {/* Edit Button */}
         <button className="edit-btn" onClick={openEditDialog}>
           Edit Profile
         </button>
@@ -247,6 +324,7 @@ export default function ProfileNew() {
           <div className="dialog-box" onClick={(e) => e.stopPropagation()}>
             <h2>Edit Profile</h2>
             <form onSubmit={handleEdit}>
+              {/* First Name */}
               <div className="form-group">
                 <label>First Name</label>
                 <input
@@ -257,6 +335,8 @@ export default function ProfileNew() {
                   required
                 />
               </div>
+
+              {/* Last Name */}
               <div className="form-group">
                 <label>Last Name</label>
                 <input
@@ -267,6 +347,8 @@ export default function ProfileNew() {
                   required
                 />
               </div>
+
+              {/* Email */}
               <div className="form-group">
                 <label>Email</label>
                 <input
@@ -277,6 +359,8 @@ export default function ProfileNew() {
                   required
                 />
               </div>
+
+              {/* Department */}
               <div className="form-group">
                 <label>Department</label>
                 <input
@@ -287,6 +371,8 @@ export default function ProfileNew() {
                   required
                 />
               </div>
+
+              {/* Bio */}
               <div className="form-group">
                 <label>Bio</label>
                 <textarea
@@ -296,6 +382,8 @@ export default function ProfileNew() {
                   required
                 />
               </div>
+
+              {/* LinkedIn */}
               <div className="form-group">
                 <label>LinkedIn</label>
                 <input
@@ -305,6 +393,8 @@ export default function ProfileNew() {
                   onChange={handleInputChange}
                 />
               </div>
+
+              {/* GitHub */}
               <div className="form-group">
                 <label>GitHub</label>
                 <input
@@ -314,6 +404,8 @@ export default function ProfileNew() {
                   onChange={handleInputChange}
                 />
               </div>
+
+              {/* Twitter */}
               <div className="form-group">
                 <label>Twitter</label>
                 <input
@@ -323,6 +415,8 @@ export default function ProfileNew() {
                   onChange={handleInputChange}
                 />
               </div>
+
+              {/* Interests */}
               <div className="form-group">
                 <label>Interests</label>
                 <div className="chip-input">
@@ -356,6 +450,8 @@ export default function ProfileNew() {
                   />
                 </div>
               </div>
+
+              {/* Skills */}
               <div className="form-group">
                 <label>Skills</label>
                 <div className="chip-input">
@@ -389,6 +485,8 @@ export default function ProfileNew() {
                   />
                 </div>
               </div>
+
+              {/* Company Name */}
               <div className="form-group">
                 <label>Company Name</label>
                 <input
@@ -398,6 +496,8 @@ export default function ProfileNew() {
                   onChange={handleInputChange}
                 />
               </div>
+
+              {/* Batch */}
               <div className="form-group">
                 <label>Batch</label>
                 <input
@@ -408,6 +508,8 @@ export default function ProfileNew() {
                   required
                 />
               </div>
+
+              {/* Profile Image */}
               <div className="form-group">
                 <label>Profile Image (optional)</label>
                 <input
@@ -417,6 +519,8 @@ export default function ProfileNew() {
                   onChange={handleFileChange}
                 />
               </div>
+
+              {/* Submit Buttons */}
               <button type="submit">Save Changes</button>
               <button
                 type="button"
@@ -434,4 +538,4 @@ export default function ProfileNew() {
       )}
     </div>
   );
-} 
+}
