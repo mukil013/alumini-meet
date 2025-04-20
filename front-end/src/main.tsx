@@ -15,7 +15,6 @@ import AdminHome from "./pages/admin/AdminHome.tsx";
 import PlacementInfo from "./pages/admin/PlacementInfo.tsx";
 import Refferral from "./pages/Refferral.tsx";
 import EditEvent from "./pages/admin/EditEvents.tsx";
-import ProtectedRoute from "./pages/ProtectedRoute.tsx";
 import { StrictMode } from "react";
 import DefaultHome from "./pages/DefaultHome.tsx";
 import ContentModeration from "./pages/admin/ContentModeration.tsx";
@@ -25,7 +24,6 @@ import EditTopCompanies from "./pages/admin/EditTopCompanies.tsx";
 const router = Bro([
   {
     path: "/",
-    Component: ProtectedRoute,
     children: [
       {
         path: "home",
