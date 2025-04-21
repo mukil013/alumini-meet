@@ -105,8 +105,8 @@ const router = Bro([
   },
 ]);
 
-export const mainUrlPrefix = "http://localhost:8000"; // "https://alumini-meet-backend.onrender.com"
-export const mainPythonUrl = "http://127.0.0.1:5000"; // "https://alumini-meet-python.onrender.com"
+export const mainUrlPrefix = "http://localhost:8000"; //"https://alumini-meet-backend-lo0r.onrender.com" 
+export const mainPythonUrl = "http://127.0.0.1:5000"; //"https://alumini-meet.onrender.com"
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
